@@ -287,7 +287,7 @@
         .stat .value { font-size: 1.75rem; font-weight: 800; font-family: 'Space Grotesk', 'JetBrains Mono', monospace; letter-spacing: -0.02em; color: var(--text); line-height: 1.1; }
         .stat .sub { margin-top: 2px; color: var(--primary); font-size: 0.72rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Mini stats for jenjang */
+        /* Mini stats untuk jenjang */
         .mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .mini-stat {
             background: var(--surface-soft); border: 1px solid var(--border-soft);
@@ -308,20 +308,19 @@
             padding: 20px; box-shadow: var(--shadow-lg);
         }
 
-        /* ─── Gunakan grid agar tinggi kolom otomatis sama ─── */
         .kelas-row,
         .jenjang-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
-            align-items: stretch; /* kedua kolom setinggi mungkin */
+            align-items: stretch;
         }
 
         .rank-card {
             display: flex;
             flex-direction: column;
             min-width: 0;
-            height: 100%; /* penting agar isi mengisi penuh */
+            height: 100%;
         }
 
         .rank-card h4 {
@@ -338,11 +337,10 @@
         }
         .rank-card h4 i { color: var(--primary); }
 
-        /* ─── Table wrapper ─── */
         .kelas-table-wrap,
         .jenjang-table-wrap {
-            flex: 1;                /* isi sisa ruang */
-            min-height: 0;          /* biarkan flex mengatur */
+            flex: 1;
+            min-height: 0;
             overflow: auto;
             border-radius: var(--radius-lg);
             background: var(--surface-solid);
@@ -358,7 +356,7 @@
             width: 100%;
             min-width: 380px;
             font-size: 0.8125rem;
-            flex: 1;                /* tabel mengisi tinggi wrapper */
+            flex: 1;
         }
 
         thead { position: sticky; top: 0; z-index: 3; }
@@ -382,10 +380,9 @@
         .badge-warning { background: var(--warning-soft); color: var(--warning); }
         .badge-danger { background: var(--danger-soft); color: var(--danger); }
 
-        /* ─── Chart wrapper ─── */
         .kelas-chart-wrap,
         .jenjang-chart-wrap {
-            flex: 1;                /* sama seperti tabel */
+            flex: 1;
             min-height: 0;
             background: var(--chart-bg);
             border-radius: var(--radius-lg);
@@ -406,7 +403,6 @@
             height: 100% !important;
         }
 
-        /* ─── Tombol export diletakkan di bawah, terpisah ─── */
         .export-row {
             margin-top: 12px;
             display: flex;
@@ -494,7 +490,6 @@
             .kelas-chart-wrap canvas,
             .jenjang-chart-wrap canvas { max-height: 340px !important; }
             .mini-stats { grid-template-columns: repeat(3, 1fr); }
-            /* Pada layar kecil, tumpuk vertikal */
             .kelas-row,
             .jenjang-row {
                 grid-template-columns: 1fr;
@@ -579,7 +574,7 @@
             <div class="stat"><div class="label"><i class="fa-solid fa-bullseye"></i> Keseluruhan</div><div class="value" id="overall-avg">-</div><div class="sub">Rerata mapel</div></div>
         </div>
 
-        <!-- LAYOUT PER KELAS -->
+        <!-- LAYOUT PER KELAS (tetap sama) -->
         <div class="kelas-section" id="kelasSection">
             <div class="kelas-row" id="kelasRow">
                 <div class="rank-card">
@@ -601,13 +596,12 @@
                     <div class="kelas-chart-wrap"><canvas id="avgChart"></canvas></div>
                 </div>
             </div>
-            <!-- Tombol export di bawah, terpisah dari row -->
             <div class="export-row">
                 <button id="exportPDFBtn" class="btn btn-pdf btn-sm"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
             </div>
         </div>
 
-        <!-- TAB JENJANG -->
+        <!-- TAB JENJANG (STRUKTUR MIRIP PER KELAS) -->
         <div class="jenjang-section" id="jenjangSection">
             <div class="jenjang-tabs" id="jenjangTabs">
                 <span class="chip" style="margin:4px 0;background:transparent;border:none;box-shadow:none;">
@@ -874,7 +868,6 @@
             const maxVal = Math.max(...averages), minVal = Math.min(...averages);
             const overall = (averages.reduce((a, b) => a + b, 0) / averages.length).toFixed(2);
 
-            // Build HTML table
             let tableRows = '';
             sorted.subjects.forEach((sub, idx) => {
                 const avg = sorted.averages[idx];
@@ -898,7 +891,6 @@
                 </table>
             `;
 
-            // Render HTML to canvas
             const canvas = await html2canvas(pdfContainer, {
                 backgroundColor: '#ffffff',
                 scale: 2,
@@ -906,7 +898,6 @@
                 allowTaint: true,
             });
 
-            // Chart canvas
             const offChartCanvas = document.createElement('canvas');
             offChartCanvas.width = 1200; offChartCanvas.height = 700;
             const offCtx = offChartCanvas.getContext('2d');
@@ -927,16 +918,13 @@
             const chartImg = offChartCanvas.toDataURL('image/png');
             tempChart.destroy();
 
-            // Build PDF
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
             const pageW = 210, margin = 10, contentW = pageW - margin * 2;
 
-            // Table image
             const tableImgH = (canvas.height / canvas.width) * contentW;
             let y = margin;
             if (tableImgH > 250) {
-                // Scale down
                 const scale = 250 / tableImgH;
                 const scaledW = contentW * scale;
                 doc.addImage(canvas.toDataURL('image/png'), 'PNG', (pageW - scaledW) / 2, y, scaledW, 250);
@@ -946,7 +934,6 @@
                 y += tableImgH + 8;
             }
 
-            // Chart image
             if (y > 160) { doc.addPage(); y = margin; }
             const chartImgH = (700 / 1200) * contentW;
             doc.addImage(chartImg, 'PNG', margin, y, contentW, chartImgH);
@@ -956,15 +943,11 @@
         }
 
         // ============================================================
-        //  RENDER JENJANG CHART
+        //  RENDER JENJANG CHART (pakai wrapper mirip kelas)
         // ============================================================
         function renderJenjangChart(canvasId, subjects, averages, key) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return;
-            const container = canvas.parentElement;
-            if (container) {
-                container.style.display = 'flex'; container.style.alignItems = 'center'; container.style.justifyContent = 'center';
-            }
             const ctx = canvas.getContext('2d');
             if (jenjangChartInstances[key]) { jenjangChartInstances[key].destroy(); jenjangChartInstances[key] = null; }
             const themeColors = getThemeColors();
@@ -973,9 +956,6 @@
             jenjangChartInstances[key] = new Chart(ctx, config);
         }
 
-        // ============================================================
-        //  RENDER JENJANG TABS (with stats + PDF export + boxed chart!)
-        // ============================================================
         function buildMiniStatsHTML(subjects, averages) {
             const maxVal = Math.max(...averages), minVal = Math.min(...averages);
             const maxIdx = averages.indexOf(maxVal), minIdx = averages.indexOf(minVal);
@@ -1000,6 +980,9 @@
                 </div>`;
         }
 
+        // ============================================================
+        //  RENDER JENJANG TABS (STRUKTUR MIRIP PER KELAS: tabel kiri, chart kanan, tombol export bawah)
+        // ============================================================
         function renderJenjangTabs() {
             Object.values(jenjangChartInstances).forEach(ch => ch.destroy());
             jenjangChartInstances = {};
@@ -1034,7 +1017,7 @@
                             <div class="jenjang-pane ${active}" data-sheet="${name}">
                                 <div class="jenjang-row">
                                     <div class="rank-card">
-                                        <h4><i class="fa-solid fa-table-list"></i> Semua Mapel (${sorted.subjects.length})</h4>
+                                        <h4><i class="fa-solid fa-table-list"></i> Tabel Rata-rata — ${name}</h4>
                                         ${buildMiniStatsHTML(sorted.subjects, sorted.averages)}
                                         <div class="jenjang-table-wrap"><table><thead><tr><th>#</th><th>Mapel</th><th>Rata2</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table></div>
                                     </div>
@@ -1043,7 +1026,6 @@
                                         <div class="jenjang-chart-wrap"><canvas id="${canvasId}"></canvas></div>
                                     </div>
                                 </div>
-                                <!-- Tombol export di bawah row -->
                                 <div class="export-row">
                                     <button class="btn btn-pdf btn-sm export-pdf-jenjang" data-sheet="${name}"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
                                 </div>
@@ -1120,7 +1102,7 @@
                     <div class="jenjang-pane ${active}" data-key="${key}">
                         <div class="jenjang-row">
                             <div class="rank-card">
-                                <h4><i class="fa-solid fa-table-list"></i> Semua Mapel (${sorted.subjects.length})</h4>
+                                <h4><i class="fa-solid fa-table-list"></i> Tabel Rata-rata — ${key.replace('_', ' ')}</h4>
                                 ${buildMiniStatsHTML(sorted.subjects, sorted.averages)}
                                 <div class="jenjang-table-wrap"><table><thead><tr><th>#</th><th>Mapel</th><th>Rata2</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table></div>
                             </div>
@@ -1209,16 +1191,11 @@
             chartConfig.options.maintainAspectRatio = false;
 
             const canvas = document.getElementById('avgChart');
-            const container = canvas.parentElement;
-            if (container) { container.style.display = 'flex'; container.style.alignItems = 'center'; container.style.justifyContent = 'center'; }
             const ctx = canvas.getContext('2d');
             if (chartInstance) chartInstance.destroy();
             chartInstance = new Chart(ctx, chartConfig);
         }
 
-        // ============================================================
-        //  EXPORT MAIN PDF
-        // ============================================================
         async function exportMainPDF() {
             if (!currentSubjectNames.length) { alert("Tidak ada data"); return; }
             await exportPDF(currentSubjectNames, currentAverages, currentSheetName || 'Kelas');
