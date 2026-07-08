@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>Dashboard Nilai Rata-rata | 2026 Ultra UI</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js">
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #f0f4f8;
+            --bg-2: #e2e8f0;
+            --surface: rgba(255, 255, 255, 0.75);
+            --surface-solid: #ffffff;
+            --surface-soft: #f8fafc;
+            --border: rgba(203, 213, 225, 0.5);
+            --border-soft: rgba(226, 232, 240, 0.8);
+            --text: #0f172a;
+            --text-soft: #334155;
+            --muted: #64748b;
+            --muted-2: #94a3b8;
+            --primary: #6366f1;
+            --primary-2: #818cf8;
+            --primary-glow: rgba(99, 102, 241, 0.15);
+            --accent: #8b5cf6;
+            --info: #0ea5e9;
+            --success: #10b981;
+            --success-soft: #d1fae5;
+            --warning: #f59e0b;
+            --warning-soft: #fef3c7;
+            --danger: #ef4444;
+            --danger-soft: #fee2e2;
+            --secondary: #475569;
+            --chart-bg: #ffffff;
+
+            --radius-2xl: 28px;
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.06), 0 4px 10px rgba(0,0,0,0.04);
+            --shadow-xl: 0 20px 50px rgba(0,0,0,0.08), 0 8px 20px rgba(0,0,0,0.04);
+            --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.12);
+            --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04);
+
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.7);
+            --glass-blur: blur(20px);
+            --glass-sat: saturate(180%);
+
+            --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        body.dark {
+            --bg: #0b1120;
+            --bg-2: #111827;
+            --surface: rgba(15, 23, 42, 0.75);
+            --surface-solid: #0f172a;
+            --surface-soft: #1e293b;
+            --border: rgba(51, 65, 85, 0.6);
+            --border-soft: rgba(30, 41, 59, 0.8);
+            --text: #f1f5f9;
+            --text-soft: #cbd5e1;
+            --muted: #94a3b8;
+            --muted-2: #64748b;
+            --primary: #818cf8;
+            --primary-2: #a5b4fc;
+            --primary-glow: rgba(129, 140, 248, 0.2);
+            --accent: #a78bfa;
+            --info: #38bdf8;
+            --success: #34d399;
+            --success-soft: rgba(52, 211, 153, 0.15);
+            --warning: #fbbf24;
+            --warning-soft: rgba(251, 191, 36, 0.15);
+            --danger: #f87171;
+            --danger-soft: rgba(248, 113, 113, 0.15);
+            --chart-bg: #111827;
+
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.25);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.3);
+            --shadow-xl: 0 20px 50px rgba(0,0,0,0.35);
+            --shadow-glow: 0 0 40px rgba(129, 140, 248, 0.15);
+            --shadow-card: 0 1px 3px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.2);
+
+            --glass-bg: rgba(15, 23, 42, 0.6);
+            --glass-border: rgba(51, 65, 85, 0.5);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            background-image:
+                radial-gradient(ellipse 80% 50% at 20% 0%, var(--primary-glow), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(139, 92, 246, 0.08), transparent);
+            min-height: 100vh;
+            transition: background 0.5s ease, color 0.5s ease;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .dashboard {
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 20px 24px 30px;
+        }
+
+        /* ============ TOP BAR ============ */
+        .topbar {
+            position: sticky;
+            top: 12px;
+            z-index: 100;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur) var(--glass-sat);
+            -webkit-backdrop-filter: var(--glass-blur) var(--glass-sat);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            padding: 16px 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-smooth);
+        }
+
+        .topbar-wrap {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .brand h1 {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text);
+        }
+
+        .brand h1 i { color: var(--primary); font-size: 1rem; }
+        .brand p { color: var(--muted); font-size: 0.75rem; font-weight: 400; letter-spacing: 0.01em; }
+        .top-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+        /* ============ BUTTONS ============ */
+        .btn {
+            display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
+            font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.01em;
+            border-radius: var(--radius-md); border: none; cursor: pointer;
+            transition: all var(--transition-bounce); white-space: nowrap;
+            font-family: 'Inter', sans-serif; position: relative; overflow: hidden;
+        }
+        .btn::after {
+            content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.1);
+            opacity: 0; transition: opacity var(--transition-fast); border-radius: inherit;
+        }
+        .btn:hover::after { opacity: 1; }
+        .btn:active { transform: scale(0.97); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+        }
+        .btn-primary:hover { box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5); transform: translateY(-2px); }
+        .btn-pdf {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: #fff; box-shadow: 0 4px 15px rgba(220, 38, 38, 0.35);
+        }
+        .btn-pdf:hover { box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5); transform: translateY(-2px); }
+        .btn-outline {
+            background: transparent; border: 1.5px solid var(--border); color: var(--text);
+        }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-sm { padding: 6px 12px; font-size: 0.75rem; border-radius: var(--radius-sm); }
+
+        /* ============ CHIPS & INPUTS ============ */
+        .chip {
+            display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+            font-size: 0.75rem; font-weight: 500; background: var(--surface-soft);
+            color: var(--muted); border-radius: 999px; border: 1px solid var(--border-soft);
+            max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .chip i { font-size: 0.7rem; }
+
+        .select-control {
+            padding: 8px 32px 8px 12px; font-size: 0.8125rem; font-weight: 500;
+            font-family: 'Inter', sans-serif; border-radius: var(--radius-md);
+            border: 1px solid var(--border); background: var(--surface-solid); color: var(--text);
+            cursor: pointer; appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 10px center;
+            transition: all var(--transition-fast); box-shadow: var(--shadow-sm);
+        }
+        .select-control:hover { border-color: var(--primary-2); }
+        .select-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+        #file-input { display: none; }
+
+        /* ============ HERO SECTION ============ */
+        .hero {
+            background: var(--glass-bg); backdrop-filter: var(--glass-blur) var(--glass-sat);
+            -webkit-backdrop-filter: var(--glass-blur) var(--glass-sat);
+            border: 1px solid var(--glass-border); border-radius: var(--radius-2xl);
+            padding: 20px 24px; margin-bottom: 16px; box-shadow: var(--shadow-lg);
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: -50%; right: -10%; width: 250px; height: 250px;
+            background: radial-gradient(circle, var(--primary-glow), transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+        .hero-grid { display: grid; grid-template-columns: 1.6fr 0.4fr; gap: 20px; position: relative; z-index: 1; }
+        .headline { display: flex; flex-direction: column; gap: 8px; }
+        .kicker {
+            display: inline-flex; width: fit-content; padding: 4px 12px; border-radius: 999px;
+            background: var(--primary-glow); color: var(--primary); font-size: 0.7rem;
+            font-weight: 700; letter-spacing: 0.02em; align-items: center; gap: 4px; text-transform: uppercase;
+        }
+        .headline h2 { font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: 1.4rem; font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; color: var(--text); }
+        .headline p { color: var(--muted); line-height: 1.6; font-size: 0.8125rem; }
+        .hero-meta { display: grid; gap: 8px; }
+        .meta-card {
+            background: var(--surface-solid); border: 1px solid var(--border-soft);
+            border-radius: var(--radius-lg); padding: 12px 16px; box-shadow: var(--shadow-card);
+            transition: all var(--transition-smooth); cursor: default;
+        }
+        .meta-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); border-color: var(--primary-2); }
+        .meta-title { color: var(--muted-2); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+        .meta-title i { color: var(--primary); font-size: 0.75rem; }
+        .meta-value { font-size: 0.95rem; font-weight: 700; color: var(--text); font-family: 'Space Grotesk', 'Inter', sans-serif; letter-spacing: -0.01em; }
+
+        /* ============ SHEET BAR ============ */
+        .sheet-bar {
+            display: none; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 16px;
+            margin-bottom: 16px; background: var(--glass-bg); backdrop-filter: var(--glass-blur) var(--glass-sat);
+            -webkit-backdrop-filter: var(--glass-blur) var(--glass-sat);
+            border: 1px solid var(--glass-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md);
+        }
+        .sheet-bar .meta-title { margin-bottom: 0; color: var(--muted); }
+
+        /* ============ STATS GRID ============ */
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+        .stat {
+            background: var(--surface-solid); border: 1px solid var(--border-soft);
+            border-radius: var(--radius-xl); padding: 16px 20px; box-shadow: var(--shadow-card);
+            transition: all var(--transition-bounce); cursor: default; position: relative; overflow: hidden;
+        }
+        .stat:hover { transform: translateY(-3px); box-shadow: var(--shadow-xl); border-color: var(--primary-2); }
+        .stat::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transform: scaleX(0); transform-origin: left; transition: transform var(--transition-smooth);
+        }
+        .stat:hover::after { transform: scaleX(1); }
+        .stat .label { font-size: 0.65rem; font-weight: 700; color: var(--muted-2); letter-spacing: 0.04em; text-transform: uppercase; display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+        .stat .label i { color: var(--primary); font-size: 0.8rem; }
+        .stat .value { font-size: 1.75rem; font-weight: 800; font-family: 'Space Grotesk', 'JetBrains Mono', monospace; letter-spacing: -0.02em; color: var(--text); line-height: 1.1; }
+        .stat .sub { margin-top: 2px; color: var(--primary); font-size: 0.72rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Mini stats for jenjang */
+        .mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .mini-stat {
+            background: var(--surface-soft); border: 1px solid var(--border-soft);
+            border-radius: var(--radius-md); padding: 10px 14px;
+            text-align: center; transition: all var(--transition-fast);
+        }
+        .mini-stat:hover { border-color: var(--primary-2); box-shadow: var(--shadow-sm); }
+        .mini-stat .mini-label { font-size: 0.6rem; font-weight: 700; color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
+        .mini-stat .mini-value { font-size: 1.1rem; font-weight: 800; font-family: 'Space Grotesk', 'JetBrains Mono', monospace; color: var(--text); }
+        .mini-stat .mini-sub { font-size: 0.65rem; color: var(--primary); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* ============ KELAS SECTION ============ */
+        .kelas-section,
+        .jenjang-section {
+            margin-bottom: 16px; background: var(--glass-bg); backdrop-filter: var(--glass-blur) var(--glass-sat);
+            -webkit-backdrop-filter: var(--glass-blur) var(--glass-sat);
+            border: 1px solid var(--glass-border); border-radius: var(--radius-2xl);
+            padding: 20px; box-shadow: var(--shadow-lg);
+        }
+
+        /* ─── Gunakan grid agar tinggi kolom otomatis sama ─── */
+        .kelas-row,
+        .jenjang-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: stretch; /* kedua kolom setinggi mungkin */
+        }
+
+        .rank-card {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            height: 100%; /* penting agar isi mengisi penuh */
+        }
+
+        .rank-card h4 {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.01em;
+            flex-shrink: 0;
+            margin-bottom: 6px;
+        }
+        .rank-card h4 i { color: var(--primary); }
+
+        /* ─── Table wrapper ─── */
+        .kelas-table-wrap,
+        .jenjang-table-wrap {
+            flex: 1;                /* isi sisa ruang */
+            min-height: 0;          /* biarkan flex mengatur */
+            overflow: auto;
+            border-radius: var(--radius-lg);
+            background: var(--surface-solid);
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .kelas-table-wrap table,
+        .jenjang-table-wrap table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 380px;
+            font-size: 0.8125rem;
+            flex: 1;                /* tabel mengisi tinggi wrapper */
+        }
+
+        thead { position: sticky; top: 0; z-index: 3; }
+        th {
+            background: var(--surface-soft); color: var(--muted); font-size: 0.65rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.05em; padding: 12px 14px;
+            border-bottom: 2px solid var(--border); text-align: left; white-space: nowrap;
+        }
+        td { padding: 11px 14px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; color: var(--text-soft); font-weight: 500; }
+        tbody tr { transition: all var(--transition-fast); }
+        tbody tr:hover { background: var(--primary-glow); }
+        tbody tr:last-child td { border-bottom: none; }
+        td:nth-child(1) { font-weight: 700; color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; }
+        td:nth-child(3) { font-weight: 700; font-family: 'Space Grotesk', 'JetBrains Mono', monospace; color: var(--text); }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px;
+            border-radius: 999px; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.02em;
+        }
+        .badge-success { background: var(--success-soft); color: var(--success); }
+        .badge-warning { background: var(--warning-soft); color: var(--warning); }
+        .badge-danger { background: var(--danger-soft); color: var(--danger); }
+
+        /* ─── Chart wrapper ─── */
+        .kelas-chart-wrap,
+        .jenjang-chart-wrap {
+            flex: 1;                /* sama seperti tabel */
+            min-height: 0;
+            background: var(--chart-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-soft);
+            padding: 16px;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .kelas-chart-wrap canvas,
+        .jenjang-chart-wrap canvas {
+            max-width: 100%;
+            max-height: 100%;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* ─── Tombol export diletakkan di bawah, terpisah ─── */
+        .export-row {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* ============ JENJANG TABS ============ */
+        .jenjang-tabs { display: flex; gap: 5px; padding: 4px 6px 0; flex-wrap: wrap; border-bottom: 2px solid var(--border-soft); margin-bottom: 16px; }
+        .jenjang-tab {
+            padding: 8px 18px; border-radius: var(--radius-md) var(--radius-md) 0 0;
+            background: transparent; color: var(--muted); font-weight: 600; font-size: 0.8125rem;
+            cursor: pointer; transition: all var(--transition-bounce); border: none;
+            font-family: 'Inter', sans-serif; position: relative; letter-spacing: 0.01em;
+        }
+        .jenjang-tab:hover { color: var(--text); background: var(--surface-soft); }
+        .jenjang-tab.active { color: var(--primary); background: var(--surface-soft); font-weight: 700; }
+        .jenjang-tab.active::after {
+            content: ''; position: absolute; bottom: -2px; left: 15%; width: 70%; height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 3px 3px 0 0; animation: tabIndicatorIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes tabIndicatorIn { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+        .jenjang-content { min-height: 180px; }
+        .jenjang-pane { display: none; }
+        .jenjang-pane.active { display: block; animation: fadeSlideIn 0.4s ease; }
+        @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ============ THEME TOGGLE ============ */
+        .theme-toggle { display: flex; gap: 3px; background: var(--surface-soft); border-radius: var(--radius-md); padding: 3px; border: 1px solid var(--border-soft); }
+        .theme-btn { width: 32px; height: 32px; border-radius: 8px; border: none; background: transparent; cursor: pointer; color: var(--muted); font-size: 0.9rem; transition: all var(--transition-bounce); display: flex; align-items: center; justify-content: center; }
+        .theme-btn:hover { color: var(--text); background: var(--surface-solid); box-shadow: var(--shadow-sm); }
+        .theme-btn.active-theme { background: var(--surface-solid); color: var(--primary); box-shadow: var(--shadow-sm); }
+
+        /* ============ FOOTER ============ */
+        .footer-note { text-align: center; color: var(--muted-2); font-size: 0.7rem; padding: 8px 4px 0; display: flex; gap: 6px; align-items: center; justify-content: center; letter-spacing: 0.02em; }
+        .footer-note i { color: var(--primary); }
+
+        /* ============ PDF EXPORT CONTAINER (hidden) ============ */
+        #pdf-export-container {
+            position: absolute; left: -9999px; top: 0; width: 800px;
+            background: #ffffff; padding: 20px; font-family: 'Amiri', 'Inter', 'Arial', sans-serif;
+        }
+        #pdf-export-container .pdf-title { font-size: 18px; font-weight: 700; color: #1e293b; text-align: center; margin-bottom: 4px; font-family: 'Inter', 'Arial', sans-serif; }
+        #pdf-export-container .pdf-subtitle { font-size: 11px; color: #64748b; text-align: center; margin-bottom: 10px; font-family: 'Inter', 'Arial', sans-serif; }
+        #pdf-export-container .pdf-stats { text-align: center; font-size: 10px; color: #475569; margin-bottom: 10px; font-family: 'Inter', 'Arial', sans-serif; }
+        #pdf-export-container table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        #pdf-export-container th { background: #f1f5f9; color: #64748b; font-size: 9px; font-weight: 700; text-transform: uppercase; padding: 8px 10px; border-bottom: 2px solid #cbd5e1; text-align: left; font-family: 'Inter', 'Arial', sans-serif; }
+        #pdf-export-container td { padding: 7px 10px; border-bottom: 1px solid #e2e8f0; color: #334155; }
+        #pdf-export-container td:first-child { font-family: 'JetBrains Mono', monospace; color: #64748b; }
+        #pdf-export-container td:nth-child(3) { font-weight: 700; }
+        #pdf-export-container .pdf-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 9px; font-weight: 600; }
+        #pdf-export-container .pdf-badge-good { background: #d1fae5; color: #10b981; }
+        #pdf-export-container .pdf-badge-ok { background: #fef3c7; color: #f59e0b; }
+        #pdf-export-container .pdf-badge-bad { background: #fee2e2; color: #ef4444; }
+
+        /* ============ SCROLLBAR ============ */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--muted-2); }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 1400px) {
+            .hero-grid { grid-template-columns: 1fr; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .dashboard { padding: 10px 8px 24px; }
+            .topbar { padding: 12px 14px; border-radius: var(--radius-xl); top: 6px; }
+            .topbar-wrap { gap: 8px; }
+            .brand h1 { font-size: 1rem; }
+            .headline h2 { font-size: 1.2rem; }
+            .stats { grid-template-columns: 1fr; gap: 8px; }
+            .stat { padding: 14px 16px; }
+            .hero { padding: 16px; border-radius: var(--radius-xl); }
+            .kelas-section,
+            .jenjang-section { padding: 14px; border-radius: var(--radius-xl); }
+            th, td { padding: 8px 10px; font-size: 0.72rem; }
+            .chip { max-width: 180px; }
+            .jenjang-tab { padding: 6px 12px; font-size: 0.72rem; }
+            .btn { padding: 6px 12px; font-size: 0.72rem; }
+            .kelas-chart-wrap,
+            .jenjang-chart-wrap { min-height: 280px; padding: 12px; }
+            .kelas-chart-wrap canvas,
+            .jenjang-chart-wrap canvas { max-height: 340px !important; }
+            .mini-stats { grid-template-columns: repeat(3, 1fr); }
+            /* Pada layar kecil, tumpuk vertikal */
+            .kelas-row,
+            .jenjang-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 480px) {
+            .top-actions { flex-wrap: wrap; gap: 5px; }
+            .btn { width: 100%; justify-content: center; }
+            .theme-toggle { width: 100%; justify-content: center; }
+            .chip { max-width: 100%; width: 100%; justify-content: center; }
+            .sheet-bar { flex-direction: column; align-items: stretch; }
+            .select-control { width: 100%; }
+            .kelas-chart-wrap,
+            .jenjang-chart-wrap { min-height: 250px; padding: 8px; }
+            .kelas-chart-wrap canvas,
+            .jenjang-chart-wrap canvas { max-height: 280px !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <div class="topbar-wrap">
+                <div class="brand">
+                    <h1><i class="fa-solid fa-graduation-cap"></i> Dashboard Akademik 2026</h1>
+                    <p>Analisis rata-rata nilai mapel · MTs & MI Diniyah "Miftahul Ulum" Putri · 1446-1447 H</p>
+                </div>
+                <div class="top-actions">
+                    <label for="file-input" class="btn btn-primary">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload Excel
+                    </label>
+                    <input type="file" id="file-input" accept=".xlsx, .xls, .csv" />
+                    <span id="file-status" class="chip">
+                        <i class="fa-regular fa-file-lines"></i> Belum ada file
+                    </span>
+                    <div class="theme-toggle">
+                        <button id="lightModeBtn" class="theme-btn active-theme" title="Mode Terang">
+                            <i class="fa-regular fa-sun"></i>
+                        </button>
+                        <button id="darkModeBtn" class="theme-btn" title="Mode Gelap">
+                            <i class="fa-regular fa-moon"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HERO -->
+        <div class="hero">
+            <div class="hero-grid">
+                <div class="headline">
+                    <span class="kicker"><i class="fa-solid fa-bolt"></i> Realtime Insight</span>
+                    <h2>Analisis Rata-rata Nilai per Mata Pelajaran</h2>
+                    <p>Gunakan file <strong>LEGER I.xlsx</strong> · Export PDF dengan font Arab · Full HD proyektor ready</p>
+                </div>
+                <div class="hero-meta">
+                    <div class="meta-card">
+                        <div class="meta-title"><i class="fa-solid fa-database"></i> Status</div>
+                        <div class="meta-value" id="meta-data-status">Menunggu</div>
+                    </div>
+                    <div class="meta-card">
+                        <div class="meta-title"><i class="fa-regular fa-clone"></i> Sheet Aktif</div>
+                        <div class="meta-value" id="meta-sheet">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SHEET SELECTOR -->
+        <div class="sheet-bar" id="sheet-selector-area">
+            <span class="meta-title"><i class="fa-solid fa-layer-group"></i> Pilih Kelas</span>
+            <select id="sheet-select" class="select-control"></select>
+            <span class="chip"><i class="fa-solid fa-wand-magic-sparkles"></i> Otomatis</span>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats">
+            <div class="stat"><div class="label"><i class="fa-solid fa-book-open"></i> Total Mapel</div><div class="value" id="total-mapel">0</div><div class="sub">Mapel terdeteksi</div></div>
+            <div class="stat"><div class="label"><i class="fa-solid fa-trophy"></i> Tertinggi</div><div class="value" id="max-avg">-</div><div class="sub" id="max-mapel">-</div></div>
+            <div class="stat"><div class="label"><i class="fa-solid fa-arrow-trend-down"></i> Terendah</div><div class="value" id="min-avg">-</div><div class="sub" id="min-mapel">-</div></div>
+            <div class="stat"><div class="label"><i class="fa-solid fa-bullseye"></i> Keseluruhan</div><div class="value" id="overall-avg">-</div><div class="sub">Rerata mapel</div></div>
+        </div>
+
+        <!-- LAYOUT PER KELAS -->
+        <div class="kelas-section" id="kelasSection">
+            <div class="kelas-row" id="kelasRow">
+                <div class="rank-card">
+                    <h4><i class="fa-solid fa-table-list"></i> <span id="kelasTableTitle">Tabel Rata-rata</span></h4>
+                    <div class="kelas-table-wrap">
+                        <table id="avg-table">
+                            <thead><tr><th>#</th><th>Mata Pelajaran</th><th>Rata-rata</th><th>Status</th></tr></thead>
+                            <tbody id="table-body">
+                                <tr><td colspan="4" style="text-align:center;padding:28px;">
+                                    <i class="fa-solid fa-file-arrow-up" style="font-size:1.3rem;color:var(--muted-2);display:block;margin-bottom:6px;"></i>
+                                    Silakan upload file Excel
+                                </td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="rank-card">
+                    <h4><i class="fa-solid fa-chart-bar"></i> Diagram Batang</h4>
+                    <div class="kelas-chart-wrap"><canvas id="avgChart"></canvas></div>
+                </div>
+            </div>
+            <!-- Tombol export di bawah, terpisah dari row -->
+            <div class="export-row">
+                <button id="exportPDFBtn" class="btn btn-pdf btn-sm"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+            </div>
+        </div>
+
+        <!-- TAB JENJANG -->
+        <div class="jenjang-section" id="jenjangSection">
+            <div class="jenjang-tabs" id="jenjangTabs">
+                <span class="chip" style="margin:4px 0;background:transparent;border:none;box-shadow:none;">
+                    <i class="fa-regular fa-folder-open"></i> Menunggu data...
+                </span>
+            </div>
+            <div class="jenjang-content" id="jenjangContent"></div>
+        </div>
+
+        <div class="footer-note">
+            <i class="fa-solid fa-circle-check"></i>
+            Export PDF (Tabel Arab + Chart HD) · Dark/Light mode · Full HD proyektor ready
+        </div>
+    </div>
+
+    <!-- Hidden PDF export container -->
+    <div id="pdf-export-container"></div>
+
+    <script>
+        // ============================================================
+        //  VARIABLES
+        // ============================================================
+        let workbookData = null;
+        let currentSheetName = "";
+        let currentAverages = [];
+        let currentSubjectNames = [];
+        let chartInstance = null;
+        let chartConfig = null;
+
+        let jenjangChartInstances = {};
+        let groupedData = {};
+        let allSheetsData = {};
+
+        const fileInput = document.getElementById('file-input');
+        const fileStatusSpan = document.getElementById('file-status');
+        const sheetSelectorDiv = document.getElementById('sheet-selector-area');
+        const sheetSelect = document.getElementById('sheet-select');
+        const totalMapelSpan = document.getElementById('total-mapel');
+        const maxAvgSpan = document.getElementById('max-avg');
+        const maxMapelSpan = document.getElementById('max-mapel');
+        const minAvgSpan = document.getElementById('min-avg');
+        const minMapelSpan = document.getElementById('min-mapel');
+        const overallAvgSpan = document.getElementById('overall-avg');
+        const tableBody = document.getElementById('table-body');
+        const metaDataStatus = document.getElementById('meta-data-status');
+        const metaSheet = document.getElementById('meta-sheet');
+        const jenjangTabs = document.getElementById('jenjangTabs');
+        const jenjangContent = document.getElementById('jenjangContent');
+        const kelasTableTitle = document.getElementById('kelasTableTitle');
+        const lightBtn = document.getElementById('lightModeBtn');
+        const darkBtn = document.getElementById('darkModeBtn');
+        const pdfContainer = document.getElementById('pdf-export-container');
+
+        // ============================================================
+        //  THEME COLORS
+        // ============================================================
+        function getThemeColors() {
+            const dark = document.body.classList.contains('dark');
+            return {
+                textColor: dark ? '#e2e8f0' : '#1e293b',
+                gridColor: dark ? 'rgba(148,163,184,0.12)' : 'rgba(148,163,184,0.18)',
+                bgColor: dark ? '#111827' : '#ffffff',
+                tooltipBg: dark ? '#1e293b' : '#ffffff',
+                legendColor: dark ? '#cbd5e1' : '#334155',
+            };
+        }
+
+        // ============================================================
+        //  UTILS
+        // ============================================================
+        function detectHeaderAndData(worksheet) {
+            const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1:Z1000');
+            const rows = [];
+            for (let R = range.s.r; R <= range.e.r; R++) {
+                const row = [];
+                for (let C = range.s.c; C <= range.e.c; C++) {
+                    const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+                    const cell = worksheet[cellAddress];
+                    let val = cell ? cell.v : "";
+                    if (cell && cell.t === 'n') val = cell.v;
+                    else if (cell && cell.t === 's') val = cell.v;
+                    else val = (val === undefined) ? "" : val;
+                    row.push(val);
+                }
+                rows.push(row);
+            }
+
+            const subjectKeywords = [
+                "فتح القريب", "تفسير الجلالين", "شرح ام البراهين", "لتبيان فى علوم القران", "علم الفرائض",
+                "الخلفاء الراشدون", "الكواكب الدرية", "ستين مسئلة", "بلوغ المرام", "إملاء", "إيضاح المبهم",
+                "قــرأة الكتاب", "مبادئ الفقه", "خريدة البهية", "هداية المستفيد", "اللغة العربية",
+                "قاعد مختصر جدا", "خلاصة نور اليقين", "رابطة الحروف", "عقيدة التوحيد", "تحفة الاطفال",
+                "الديانة", "هداية الصبيان", "عقيدة العوام", "جواهر الكلامية", "التصريف", "رياض البديعة"
+            ];
+
+            let headerRowIndex = -1, dataStartRow = -1;
+            for (let i = 0; i < rows.length && i < 50; i++) {
+                let matchCount = 0;
+                for (let j = 0; j < rows[i].length && j < 30; j++) {
+                    const cell = String(rows[i][j]).trim();
+                    if (cell.length > 0 && subjectKeywords.some(kw => cell.includes(kw))) matchCount++;
+                }
+                if (matchCount >= 3) { headerRowIndex = i; dataStartRow = i + 1; break; }
+            }
+            if (headerRowIndex === -1 && rows.length > 6) { headerRowIndex = 5; dataStartRow = 6; }
+            if (headerRowIndex === -1 || dataStartRow === -1) return { subjects: [], scores: [] };
+
+            const headerRow = rows[headerRowIndex];
+            const subjectIndices = [], subjectNames = [];
+            const ignoreKeywords = ["NO", "NOPES", "NIS", "NAMA", "ASR", "KELAS", "جملة", "ألتسوية", "فائز", "RANK", "SUM", "jml"];
+            for (let c = 0; c < headerRow.length; c++) {
+                let cellVal = headerRow[c];
+                if (cellVal && typeof cellVal === 'string') {
+                    let cleaned = cellVal.trim();
+                    if (!ignoreKeywords.some(ig => cleaned.toUpperCase().includes(ig)) && cleaned.length > 1 && !/^\d+(\.\d+)?$/.test(cleaned)) {
+                        subjectIndices.push(c); subjectNames.push(cleaned);
+                    }
+                }
+            }
+            if (subjectNames.length < 3 && headerRow.length > 6) {
+                subjectIndices.length = 0; subjectNames.length = 0;
+                for (let c = 6; c < Math.min(headerRow.length, 30); c++) {
+                    let name = headerRow[c];
+                    if (name && typeof name === 'string' && name.trim().length > 0) {
+                        subjectIndices.push(c); subjectNames.push(name.trim());
+                    }
+                }
+            }
+
+            const studentScores = [];
+            for (let r = dataStartRow; r < rows.length; r++) {
+                const row = rows[r];
+                if (!row || row.length === 0) continue;
+                let hasNumeric = false;
+                const scoreRow = [];
+                for (let idx of subjectIndices) {
+                    let val = row[idx]; let num = null;
+                    if (val !== undefined && val !== "") {
+                        if (typeof val === 'number') { num = val; hasNumeric = true; }
+                        else if (typeof val === 'string') { let p = parseFloat(val); if (!isNaN(p)) { num = p; hasNumeric = true; } }
+                        else if (typeof val === 'boolean') { num = val ? 1 : 0; hasNumeric = true; }
+                    }
+                    scoreRow.push(num);
+                }
+                if (hasNumeric) studentScores.push(scoreRow);
+            }
+            return { subjects: subjectNames, scores: studentScores };
+        }
+
+        function computeAverages(subjects, scores) {
+            if (!scores.length || !subjects.length) return [];
+            const sums = new Array(subjects.length).fill(0);
+            const counts = new Array(subjects.length).fill(0);
+            for (const student of scores) {
+                for (let i = 0; i < subjects.length; i++) {
+                    const val = student[i];
+                    if (val !== null && typeof val === 'number' && !isNaN(val)) { sums[i] += val; counts[i]++; }
+                }
+            }
+            return sums.map((sum, idx) => counts[idx] ? parseFloat((sum / counts[idx]).toFixed(2)) : 0);
+        }
+
+        function sortSubjectsByAverageDesc(subjects, averages) {
+            const pairs = subjects.map((s, i) => ({ subject: s, avg: averages[i] }));
+            pairs.sort((a, b) => b.avg - a.avg);
+            return { subjects: pairs.map(p => p.subject), averages: pairs.map(p => p.avg) };
+        }
+
+        function mergeSheetData(sheetList) {
+            let allSubjects = [], allScores = [];
+            for (const sheetName of sheetList) {
+                const ws = workbookData.Sheets[sheetName];
+                if (!ws) continue;
+                const { subjects, scores } = detectHeaderAndData(ws);
+                if (subjects.length === 0 || scores.length === 0) continue;
+                if (allSubjects.length === 0) allSubjects = subjects.slice();
+                for (const student of scores) {
+                    if (student.length === allSubjects.length) allScores.push(student.slice());
+                }
+            }
+            return { subjects: allSubjects, averages: computeAverages(allSubjects, allScores) };
+        }
+
+        function getStatusBadge(avg) {
+            if (avg >= 7.5) return '<span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> Baik</span>';
+            if (avg >= 5) return '<span class="badge badge-warning"><i class="fa-solid fa-exclamation-triangle"></i> Cukup</span>';
+            return '<span class="badge badge-danger"><i class="fa-solid fa-circle-exclamation"></i> Perlu Bimbingan</span>';
+        }
+
+        function getStatusText(avg) {
+            if (avg >= 7.5) return "Baik";
+            if (avg >= 5) return "Cukup";
+            return "Perlu Bimbingan";
+        }
+
+        function getPDFBadgeClass(avg) {
+            if (avg >= 7.5) return 'pdf-badge-good';
+            if (avg >= 5) return 'pdf-badge-ok';
+            return 'pdf-badge-bad';
+        }
+
+        // ============================================================
+        //  BUILD CHART CONFIG
+        // ============================================================
+        function buildChartConfig(subjects, averages, themeColors, extraOpts = {}) {
+            const isExport = extraOpts.isExport || false;
+            return {
+                type: 'bar',
+                data: {
+                    labels: subjects,
+                    datasets: [{
+                        label: 'Rata-rata Nilai',
+                        data: averages,
+                        backgroundColor: averages.map(a => a >= 7.5 ? '#10b981' : (a >= 5 ? '#f59e0b' : '#ef4444')),
+                        borderColor: averages.map(a => a >= 7.5 ? '#059669' : (a >= 5 ? '#d97706' : '#dc2626')),
+                        borderWidth: isExport ? 2 : 1.5,
+                        borderRadius: isExport ? 10 : 6,
+                        borderSkipped: false,
+                        maxBarThickness: isExport ? 65 : 45,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: isExport ? false : { duration: 800, easing: 'easeOutQuart' },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: { size: isExport ? 20 : 12, family: "'Inter','Arial',sans-serif", weight: 'bold' },
+                                color: themeColors.legendColor,
+                                padding: isExport ? 18 : 12,
+                                usePointStyle: true,
+                                pointStyleWidth: isExport ? 10 : 7,
+                            }
+                        },
+                        tooltip: { enabled: !isExport }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: Math.max(10, Math.max(...averages) + 1),
+                            ticks: { color: themeColors.textColor, font: { size: isExport ? 18 : 11, family: "'Inter','Arial',sans-serif" }, callback: v => v.toFixed(1), padding: isExport ? 10 : 5 },
+                            title: { display: true, text: 'Nilai Rata-rata', color: themeColors.textColor, font: { size: isExport ? 22 : 11, family: "'Inter','Arial',sans-serif", weight: '600' } },
+                            grid: { color: themeColors.gridColor, drawBorder: false }
+                        },
+                        x: {
+                            ticks: { autoSkip: false, maxRotation: isExport ? 45 : 40, minRotation: isExport ? 30 : 30, color: themeColors.textColor, font: { size: isExport ? 14 : 10, family: "'Amiri','Inter','Arial',sans-serif", weight: isExport ? 'bold' : 'normal' }, padding: isExport ? 14 : 6 },
+                            grid: { display: false }
+                        }
+                    },
+                    layout: { padding: { top: 8, bottom: isExport ? 25 : 8, left: 4, right: 12 } }
+                }
+            };
+        }
+
+        // ============================================================
+        //  EXPORT PDF via html2canvas (supports Arabic fonts!)
+        // ============================================================
+        async function exportPDF(subjects, averages, title) {
+            if (!subjects.length) { alert("Tidak ada data untuk diekspor."); return; }
+
+            const sorted = sortSubjectsByAverageDesc(subjects, averages);
+            const maxVal = Math.max(...averages), minVal = Math.min(...averages);
+            const overall = (averages.reduce((a, b) => a + b, 0) / averages.length).toFixed(2);
+
+            // Build HTML table
+            let tableRows = '';
+            sorted.subjects.forEach((sub, idx) => {
+                const avg = sorted.averages[idx];
+                const badgeClass = getPDFBadgeClass(avg);
+                const status = getStatusText(avg);
+                tableRows += `<tr>
+                    <td>${idx + 1}</td>
+                    <td style="font-family:'Amiri','Traditional Arabic',serif;font-size:13px;">${sub}</td>
+                    <td style="font-family:'JetBrains Mono',monospace;">${avg.toFixed(2)}</td>
+                    <td><span class="pdf-badge ${badgeClass}">${status}</span></td>
+                </tr>`;
+            });
+
+            pdfContainer.innerHTML = `
+                <div class="pdf-title">Laporan Rata-rata Nilai — ${title}</div>
+                <div class="pdf-subtitle">Madrasah Diniyah "Miftahul Ulum" Putri · Tahun 1446-1447 H · ${new Date().toLocaleDateString('id-ID')}</div>
+                <div class="pdf-stats">Total Mapel: ${sorted.subjects.length} &nbsp;|&nbsp; Tertinggi: ${maxVal.toFixed(2)} &nbsp;|&nbsp; Terendah: ${minVal.toFixed(2)} &nbsp;|&nbsp; Rerata: ${overall}</div>
+                <table>
+                    <thead><tr><th>#</th><th>Mata Pelajaran</th><th>Rata2</th><th>Status</th></tr></thead>
+                    <tbody>${tableRows}</tbody>
+                </table>
+            `;
+
+            // Render HTML to canvas
+            const canvas = await html2canvas(pdfContainer, {
+                backgroundColor: '#ffffff',
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+            });
+
+            // Chart canvas
+            const offChartCanvas = document.createElement('canvas');
+            offChartCanvas.width = 1200; offChartCanvas.height = 700;
+            const offCtx = offChartCanvas.getContext('2d');
+            const exportColors = {
+                textColor: '#1e293b', gridColor: 'rgba(148,163,184,0.18)',
+                bgColor: '#ffffff', tooltipBg: '#ffffff', legendColor: '#334155',
+            };
+            const chartCfg = buildChartConfig(sorted.subjects, sorted.averages, exportColors, { isExport: true });
+            chartCfg.options.responsive = false;
+            chartCfg.options.maintainAspectRatio = true;
+            chartCfg.options.plugins.tooltip = { enabled: false };
+            chartCfg.data.datasets[0].maxBarThickness = 60;
+
+            offCtx.fillStyle = '#ffffff';
+            offCtx.fillRect(0, 0, offChartCanvas.width, offChartCanvas.height);
+            const tempChart = new Chart(offCtx, chartCfg);
+            await new Promise(r => setTimeout(r, 600));
+            const chartImg = offChartCanvas.toDataURL('image/png');
+            tempChart.destroy();
+
+            // Build PDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            const pageW = 210, margin = 10, contentW = pageW - margin * 2;
+
+            // Table image
+            const tableImgH = (canvas.height / canvas.width) * contentW;
+            let y = margin;
+            if (tableImgH > 250) {
+                // Scale down
+                const scale = 250 / tableImgH;
+                const scaledW = contentW * scale;
+                doc.addImage(canvas.toDataURL('image/png'), 'PNG', (pageW - scaledW) / 2, y, scaledW, 250);
+                y += 255;
+            } else {
+                doc.addImage(canvas.toDataURL('image/png'), 'PNG', margin, y, contentW, tableImgH);
+                y += tableImgH + 8;
+            }
+
+            // Chart image
+            if (y > 160) { doc.addPage(); y = margin; }
+            const chartImgH = (700 / 1200) * contentW;
+            doc.addImage(chartImg, 'PNG', margin, y, contentW, chartImgH);
+
+            const safe = title.replace(/[^a-zA-Z0-9]/g, '_');
+            doc.save(`Laporan_${safe}.pdf`);
+        }
+
+        // ============================================================
+        //  RENDER JENJANG CHART
+        // ============================================================
+        function renderJenjangChart(canvasId, subjects, averages, key) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const container = canvas.parentElement;
+            if (container) {
+                container.style.display = 'flex'; container.style.alignItems = 'center'; container.style.justifyContent = 'center';
+            }
+            const ctx = canvas.getContext('2d');
+            if (jenjangChartInstances[key]) { jenjangChartInstances[key].destroy(); jenjangChartInstances[key] = null; }
+            const themeColors = getThemeColors();
+            const config = buildChartConfig(subjects, averages, themeColors);
+            config.options.maintainAspectRatio = false;
+            jenjangChartInstances[key] = new Chart(ctx, config);
+        }
+
+        // ============================================================
+        //  RENDER JENJANG TABS (with stats + PDF export + boxed chart!)
+        // ============================================================
+        function buildMiniStatsHTML(subjects, averages) {
+            const maxVal = Math.max(...averages), minVal = Math.min(...averages);
+            const maxIdx = averages.indexOf(maxVal), minIdx = averages.indexOf(minVal);
+            const overall = (averages.reduce((a, b) => a + b, 0) / averages.length).toFixed(2);
+            return `
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <div class="mini-label"><i class="fa-solid fa-trophy"></i> Tertinggi</div>
+                        <div class="mini-value">${maxVal.toFixed(2)}</div>
+                        <div class="mini-sub" style="font-family:'Amiri','Traditional Arabic',serif;">${subjects[maxIdx]}</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-label"><i class="fa-solid fa-arrow-trend-down"></i> Terendah</div>
+                        <div class="mini-value">${minVal.toFixed(2)}</div>
+                        <div class="mini-sub" style="font-family:'Amiri','Traditional Arabic',serif;">${subjects[minIdx]}</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-label"><i class="fa-solid fa-bullseye"></i> Rata-rata</div>
+                        <div class="mini-value">${overall}</div>
+                        <div class="mini-sub">Keseluruhan</div>
+                    </div>
+                </div>`;
+        }
+
+        function renderJenjangTabs() {
+            Object.values(jenjangChartInstances).forEach(ch => ch.destroy());
+            jenjangChartInstances = {};
+
+            const keys = Object.keys(groupedData);
+            if (!keys.length) {
+                const sheetKeys = Object.keys(allSheetsData);
+                if (sheetKeys.length) {
+                    let tabsHtml = '';
+                    sheetKeys.forEach((name, idx) => {
+                        const active = idx === 0 ? 'active' : '';
+                        tabsHtml += `<button class="jenjang-tab ${active}" data-sheet="${name}">${name}</button>`;
+                    });
+                    jenjangTabs.innerHTML = tabsHtml;
+
+                    let panesHtml = '';
+                    sheetKeys.forEach((name, idx) => {
+                        const active = idx === 0 ? 'active' : '';
+                        const data = allSheetsData[name];
+                        const safeName = name.replace(/[^a-zA-Z0-9]/g, '_');
+                        const canvasId = `jenjangChart_${safeName}`;
+                        if (!data || !data.subjects.length) {
+                            panesHtml += `<div class="jenjang-pane ${active}" data-sheet="${name}"><div class="jenjang-row"><div class="rank-card"><h4><i class="fa-solid fa-table-list"></i> Semua Mapel</h4><p style="color:var(--muted);">Tidak ada data</p></div></div></div>`;
+                            return;
+                        }
+                        const sorted = sortSubjectsByAverageDesc(data.subjects, data.averages);
+                        let tableRows = '';
+                        sorted.subjects.forEach((sub, i) => {
+                            tableRows += `<tr><td>${i+1}</td><td><span style="font-family:'Amiri','Traditional Arabic',serif;">${sub}</span></td><td>${sorted.averages[i].toFixed(2)}</td><td>${getStatusBadge(sorted.averages[i])}</td></tr>`;
+                        });
+                        panesHtml += `
+                            <div class="jenjang-pane ${active}" data-sheet="${name}">
+                                <div class="jenjang-row">
+                                    <div class="rank-card">
+                                        <h4><i class="fa-solid fa-table-list"></i> Semua Mapel (${sorted.subjects.length})</h4>
+                                        ${buildMiniStatsHTML(sorted.subjects, sorted.averages)}
+                                        <div class="jenjang-table-wrap"><table><thead><tr><th>#</th><th>Mapel</th><th>Rata2</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table></div>
+                                    </div>
+                                    <div class="rank-card">
+                                        <h4><i class="fa-solid fa-chart-bar"></i> Diagram Batang</h4>
+                                        <div class="jenjang-chart-wrap"><canvas id="${canvasId}"></canvas></div>
+                                    </div>
+                                </div>
+                                <!-- Tombol export di bawah row -->
+                                <div class="export-row">
+                                    <button class="btn btn-pdf btn-sm export-pdf-jenjang" data-sheet="${name}"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+                                </div>
+                            </div>`;
+                        setTimeout(() => renderJenjangChart(canvasId, sorted.subjects, sorted.averages, name), 120);
+                    });
+                    jenjangContent.innerHTML = panesHtml;
+
+                    document.querySelectorAll('.export-pdf-jenjang').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const sheet = this.dataset.sheet;
+                            const d = allSheetsData[sheet];
+                            if (d && d.subjects.length) {
+                                const s = sortSubjectsByAverageDesc(d.subjects, d.averages);
+                                exportPDF(s.subjects, s.averages, sheet);
+                            }
+                        });
+                    });
+
+                    document.querySelectorAll('.jenjang-tab').forEach(tab => {
+                        tab.addEventListener('click', function() {
+                            const sheet = this.dataset.sheet;
+                            document.querySelectorAll('.jenjang-tab').forEach(t => t.classList.remove('active'));
+                            this.classList.add('active');
+                            document.querySelectorAll('.jenjang-pane').forEach(p => p.classList.remove('active'));
+                            const pane = document.querySelector(`.jenjang-pane[data-sheet="${sheet}"]`);
+                            if (pane) pane.classList.add('active');
+                            const safeName = sheet.replace(/[^a-zA-Z0-9]/g, '_');
+                            const canvasId = `jenjangChart_${safeName}`;
+                            const canvas = document.getElementById(canvasId);
+                            if (canvas && !jenjangChartInstances[sheet] && allSheetsData[sheet]?.subjects.length) {
+                                const s = sortSubjectsByAverageDesc(allSheetsData[sheet].subjects, allSheetsData[sheet].averages);
+                                renderJenjangChart(canvasId, s.subjects, s.averages, sheet);
+                            }
+                        });
+                    });
+                    return;
+                }
+                jenjangTabs.innerHTML = '<span class="chip" style="margin:5px 0;background:transparent;border:none;box-shadow:none;"><i class="fa-regular fa-folder-open"></i> Belum ada data jenjang</span>';
+                jenjangContent.innerHTML = '';
+                return;
+            }
+
+            const sortedKeys = keys.sort((a, b) => {
+                const aMid = a.includes('MID') ? 0 : 1;
+                const bMid = b.includes('MID') ? 0 : 1;
+                if (aMid !== bMid) return aMid - bMid;
+                return (parseInt(a) || 0) - (parseInt(b) || 0);
+            });
+
+            let tabsHtml = '';
+            sortedKeys.forEach((key, idx) => {
+                const active = idx === 0 ? 'active' : '';
+                tabsHtml += `<button class="jenjang-tab ${active}" data-key="${key}">${key.replace('_', ' ')}</button>`;
+            });
+            jenjangTabs.innerHTML = tabsHtml;
+
+            let panesHtml = '';
+            sortedKeys.forEach((key, idx) => {
+                const active = idx === 0 ? 'active' : '';
+                const data = groupedData[key];
+                const safeKey = key.replace(/[^a-zA-Z0-9]/g, '_');
+                const canvasId = `jenjangChart_${safeKey}`;
+                if (!data || !data.subjects.length) {
+                    panesHtml += `<div class="jenjang-pane ${active}" data-key="${key}"><div class="jenjang-row"><div class="rank-card"><h4><i class="fa-solid fa-table-list"></i> Semua Mapel</h4><p style="color:var(--muted);">Tidak ada data</p></div></div></div>`;
+                    return;
+                }
+                const sorted = sortSubjectsByAverageDesc(data.subjects, data.averages);
+                let tableRows = '';
+                sorted.subjects.forEach((sub, i) => {
+                    tableRows += `<tr><td>${i+1}</td><td><span style="font-family:'Amiri','Traditional Arabic',serif;">${sub}</span></td><td>${sorted.averages[i].toFixed(2)}</td><td>${getStatusBadge(sorted.averages[i])}</td></tr>`;
+                });
+                panesHtml += `
+                    <div class="jenjang-pane ${active}" data-key="${key}">
+                        <div class="jenjang-row">
+                            <div class="rank-card">
+                                <h4><i class="fa-solid fa-table-list"></i> Semua Mapel (${sorted.subjects.length})</h4>
+                                ${buildMiniStatsHTML(sorted.subjects, sorted.averages)}
+                                <div class="jenjang-table-wrap"><table><thead><tr><th>#</th><th>Mapel</th><th>Rata2</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table></div>
+                            </div>
+                            <div class="rank-card">
+                                <h4><i class="fa-solid fa-chart-bar"></i> Diagram Batang</h4>
+                                <div class="jenjang-chart-wrap"><canvas id="${canvasId}"></canvas></div>
+                            </div>
+                        </div>
+                        <div class="export-row">
+                            <button class="btn btn-pdf btn-sm export-pdf-group" data-key="${key}"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+                        </div>
+                    </div>`;
+                setTimeout(() => renderJenjangChart(canvasId, sorted.subjects, sorted.averages, key), 150);
+            });
+            jenjangContent.innerHTML = panesHtml;
+
+            document.querySelectorAll('.export-pdf-group').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const key = this.dataset.key;
+                    const d = groupedData[key];
+                    if (d && d.subjects.length) {
+                        const s = sortSubjectsByAverageDesc(d.subjects, d.averages);
+                        exportPDF(s.subjects, s.averages, key.replace('_', ' '));
+                    }
+                });
+            });
+
+            document.querySelectorAll('.jenjang-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const key = this.dataset.key;
+                    document.querySelectorAll('.jenjang-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    document.querySelectorAll('.jenjang-pane').forEach(p => p.classList.remove('active'));
+                    const pane = document.querySelector(`.jenjang-pane[data-key="${key}"]`);
+                    if (pane) pane.classList.add('active');
+                    const safeKey = key.replace(/[^a-zA-Z0-9]/g, '_');
+                    const canvasId = `jenjangChart_${safeKey}`;
+                    const canvas = document.getElementById(canvasId);
+                    if (canvas && !jenjangChartInstances[key] && groupedData[key]?.subjects.length) {
+                        const s = sortSubjectsByAverageDesc(groupedData[key].subjects, groupedData[key].averages);
+                        renderJenjangChart(canvasId, s.subjects, s.averages, key);
+                    }
+                });
+            });
+        }
+
+        // ============================================================
+        //  RENDER UTAMA (per kelas)
+        // ============================================================
+        function renderDashboard(subjects, averages, sheetName) {
+            const title = sheetName || currentSheetName || 'Kelas';
+            kelasTableTitle.textContent = `Tabel Rata-rata — ${title}`;
+
+            if (!subjects.length || !averages.length) {
+                tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:28px;color:var(--muted);"><i class="fa-solid fa-triangle-exclamation" style="font-size:1.3rem;display:block;margin-bottom:6px;color:var(--warning);"></i> Tidak ada data mapel.</td></tr>`;
+                if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+                totalMapelSpan.innerText = "0"; maxAvgSpan.innerText = "-"; minAvgSpan.innerText = "-"; overallAvgSpan.innerText = "-";
+                maxMapelSpan.innerText = "-"; minMapelSpan.innerText = "-"; metaDataStatus.innerText = "Tidak ditemukan";
+                return;
+            }
+
+            const sorted = sortSubjectsByAverageDesc(subjects, averages);
+            currentSubjectNames = sorted.subjects; currentAverages = sorted.averages;
+
+            const maxVal = Math.max(...currentAverages), minVal = Math.min(...currentAverages);
+            const maxIdx = currentAverages.indexOf(maxVal), minIdx = currentAverages.indexOf(minVal);
+            const overall = (currentAverages.reduce((a, b) => a + b, 0) / currentAverages.length).toFixed(2);
+
+            totalMapelSpan.innerText = currentSubjectNames.length;
+            maxAvgSpan.innerText = maxVal.toFixed(2); maxMapelSpan.innerText = currentSubjectNames[maxIdx];
+            minAvgSpan.innerText = minVal.toFixed(2); minMapelSpan.innerText = currentSubjectNames[minIdx];
+            overallAvgSpan.innerText = overall;
+            metaDataStatus.innerText = "Aktif"; metaSheet.innerText = currentSheetName || "-";
+
+            tableBody.innerHTML = '';
+            currentSubjectNames.forEach((sub, idx) => {
+                const row = tableBody.insertRow();
+                row.insertCell(0).innerText = idx + 1;
+                row.insertCell(1).innerHTML = `<span style="font-family:'Amiri','Traditional Arabic',serif;">${sub}</span>`;
+                row.insertCell(2).innerHTML = `<strong>${currentAverages[idx].toFixed(2)}</strong>`;
+                row.insertCell(3).innerHTML = getStatusBadge(currentAverages[idx]);
+            });
+
+            const themeColors = getThemeColors();
+            chartConfig = buildChartConfig(currentSubjectNames, currentAverages, themeColors);
+            chartConfig.options.maintainAspectRatio = false;
+
+            const canvas = document.getElementById('avgChart');
+            const container = canvas.parentElement;
+            if (container) { container.style.display = 'flex'; container.style.alignItems = 'center'; container.style.justifyContent = 'center'; }
+            const ctx = canvas.getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, chartConfig);
+        }
+
+        // ============================================================
+        //  EXPORT MAIN PDF
+        // ============================================================
+        async function exportMainPDF() {
+            if (!currentSubjectNames.length) { alert("Tidak ada data"); return; }
+            await exportPDF(currentSubjectNames, currentAverages, currentSheetName || 'Kelas');
+        }
+
+        function processAllSheets() {
+            if (!workbookData) return;
+            const sheetNames = workbookData.SheetNames;
+            if (!sheetNames.length) return;
+            groupedData = {}; allSheetsData = {};
+
+            let hasMidMtsd = false;
+            for (const name of sheetNames) { if (/MID|MTSD/i.test(name)) { hasMidMtsd = true; break; } }
+
+            if (hasMidMtsd) {
+                const groupMap = {};
+                for (const name of sheetNames) {
+                    let kelas = '0', jenis = 'MID';
+                    if (/MID/i.test(name)) jenis = 'MID'; else if (/MTSD/i.test(name)) jenis = 'MTSD';
+                    const numMatch = name.match(/\d+/); if (numMatch) kelas = numMatch[0];
+                    const key = `${kelas}_${jenis}`; if (!groupMap[key]) groupMap[key] = []; groupMap[key].push(name);
+                }
+                for (const [key, sheetList] of Object.entries(groupMap)) { groupedData[key] = mergeSheetData(sheetList); }
+            } else {
+                for (const name of sheetNames) {
+                    const ws = workbookData.Sheets[name];
+                    if (!ws) { allSheetsData[name] = { subjects: [], averages: [] }; continue; }
+                    const { subjects, scores } = detectHeaderAndData(ws);
+                    allSheetsData[name] = subjects.length && scores.length ? { subjects, averages: computeAverages(subjects, scores) } : { subjects: [], averages: [] };
+                }
+            }
+
+            renderJenjangTabs();
+            sheetSelect.innerHTML = '';
+            sheetNames.forEach(name => { const opt = document.createElement('option'); opt.value = name; opt.textContent = name; sheetSelect.appendChild(opt); });
+            sheetSelectorDiv.style.display = 'flex';
+            currentSheetName = sheetNames[0]; sheetSelect.value = currentSheetName;
+
+            let found = false;
+            for (const [key, data] of Object.entries(groupedData)) {
+                if (data.subjects.length) {
+                    currentSubjectNames = data.subjects; currentAverages = data.averages;
+                    renderDashboard(currentSubjectNames, currentAverages, key.replace('_', ' '));
+                    metaSheet.innerText = key.replace('_', ' '); found = true; break;
+                }
+            }
+            if (!found) {
+                const first = sheetNames[0];
+                if (allSheetsData[first]?.subjects.length) {
+                    currentSubjectNames = allSheetsData[first].subjects; currentAverages = allSheetsData[first].averages;
+                    renderDashboard(currentSubjectNames, currentAverages, first); metaSheet.innerText = first;
+                } else { renderDashboard([], [], ''); }
+            }
+        }
+
+        function loadExcel(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                try {
+                    workbookData = XLSX.read(data, { type: 'array', cellDates: false });
+                    processAllSheets();
+                    fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i> ${file.name}`;
+                    metaDataStatus.innerText = "Dimuat";
+                } catch (err) {
+                    fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Gagal`;
+                    metaDataStatus.innerText = "Gagal";
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // ============================================================
+        //  EVENT LISTENERS
+        // ============================================================
+        fileInput.addEventListener('change', (e) => { if (e.target.files.length) loadExcel(e.target.files[0]); fileInput.value = ''; });
+        sheetSelect.addEventListener('change', (e) => {
+            if (!workbookData || !e.target.value) return;
+            const name = e.target.value; currentSheetName = name;
+            if (allSheetsData[name]?.subjects.length) {
+                currentSubjectNames = allSheetsData[name].subjects; currentAverages = allSheetsData[name].averages;
+                renderDashboard(currentSubjectNames, currentAverages, name); metaSheet.innerText = name; return;
+            }
+            const ws = workbookData.Sheets[name];
+            if (ws) {
+                const { subjects, scores } = detectHeaderAndData(ws);
+                if (subjects.length && scores.length) {
+                    const avgs = computeAverages(subjects, scores);
+                    allSheetsData[name] = { subjects, averages: avgs };
+                    currentSubjectNames = subjects; currentAverages = avgs;
+                    renderDashboard(currentSubjectNames, currentAverages, name); metaSheet.innerText = name;
+                } else { renderDashboard([], [], name); }
+            }
+        });
+
+        document.getElementById('exportPDFBtn').addEventListener('click', exportMainPDF);
+
+        function updateThemeUI() {
+            const isDark = document.body.classList.contains('dark');
+            lightBtn.classList.toggle('active-theme', !isDark); darkBtn.classList.toggle('active-theme', isDark);
+        }
+        function refreshAllCharts() {
+            if (currentSubjectNames.length) renderDashboard(currentSubjectNames, currentAverages, currentSheetName);
+            renderJenjangTabs();
+        }
+        lightBtn.addEventListener('click', () => { document.body.classList.remove('dark'); localStorage.setItem('theme', 'light'); updateThemeUI(); refreshAllCharts(); });
+        darkBtn.addEventListener('click', () => { document.body.classList.add('dark'); localStorage.setItem('theme', 'dark'); updateThemeUI(); refreshAllCharts(); });
+        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+        updateThemeUI();
+
+        const dashboardEl = document.querySelector('.dashboard');
+        dashboardEl.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); });
+        dashboardEl.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); if (e.dataTransfer.files.length) loadExcel(e.dataTransfer.files[0]); });
+
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (chartInstance) chartInstance.resize();
+                Object.values(jenjangChartInstances).forEach(ch => ch.resize());
+            }, 250);
+        });
+    </script>
+</body>
+</html>
