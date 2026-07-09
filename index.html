@@ -48,6 +48,7 @@
             --danger-soft: #fee2e2;
             --secondary: #475569;
             --chart-bg: #ffffff;
+            --kkm-line: #ef4444;
 
             --radius-2xl: 28px;
             --radius-xl: 20px;
@@ -96,6 +97,7 @@
             --danger: #f87171;
             --danger-soft: rgba(248, 113, 113, 0.15);
             --chart-bg: #111827;
+            --kkm-line: #f87171;
 
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
             --shadow-md: 0 4px 6px rgba(0,0,0,0.25);
@@ -203,6 +205,11 @@
         }
         .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
         .btn-sm { padding: 6px 12px; font-size: 0.75rem; border-radius: var(--radius-sm); }
+        .btn-csv {
+            background: linear-gradient(135deg, #059669, #047857);
+            color: #fff; box-shadow: 0 4px 15px rgba(5, 150, 105, 0.35);
+        }
+        .btn-csv:hover { box-shadow: 0 6px 20px rgba(5, 150, 105, 0.5); transform: translateY(-2px); }
 
         /* ============ CHIPS & INPUTS ============ */
         .chip {
@@ -361,7 +368,7 @@
         .jenjang-table-wrap table {
             border-collapse: collapse;
             width: 100%;
-            min-width: 380px;
+            min-width: 420px;
             font-size: 0.8125rem;
             flex: 1;
         }
@@ -378,6 +385,40 @@
         tbody tr:last-child td { border-bottom: none; }
         td:nth-child(1) { font-weight: 700; color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; }
         td:nth-child(3) { font-weight: 700; font-family: 'Space Grotesk', 'JetBrains Mono', monospace; color: var(--text); }
+
+        /* Progress bar */
+        .progress-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .progress-bar-wrap {
+            flex: 1;
+            height: 6px;
+            background: var(--bg-2);
+            border-radius: 10px;
+            overflow: hidden;
+            min-width: 50px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .progress-bar-fill.good { background: linear-gradient(90deg, #10b981, #34d399); }
+        .progress-bar-fill.ok { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .progress-bar-fill.bad { background: linear-gradient(90deg, #ef4444, #f87171); }
+
+        /* KKM highlight */
+        .below-kkm {
+            background: rgba(239, 68, 68, 0.06) !important;
+        }
+        body.dark .below-kkm {
+            background: rgba(248, 113, 113, 0.08) !important;
+        }
+        .below-kkm td:nth-child(3) {
+            color: var(--danger) !important;
+        }
 
         .badge {
             display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px;
@@ -438,7 +479,7 @@
         .jenjang-pane.active { display: block; animation: fadeSlideIn 0.4s ease; }
         @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ============ REKAP SECTION (Nilai Terendah & Tertinggi per Kelas) ============ */
+        /* ============ REKAP SECTION ============ */
         .rekap-section {
             margin-bottom: 16px;
             background: var(--glass-bg);
@@ -464,7 +505,7 @@
 
         .rekap-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
             gap: 14px;
         }
 
@@ -485,10 +526,11 @@
             font-size: 0.85rem;
             font-weight: 700;
             color: var(--text);
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 6px;
+            flex-wrap: wrap;
         }
         .rekap-card .rekap-card-title i { color: var(--primary); }
         .rekap-card .rekap-card-title .chip-sm {
@@ -499,6 +541,25 @@
             color: var(--primary);
             font-weight: 600;
         }
+
+        .rekap-info-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .rekap-info-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.68rem;
+            color: var(--muted);
+            background: var(--surface-soft);
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+        .rekap-info-chip i { font-size: 0.6rem; color: var(--primary); }
 
         .rekap-minmax {
             display: grid;
@@ -606,10 +667,9 @@
             .jenjang-chart-wrap canvas { max-height: 340px !important; }
             .mini-stats { grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
             .kelas-row,
-            .jenjang-row {
-                grid-template-columns: 1fr;
-            }
+            .jenjang-row { grid-template-columns: 1fr; }
             .rekap-grid { grid-template-columns: 1fr; }
+            .progress-bar-wrap { min-width: 35px; }
         }
         @media (max-width: 480px) {
             .top-actions { flex-wrap: wrap; gap: 5px; }
@@ -623,6 +683,7 @@
             .kelas-chart-wrap canvas,
             .jenjang-chart-wrap canvas { max-height: 280px !important; }
             .mini-stats { grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+            .rekap-minmax { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
@@ -661,7 +722,7 @@
                 <div class="headline">
                     <span class="kicker"><i class="fa-solid fa-bolt"></i> Realtime Insight</span>
                     <h2>Analisis Rata-rata Nilai per Mata Pelajaran</h2>
-                    <p>Gunakan file <strong>LEGER I.xlsx</strong> · Export PDF dengan font Arab · Full HD proyektor ready</p>
+                    <p>Gunakan file <strong>LEGER I.xlsx</strong> · Export PDF & CSV · Progress bar visual</p>
                 </div>
                 <div class="hero-meta">
                     <div class="meta-card">
@@ -698,9 +759,9 @@
                     <h4><i class="fa-solid fa-table-list"></i> <span id="kelasTableTitle">Tabel Rata-rata</span></h4>
                     <div class="kelas-table-wrap">
                         <table id="avg-table">
-                            <thead><tr><th>#</th><th>Mata Pelajaran</th><th>Rata-rata</th><th>Status</th></tr></thead>
+                            <thead><tr><th>#</th><th>Mata Pelajaran</th><th>Rata-rata</th><th>Progress</th><th>Status</th></tr></thead>
                             <tbody id="table-body">
-                                <tr><td colspan="4" style="text-align:center;padding:28px;">
+                                <tr><td colspan="5" style="text-align:center;padding:28px;">
                                     <i class="fa-solid fa-file-arrow-up" style="font-size:1.3rem;color:var(--muted-2);display:block;margin-bottom:6px;"></i>
                                     Silakan upload file Excel
                                 </td></tr>
@@ -715,6 +776,7 @@
             </div>
             <div class="export-row">
                 <button id="exportPDFBtn" class="btn btn-pdf btn-sm"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+                <button id="exportCSVBtn" class="btn btn-csv btn-sm"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
             </div>
         </div>
 
@@ -728,7 +790,7 @@
             <div class="jenjang-content" id="jenjangContent"></div>
         </div>
 
-        <!-- REKAP: NILAI TERENDAH & TERTINGGI PER KELAS (INDIVIDUAL SHEETS) -->
+        <!-- REKAP: NILAI TERENDAH & TERTINGGI PER KELAS -->
         <div class="rekap-section" id="rekapSection" style="display:none;">
             <div class="rekap-title"><i class="fa-solid fa-ranking-star"></i> Rekap Nilai Terendah & Tertinggi — Semua Kelas</div>
             <div class="rekap-grid" id="rekapGrid"></div>
@@ -736,7 +798,7 @@
 
         <div class="footer-note">
             <i class="fa-solid fa-circle-check"></i>
-            Export PDF (Tabel Arab + Chart HD) · Dark/Light mode · Full HD proyektor ready
+            Export PDF & CSV · Progress bar visual · Highlight KKM · Dark/Light mode
         </div>
     </div>
 
@@ -751,8 +813,10 @@
         let currentSheetName = "";
         let currentAverages = [];
         let currentSubjectNames = [];
+        let currentStudentCount = 0;
         let chartInstance = null;
         let chartConfig = null;
+        const KKM = 5.0;
 
         let jenjangChartInstances = {};
         let groupedData = {};
@@ -873,7 +937,7 @@
                 }
                 if (hasNumeric) studentScores.push(scoreRow);
             }
-            return { subjects: subjectNames, scores: studentScores };
+            return { subjects: subjectNames, scores: studentScores, studentCount: studentScores.length };
         }
 
         function computeAverages(subjects, scores) {
@@ -896,18 +960,34 @@
         }
 
         function mergeSheetData(sheetList) {
-            let allSubjects = [], allScores = [];
+            let allSubjects = [], allScores = [], totalStudents = 0;
             for (const sheetName of sheetList) {
                 const ws = workbookData.Sheets[sheetName];
                 if (!ws) continue;
-                const { subjects, scores } = detectHeaderAndData(ws);
+                const { subjects, scores, studentCount } = detectHeaderAndData(ws);
                 if (subjects.length === 0 || scores.length === 0) continue;
                 if (allSubjects.length === 0) allSubjects = subjects.slice();
                 for (const student of scores) {
                     if (student.length === allSubjects.length) allScores.push(student.slice());
                 }
+                totalStudents += studentCount;
             }
-            return { subjects: allSubjects, averages: computeAverages(allSubjects, allScores) };
+            return { subjects: allSubjects, averages: computeAverages(allSubjects, allScores), studentCount: totalStudents };
+        }
+
+        function getProgressBarClass(avg) {
+            if (avg >= 7.5) return 'good';
+            if (avg >= 5) return 'ok';
+            return 'bad';
+        }
+
+        function getProgressBarHTML(avg) {
+            const pct = Math.min(100, (avg / 10) * 100);
+            const cls = getProgressBarClass(avg);
+            return `<div class="progress-cell">
+                <div class="progress-bar-wrap"><div class="progress-bar-fill ${cls}" style="width:${pct}%"></div></div>
+                <strong style="font-family:'Space Grotesk','JetBrains Mono',monospace;min-width:42px;text-align:right;">${avg.toFixed(2)}</strong>
+            </div>`;
         }
 
         function getStatusBadge(avg) {
@@ -928,6 +1008,8 @@
             return 'pdf-badge-bad';
         }
 
+        function isBelowKKM(avg) { return avg < KKM && avg > 0; }
+
         // ============================================================
         //  BUILD CHART CONFIG
         // ============================================================
@@ -946,6 +1028,16 @@
                         borderRadius: isExport ? 10 : 6,
                         borderSkipped: false,
                         maxBarThickness: isExport ? 65 : 45,
+                    }, {
+                        label: 'Batas KKM (5.0)',
+                        data: new Array(averages.length).fill(KKM),
+                        type: 'line',
+                        borderColor: '#ef4444',
+                        borderWidth: 2,
+                        borderDash: [6, 4],
+                        pointRadius: 0,
+                        fill: false,
+                        order: 1,
                     }]
                 },
                 options: {
@@ -984,7 +1076,7 @@
         }
 
         // ============================================================
-        //  EXPORT PDF via html2canvas
+        //  EXPORT PDF
         // ============================================================
         async function exportPDF(subjects, averages, title) {
             if (!subjects.length) { alert("Tidak ada data untuk diekspor."); return; }
@@ -1035,6 +1127,7 @@
             chartCfg.options.maintainAspectRatio = true;
             chartCfg.options.plugins.tooltip = { enabled: false };
             chartCfg.data.datasets[0].maxBarThickness = 60;
+            chartCfg.data.datasets[1].borderWidth = 3;
 
             offCtx.fillStyle = '#ffffff';
             offCtx.fillRect(0, 0, offChartCanvas.width, offChartCanvas.height);
@@ -1065,6 +1158,24 @@
 
             const safe = title.replace(/[^a-zA-Z0-9]/g, '_');
             doc.save(`Laporan_${safe}.pdf`);
+        }
+
+        // ============================================================
+        //  EXPORT CSV
+        // ============================================================
+        function exportCSV(subjects, averages, title) {
+            if (!subjects.length) { alert("Tidak ada data."); return; }
+            const sorted = sortSubjectsByAverageDesc(subjects, averages);
+            let csv = '\uFEFF#;Mata Pelajaran;Rata-rata;Status\n';
+            sorted.subjects.forEach((sub, idx) => {
+                const avg = sorted.averages[idx];
+                csv += `${idx+1};"${sub}";${avg.toFixed(2)};${getStatusText(avg)}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `${title.replace(/[^a-zA-Z0-9]/g,'_')}.csv`;
+            a.click(); URL.revokeObjectURL(url);
         }
 
         // ============================================================
@@ -1106,8 +1217,7 @@
         }
 
         // ============================================================
-        //  RENDER REKAP (NILAI TERENDAH & TERTINGGI PER SHEET/KELAS)
-        //  Menampilkan SETIAP sheet individual (MID 1A, MID 1B, MTSD 1A, dst.)
+        //  RENDER REKAP
         // ============================================================
         function renderRekapSection() {
             if (!workbookData || !workbookData.SheetNames.length) {
@@ -1122,7 +1232,7 @@
                 const ws = workbookData.Sheets[name];
                 if (!ws) continue;
                 
-                const { subjects, scores } = detectHeaderAndData(ws);
+                const { subjects, scores, studentCount } = detectHeaderAndData(ws);
                 if (!subjects.length || !scores.length) continue;
                 
                 const avgs = computeAverages(subjects, scores);
@@ -1132,6 +1242,8 @@
                 const minVal = Math.min(...avgs);
                 const maxIdx = avgs.indexOf(maxVal);
                 const minIdx = avgs.indexOf(minVal);
+                const overall = (avgs.reduce((a, b) => a + b, 0) / avgs.length).toFixed(2);
+                const belowCount = avgs.filter(a => isBelowKKM(a)).length;
 
                 let isMid = 0;
                 if (/MTSD/i.test(name)) { isMid = 1; }
@@ -1143,20 +1255,16 @@
 
                 rekapEntries.push({
                     label: name,
-                    maxVal,
-                    maxSubject: subjects[maxIdx],
-                    minVal,
-                    minSubject: subjects[minIdx],
+                    maxVal, maxSubject: subjects[maxIdx],
+                    minVal, minSubject: subjects[minIdx],
+                    overall, studentCount, belowCount,
                     totalMapel: subjects.length,
-                    isMid,
-                    kelasNum,
+                    isMid, kelasNum,
+                    delta: parseFloat((maxVal - minVal).toFixed(2)),
                 });
             }
 
-            if (!rekapEntries.length) {
-                rekapSection.style.display = 'none';
-                return;
-            }
+            if (!rekapEntries.length) { rekapSection.style.display = 'none'; return; }
 
             rekapEntries.sort((a, b) => {
                 if (a.isMid !== b.isMid) return a.isMid - b.isMid;
@@ -1171,6 +1279,12 @@
                         <div class="rekap-card-title">
                             <i class="fa-solid fa-layer-group"></i> ${entry.label}
                             <span class="chip-sm">${entry.totalMapel} mapel</span>
+                        </div>
+                        <div class="rekap-info-row">
+                            <span class="rekap-info-chip"><i class="fa-solid fa-users"></i> ${entry.studentCount} siswa</span>
+                            <span class="rekap-info-chip"><i class="fa-solid fa-calculator"></i> Rerata: ${entry.overall}</span>
+                            <span class="rekap-info-chip"><i class="fa-solid fa-arrows-left-right"></i> Selisih: ${entry.delta}</span>
+                            ${entry.belowCount > 0 ? `<span class="rekap-info-chip" style="color:var(--danger);"><i class="fa-solid fa-triangle-exclamation"></i> ${entry.belowCount} mapel &lt; KKM</span>` : ''}
                         </div>
                         <div class="rekap-minmax">
                             <div class="rekap-mm-card">
@@ -1222,7 +1336,9 @@
                         const sorted = sortSubjectsByAverageDesc(data.subjects, data.averages);
                         let tableRows = '';
                         sorted.subjects.forEach((sub, i) => {
-                            tableRows += `<tr><td>${i+1}</td><td><span style="font-family:'Amiri','Traditional Arabic',serif;">${sub}</span></td><td>${sorted.averages[i].toFixed(2)}</td><td>${getStatusBadge(sorted.averages[i])}</td></tr>`;
+                            const avg = sorted.averages[i];
+                            const kkmClass = isBelowKKM(avg) ? 'below-kkm' : '';
+                            tableRows += `<tr class="${kkmClass}"><td>${i+1}</td><td><span style="font-family:'Amiri','Traditional Arabic',serif;">${sub}</span></td><td>${getProgressBarHTML(avg)}</td><td>${getStatusBadge(avg)}</td></tr>`;
                         });
                         panesHtml += `
                             <div class="jenjang-pane ${active}" data-sheet="${name}">
@@ -1239,6 +1355,7 @@
                                 </div>
                                 <div class="export-row">
                                     <button class="btn btn-pdf btn-sm export-pdf-jenjang" data-sheet="${name}"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+                                    <button class="btn btn-csv btn-sm export-csv-jenjang" data-sheet="${name}"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
                                 </div>
                             </div>`;
                         setTimeout(() => renderJenjangChart(canvasId, sorted.subjects, sorted.averages, name), 120);
@@ -1249,10 +1366,14 @@
                         btn.addEventListener('click', function() {
                             const sheet = this.dataset.sheet;
                             const d = allSheetsData[sheet];
-                            if (d && d.subjects.length) {
-                                const s = sortSubjectsByAverageDesc(d.subjects, d.averages);
-                                exportPDF(s.subjects, s.averages, sheet);
-                            }
+                            if (d?.subjects.length) { const s = sortSubjectsByAverageDesc(d.subjects, d.averages); exportPDF(s.subjects, s.averages, sheet); }
+                        });
+                    });
+                    document.querySelectorAll('.export-csv-jenjang').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const sheet = this.dataset.sheet;
+                            const d = allSheetsData[sheet];
+                            if (d?.subjects.length) { const s = sortSubjectsByAverageDesc(d.subjects, d.averages); exportCSV(s.subjects, s.averages, sheet); }
                         });
                     });
 
@@ -1276,7 +1397,7 @@
                     renderRekapSection();
                     return;
                 }
-                jenjangTabs.innerHTML = '<span class="chip" style="margin:5px 0;background:transparent;border:none;box-shadow:none;"><i class="fa-regular fa-folder-open"></i> Belum ada data jenjang</span>';
+                jenjangTabs.innerHTML = '<span class="chip"><i class="fa-regular fa-folder-open"></i> Belum ada data</span>';
                 jenjangContent.innerHTML = '';
                 rekapSection.style.display = 'none';
                 return;
@@ -1291,8 +1412,7 @@
 
             let tabsHtml = '';
             sortedKeys.forEach((key, idx) => {
-                const active = idx === 0 ? 'active' : '';
-                tabsHtml += `<button class="jenjang-tab ${active}" data-key="${key}">${key.replace('_', ' ')}</button>`;
+                tabsHtml += `<button class="jenjang-tab ${idx===0?'active':''}" data-key="${key}">${key.replace('_', ' ')}</button>`;
             });
             jenjangTabs.innerHTML = tabsHtml;
 
@@ -1309,7 +1429,9 @@
                 const sorted = sortSubjectsByAverageDesc(data.subjects, data.averages);
                 let tableRows = '';
                 sorted.subjects.forEach((sub, i) => {
-                    tableRows += `<tr><td>${i+1}</td><td><span style="font-family:'Amiri','Traditional Arabic',serif;">${sub}</span></td><td>${sorted.averages[i].toFixed(2)}</td><td>${getStatusBadge(sorted.averages[i])}</td></tr>`;
+                    const avg = sorted.averages[i];
+                    const kkmClass = isBelowKKM(avg) ? 'below-kkm' : '';
+                    tableRows += `<tr class="${kkmClass}"><td>${i+1}</td><td><span style="font-family:'Amiri','Traditional Arabic',serif;">${sub}</span></td><td>${getProgressBarHTML(avg)}</td><td>${getStatusBadge(avg)}</td></tr>`;
                 });
                 panesHtml += `
                     <div class="jenjang-pane ${active}" data-key="${key}">
@@ -1326,6 +1448,7 @@
                         </div>
                         <div class="export-row">
                             <button class="btn btn-pdf btn-sm export-pdf-group" data-key="${key}"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+                            <button class="btn btn-csv btn-sm export-csv-group" data-key="${key}"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
                         </div>
                     </div>`;
                 setTimeout(() => renderJenjangChart(canvasId, sorted.subjects, sorted.averages, key), 150);
@@ -1336,10 +1459,14 @@
                 btn.addEventListener('click', function() {
                     const key = this.dataset.key;
                     const d = groupedData[key];
-                    if (d && d.subjects.length) {
-                        const s = sortSubjectsByAverageDesc(d.subjects, d.averages);
-                        exportPDF(s.subjects, s.averages, key.replace('_', ' '));
-                    }
+                    if (d?.subjects.length) { const s = sortSubjectsByAverageDesc(d.subjects, d.averages); exportPDF(s.subjects, s.averages, key.replace('_', ' ')); }
+                });
+            });
+            document.querySelectorAll('.export-csv-group').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const key = this.dataset.key;
+                    const d = groupedData[key];
+                    if (d?.subjects.length) { const s = sortSubjectsByAverageDesc(d.subjects, d.averages); exportCSV(s.subjects, s.averages, key.replace('_', ' ')); }
                 });
             });
 
@@ -1365,14 +1492,14 @@
         }
 
         // ============================================================
-        //  RENDER UTAMA (per kelas)
+        //  RENDER UTAMA
         // ============================================================
-        function renderDashboard(subjects, averages, sheetName) {
+        function renderDashboard(subjects, averages, sheetName, studentCount = 0) {
             const title = sheetName || currentSheetName || 'Kelas';
-            kelasTableTitle.textContent = `Tabel Rata-rata — ${title}`;
+            kelasTableTitle.textContent = `Tabel Rata-rata — ${title}` + (studentCount ? ` (${studentCount} siswa)` : '');
 
             if (!subjects.length || !averages.length) {
-                tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:28px;color:var(--muted);"><i class="fa-solid fa-triangle-exclamation" style="font-size:1.3rem;display:block;margin-bottom:6px;color:var(--warning);"></i> Tidak ada data mapel.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:28px;color:var(--muted);">Tidak ada data mapel.</td></tr>`;
                 if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
                 totalMapelSpan.innerText = "0"; maxAvgSpan.innerText = "-"; minAvgSpan.innerText = "-"; overallAvgSpan.innerText = "-";
                 maxMapelSpan.innerText = "-"; minMapelSpan.innerText = "-"; metaDataStatus.innerText = "Tidak ditemukan";
@@ -1380,7 +1507,7 @@
             }
 
             const sorted = sortSubjectsByAverageDesc(subjects, averages);
-            currentSubjectNames = sorted.subjects; currentAverages = sorted.averages;
+            currentSubjectNames = sorted.subjects; currentAverages = sorted.averages; currentStudentCount = studentCount;
 
             const maxVal = Math.max(...currentAverages), minVal = Math.min(...currentAverages);
             const maxIdx = currentAverages.indexOf(maxVal), minIdx = currentAverages.indexOf(minVal);
@@ -1394,11 +1521,14 @@
 
             tableBody.innerHTML = '';
             currentSubjectNames.forEach((sub, idx) => {
+                const avg = currentAverages[idx];
+                const kkmClass = isBelowKKM(avg) ? 'below-kkm' : '';
                 const row = tableBody.insertRow();
+                row.className = kkmClass;
                 row.insertCell(0).innerText = idx + 1;
                 row.insertCell(1).innerHTML = `<span style="font-family:'Amiri','Traditional Arabic',serif;">${sub}</span>`;
-                row.insertCell(2).innerHTML = `<strong>${currentAverages[idx].toFixed(2)}</strong>`;
-                row.insertCell(3).innerHTML = getStatusBadge(currentAverages[idx]);
+                row.insertCell(2).innerHTML = getProgressBarHTML(avg);
+                row.insertCell(3).innerHTML = getStatusBadge(avg);
             });
 
             const themeColors = getThemeColors();
@@ -1409,11 +1539,6 @@
             const ctx = canvas.getContext('2d');
             if (chartInstance) chartInstance.destroy();
             chartInstance = new Chart(ctx, chartConfig);
-        }
-
-        async function exportMainPDF() {
-            if (!currentSubjectNames.length) { alert("Tidak ada data"); return; }
-            await exportPDF(currentSubjectNames, currentAverages, currentSheetName || 'Kelas');
         }
 
         function processAllSheets() {
@@ -1437,9 +1562,9 @@
             } else {
                 for (const name of sheetNames) {
                     const ws = workbookData.Sheets[name];
-                    if (!ws) { allSheetsData[name] = { subjects: [], averages: [] }; continue; }
-                    const { subjects, scores } = detectHeaderAndData(ws);
-                    allSheetsData[name] = subjects.length && scores.length ? { subjects, averages: computeAverages(subjects, scores) } : { subjects: [], averages: [] };
+                    if (!ws) { allSheetsData[name] = { subjects: [], averages: [], studentCount: 0 }; continue; }
+                    const { subjects, scores, studentCount } = detectHeaderAndData(ws);
+                    allSheetsData[name] = subjects.length && scores.length ? { subjects, averages: computeAverages(subjects, scores), studentCount } : { subjects: [], averages: [], studentCount: 0 };
                 }
             }
 
@@ -1452,16 +1577,17 @@
             let found = false;
             for (const [key, data] of Object.entries(groupedData)) {
                 if (data.subjects.length) {
-                    currentSubjectNames = data.subjects; currentAverages = data.averages;
-                    renderDashboard(currentSubjectNames, currentAverages, key.replace('_', ' '));
+                    currentSubjectNames = data.subjects; currentAverages = data.averages; currentStudentCount = data.studentCount || 0;
+                    renderDashboard(currentSubjectNames, currentAverages, key.replace('_', ' '), currentStudentCount);
                     metaSheet.innerText = key.replace('_', ' '); found = true; break;
                 }
             }
             if (!found) {
                 const first = sheetNames[0];
-                if (allSheetsData[first]?.subjects.length) {
-                    currentSubjectNames = allSheetsData[first].subjects; currentAverages = allSheetsData[first].averages;
-                    renderDashboard(currentSubjectNames, currentAverages, first); metaSheet.innerText = first;
+                const fd = allSheetsData[first];
+                if (fd?.subjects.length) {
+                    currentSubjectNames = fd.subjects; currentAverages = fd.averages; currentStudentCount = fd.studentCount || 0;
+                    renderDashboard(currentSubjectNames, currentAverages, first, currentStudentCount); metaSheet.innerText = first;
                 } else { renderDashboard([], [], ''); }
             }
         }
@@ -1486,39 +1612,42 @@
         // ============================================================
         //  EVENT LISTENERS
         // ============================================================
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length) {
-                loadExcel(e.target.files[0]);
-            }
-            fileInput.value = '';
-        });
+        fileInput.addEventListener('change', (e) => { if (e.target.files.length) loadExcel(e.target.files[0]); fileInput.value = ''; });
         sheetSelect.addEventListener('change', (e) => {
             if (!workbookData || !e.target.value) return;
             const name = e.target.value; currentSheetName = name;
             if (allSheetsData[name]?.subjects.length) {
-                currentSubjectNames = allSheetsData[name].subjects; currentAverages = allSheetsData[name].averages;
-                renderDashboard(currentSubjectNames, currentAverages, name); metaSheet.innerText = name; return;
+                const d = allSheetsData[name];
+                currentSubjectNames = d.subjects; currentAverages = d.averages; currentStudentCount = d.studentCount || 0;
+                renderDashboard(currentSubjectNames, currentAverages, name, currentStudentCount); metaSheet.innerText = name; return;
             }
             const ws = workbookData.Sheets[name];
             if (ws) {
-                const { subjects, scores } = detectHeaderAndData(ws);
+                const { subjects, scores, studentCount } = detectHeaderAndData(ws);
                 if (subjects.length && scores.length) {
                     const avgs = computeAverages(subjects, scores);
-                    allSheetsData[name] = { subjects, averages: avgs };
-                    currentSubjectNames = subjects; currentAverages = avgs;
-                    renderDashboard(currentSubjectNames, currentAverages, name); metaSheet.innerText = name;
+                    allSheetsData[name] = { subjects, averages: avgs, studentCount };
+                    currentSubjectNames = subjects; currentAverages = avgs; currentStudentCount = studentCount;
+                    renderDashboard(currentSubjectNames, currentAverages, name, currentStudentCount); metaSheet.innerText = name;
                 } else { renderDashboard([], [], name); }
             }
         });
 
-        document.getElementById('exportPDFBtn').addEventListener('click', exportMainPDF);
+        document.getElementById('exportPDFBtn').addEventListener('click', () => {
+            if (!currentSubjectNames.length) { alert("Tidak ada data"); return; }
+            exportPDF(currentSubjectNames, currentAverages, currentSheetName || 'Kelas');
+        });
+        document.getElementById('exportCSVBtn').addEventListener('click', () => {
+            if (!currentSubjectNames.length) { alert("Tidak ada data"); return; }
+            exportCSV(currentSubjectNames, currentAverages, currentSheetName || 'Kelas');
+        });
 
         function updateThemeUI() {
             const isDark = document.body.classList.contains('dark');
             lightBtn.classList.toggle('active-theme', !isDark); darkBtn.classList.toggle('active-theme', isDark);
         }
         function refreshAllCharts() {
-            if (currentSubjectNames.length) renderDashboard(currentSubjectNames, currentAverages, currentSheetName);
+            if (currentSubjectNames.length) renderDashboard(currentSubjectNames, currentAverages, currentSheetName, currentStudentCount);
             renderJenjangTabs();
         }
         lightBtn.addEventListener('click', () => { document.body.classList.remove('dark'); localStorage.setItem('theme', 'light'); updateThemeUI(); refreshAllCharts(); });
