@@ -209,7 +209,7 @@
             display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
             font-size: 0.75rem; font-weight: 500; background: var(--surface-soft);
             color: var(--muted); border-radius: 999px; border: 1px solid var(--border-soft);
-            max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
         .chip i { font-size: 0.7rem; }
 
@@ -431,6 +431,113 @@
         .jenjang-pane.active { display: block; animation: fadeSlideIn 0.4s ease; }
         @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* ============ REKAP SECTION (Nilai Terendah & Tertinggi per Kelas) ============ */
+        .rekap-section {
+            margin-bottom: 16px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur) var(--glass-sat);
+            -webkit-backdrop-filter: var(--glass-blur) var(--glass-sat);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            padding: 20px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .rekap-section .rekap-title {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .rekap-section .rekap-title i { color: var(--primary); }
+
+        .rekap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 14px;
+        }
+
+        .rekap-card {
+            background: var(--surface-solid);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-xl);
+            padding: 16px;
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition-smooth);
+        }
+        .rekap-card:hover {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-2);
+        }
+        .rekap-card .rekap-card-title {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .rekap-card .rekap-card-title i { color: var(--primary); }
+        .rekap-card .rekap-card-title .chip-sm {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: var(--primary-glow);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .rekap-minmax {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .rekap-mm-card {
+            background: var(--surface-soft);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            text-align: center;
+            transition: all var(--transition-fast);
+        }
+        .rekap-mm-card:hover { border-color: var(--primary-2); }
+        .rekap-mm-card .mm-label {
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .rekap-mm-card .mm-label.trend-up { color: var(--success); }
+        .rekap-mm-card .mm-label.trend-down { color: var(--danger); }
+        .rekap-mm-card .mm-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            font-family: 'Space Grotesk', 'JetBrains Mono', monospace;
+            color: var(--text);
+            line-height: 1.1;
+        }
+        .rekap-mm-card .mm-subject {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--muted);
+            margin-top: 2px;
+            font-family: 'Amiri', 'Traditional Arabic', serif;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         /* ============ THEME TOGGLE ============ */
         .theme-toggle { display: flex; gap: 3px; background: var(--surface-soft); border-radius: var(--radius-md); padding: 3px; border: 1px solid var(--border-soft); }
         .theme-btn { width: 32px; height: 32px; border-radius: 8px; border: none; background: transparent; cursor: pointer; color: var(--muted); font-size: 0.9rem; transition: all var(--transition-bounce); display: flex; align-items: center; justify-content: center; }
@@ -480,7 +587,8 @@
             .stat { padding: 14px 16px; }
             .hero { padding: 16px; border-radius: var(--radius-xl); }
             .kelas-section,
-            .jenjang-section { padding: 14px; border-radius: var(--radius-xl); }
+            .jenjang-section,
+            .rekap-section { padding: 14px; border-radius: var(--radius-xl); }
             th, td { padding: 8px 10px; font-size: 0.72rem; }
             .chip { max-width: 180px; }
             .jenjang-tab { padding: 6px 12px; font-size: 0.72rem; }
@@ -494,6 +602,7 @@
             .jenjang-row {
                 grid-template-columns: 1fr;
             }
+            .rekap-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 480px) {
             .top-actions { flex-wrap: wrap; gap: 5px; }
@@ -574,7 +683,7 @@
             <div class="stat"><div class="label"><i class="fa-solid fa-bullseye"></i> Keseluruhan</div><div class="value" id="overall-avg">-</div><div class="sub">Rerata mapel</div></div>
         </div>
 
-        <!-- LAYOUT PER KELAS (tetap sama) -->
+        <!-- LAYOUT PER KELAS -->
         <div class="kelas-section" id="kelasSection">
             <div class="kelas-row" id="kelasRow">
                 <div class="rank-card">
@@ -601,7 +710,7 @@
             </div>
         </div>
 
-        <!-- TAB JENJANG (STRUKTUR MIRIP PER KELAS) -->
+        <!-- TAB JENJANG -->
         <div class="jenjang-section" id="jenjangSection">
             <div class="jenjang-tabs" id="jenjangTabs">
                 <span class="chip" style="margin:4px 0;background:transparent;border:none;box-shadow:none;">
@@ -609,6 +718,12 @@
                 </span>
             </div>
             <div class="jenjang-content" id="jenjangContent"></div>
+        </div>
+
+        <!-- REKAP: NILAI TERENDAH & TERTINGGI PER KELAS (INDIVIDUAL SHEETS) -->
+        <div class="rekap-section" id="rekapSection" style="display:none;">
+            <div class="rekap-title"><i class="fa-solid fa-ranking-star"></i> Rekap Nilai Terendah & Tertinggi — Semua Kelas</div>
+            <div class="rekap-grid" id="rekapGrid"></div>
         </div>
 
         <div class="footer-note">
@@ -654,6 +769,8 @@
         const lightBtn = document.getElementById('lightModeBtn');
         const darkBtn = document.getElementById('darkModeBtn');
         const pdfContainer = document.getElementById('pdf-export-container');
+        const rekapSection = document.getElementById('rekapSection');
+        const rekapGrid = document.getElementById('rekapGrid');
 
         // ============================================================
         //  THEME COLORS
@@ -859,7 +976,7 @@
         }
 
         // ============================================================
-        //  EXPORT PDF via html2canvas (supports Arabic fonts!)
+        //  EXPORT PDF via html2canvas
         // ============================================================
         async function exportPDF(subjects, averages, title) {
             if (!subjects.length) { alert("Tidak ada data untuk diekspor."); return; }
@@ -943,7 +1060,7 @@
         }
 
         // ============================================================
-        //  RENDER JENJANG CHART (pakai wrapper mirip kelas)
+        //  RENDER JENJANG CHART
         // ============================================================
         function renderJenjangChart(canvasId, subjects, averages, key) {
             const canvas = document.getElementById(canvasId);
@@ -981,7 +1098,98 @@
         }
 
         // ============================================================
-        //  RENDER JENJANG TABS (STRUKTUR MIRIP PER KELAS: tabel kiri, chart kanan, tombol export bawah)
+        //  RENDER REKAP (NILAI TERENDAH & TERTINGGI PER SHEET/KELAS)
+        //  Menampilkan SETIAP sheet individual (MID 1A, MID 1B, MTSD 1A, dst.)
+        // ============================================================
+        function renderRekapSection() {
+            if (!workbookData || !workbookData.SheetNames.length) {
+                rekapSection.style.display = 'none';
+                return;
+            }
+
+            const sheetNames = workbookData.SheetNames;
+            const rekapEntries = [];
+
+            // Proses SETIAP sheet satu per satu (bukan gabungan)
+            for (const name of sheetNames) {
+                const ws = workbookData.Sheets[name];
+                if (!ws) continue;
+                
+                const { subjects, scores } = detectHeaderAndData(ws);
+                if (!subjects.length || !scores.length) continue;
+                
+                const avgs = computeAverages(subjects, scores);
+                if (!avgs.length) continue;
+
+                const maxVal = Math.max(...avgs);
+                const minVal = Math.min(...avgs);
+                const maxIdx = avgs.indexOf(maxVal);
+                const minIdx = avgs.indexOf(minVal);
+
+                // Tentukan jenis untuk sorting
+                let isMid = 0;
+                let jenisLabel = '';
+                if (/MTSD/i.test(name)) { isMid = 1; jenisLabel = 'MTSD'; }
+                else if (/MID/i.test(name)) { isMid = 0; jenisLabel = 'MID'; }
+                else { isMid = 2; jenisLabel = ''; }
+
+                const numMatch = name.match(/\d+/);
+                const kelasNum = numMatch ? parseInt(numMatch[0]) : 0;
+
+                rekapEntries.push({
+                    label: name,
+                    maxVal,
+                    maxSubject: subjects[maxIdx],
+                    minVal,
+                    minSubject: subjects[minIdx],
+                    totalMapel: subjects.length,
+                    isMid,
+                    kelasNum,
+                    jenisLabel,
+                });
+            }
+
+            if (!rekapEntries.length) {
+                rekapSection.style.display = 'none';
+                return;
+            }
+
+            // Sort: MID dulu, lalu MTSD, lalu berdasarkan nomor kelas, lalu abjad
+            rekapEntries.sort((a, b) => {
+                if (a.isMid !== b.isMid) return a.isMid - b.isMid;
+                if (a.kelasNum !== b.kelasNum) return a.kelasNum - b.kelasNum;
+                return a.label.localeCompare(b.label);
+            });
+
+            let html = '';
+            rekapEntries.forEach(entry => {
+                html += `
+                    <div class="rekap-card">
+                        <div class="rekap-card-title">
+                            <i class="fa-solid fa-layer-group"></i> ${entry.label}
+                            <span class="chip-sm">${entry.totalMapel} mapel</span>
+                        </div>
+                        <div class="rekap-minmax">
+                            <div class="rekap-mm-card">
+                                <div class="mm-label trend-up"><i class="fa-solid fa-trophy"></i> Tertinggi</div>
+                                <div class="mm-value">${entry.maxVal.toFixed(2)}</div>
+                                <div class="mm-subject">${entry.maxSubject}</div>
+                            </div>
+                            <div class="rekap-mm-card">
+                                <div class="mm-label trend-down"><i class="fa-solid fa-arrow-trend-down"></i> Terendah</div>
+                                <div class="mm-value">${entry.minVal.toFixed(2)}</div>
+                                <div class="mm-subject">${entry.minSubject}</div>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+
+            rekapGrid.innerHTML = html;
+            rekapSection.style.display = 'block';
+        }
+
+        // ============================================================
+        //  RENDER JENJANG TABS
         // ============================================================
         function renderJenjangTabs() {
             Object.values(jenjangChartInstances).forEach(ch => ch.destroy());
@@ -1062,10 +1270,12 @@
                             }
                         });
                     });
+                    renderRekapSection();
                     return;
                 }
                 jenjangTabs.innerHTML = '<span class="chip" style="margin:5px 0;background:transparent;border:none;box-shadow:none;"><i class="fa-regular fa-folder-open"></i> Belum ada data jenjang</span>';
                 jenjangContent.innerHTML = '';
+                rekapSection.style.display = 'none';
                 return;
             }
 
@@ -1147,6 +1357,8 @@
                     }
                 });
             });
+
+            renderRekapSection();
         }
 
         // ============================================================
@@ -1214,7 +1426,7 @@
                 const groupMap = {};
                 for (const name of sheetNames) {
                     let kelas = '0', jenis = 'MID';
-                    if (/MID/i.test(name)) jenis = 'MID'; else if (/MTSD/i.test(name)) jenis = 'MTSD';
+                    if (/MTSD/i.test(name)) jenis = 'MTSD';
                     const numMatch = name.match(/\d+/); if (numMatch) kelas = numMatch[0];
                     const key = `${kelas}_${jenis}`; if (!groupMap[key]) groupMap[key] = []; groupMap[key].push(name);
                 }
@@ -1261,7 +1473,7 @@
                     fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i> ${file.name}`;
                     metaDataStatus.innerText = "Dimuat";
                 } catch (err) {
-                    fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Gagal`;
+                    fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Gagal: ${file.name}`;
                     metaDataStatus.innerText = "Gagal";
                 }
             };
@@ -1271,7 +1483,12 @@
         // ============================================================
         //  EVENT LISTENERS
         // ============================================================
-        fileInput.addEventListener('change', (e) => { if (e.target.files.length) loadExcel(e.target.files[0]); fileInput.value = ''; });
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                loadExcel(e.target.files[0]);
+            }
+            fileInput.value = '';
+        });
         sheetSelect.addEventListener('change', (e) => {
             if (!workbookData || !e.target.value) return;
             const name = e.target.value; currentSheetName = name;
