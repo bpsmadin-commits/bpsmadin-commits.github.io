@@ -266,6 +266,19 @@
         .meta-title i { color: var(--primary); font-size: 0.75rem; }
         .meta-value { font-size: 0.95rem; font-weight: 700; color: var(--text); font-family: 'Space Grotesk', 'Inter', sans-serif; letter-spacing: -0.01em; }
 
+        /* ============ QUARTAL BAR ============ */
+        .quartal-bar {
+            display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 16px;
+            margin-bottom: 16px; background: var(--glass-bg); backdrop-filter: var(--glass-blur) var(--glass-sat);
+            -webkit-backdrop-filter: var(--glass-blur) var(--glass-sat);
+            border: 1px solid var(--glass-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md);
+        }
+        .quartal-toggle { display: flex; gap: 3px; background: var(--surface-soft); border-radius: var(--radius-md); padding: 3px; border: 1px solid var(--border-soft); }
+        .quartal-btn { padding: 7px 16px; border-radius: 8px; border: none; background: transparent; cursor: pointer; color: var(--muted); font-size: 0.8rem; font-weight: 600; transition: all var(--transition-bounce); white-space: nowrap; }
+        .quartal-btn:hover { color: var(--text); background: var(--surface-solid); box-shadow: var(--shadow-sm); }
+        .quartal-btn.active-quartal { background: var(--primary); color: #fff; box-shadow: var(--shadow-sm); }
+        .quartal-btn .qdot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); display: inline-block; margin-left: 6px; }
+
         /* ============ SHEET BAR ============ */
         .sheet-bar {
             display: none; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 16px;
@@ -701,6 +714,9 @@
                         <i class="fa-solid fa-cloud-arrow-up"></i> Upload Excel
                     </label>
                     <input type="file" id="file-input" accept=".xlsx, .xls, .csv" />
+                    <button id="clearDataBtn" class="btn btn-sm" style="background:var(--danger-soft);color:var(--danger);border:1px solid var(--danger);" title="Hapus data yang tersimpan di browser ini">
+                        <i class="fa-solid fa-trash"></i> Hapus Data
+                    </button>
                     <span id="file-status" class="chip">
                         <i class="fa-regular fa-file-lines"></i> Belum ada file
                     </span>
@@ -735,6 +751,17 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- QUARTAL SELECTOR -->
+        <div class="quartal-bar" id="quartal-bar">
+            <span class="meta-title"><i class="fa-solid fa-calendar-days"></i> Periode Ujian</span>
+            <div class="quartal-toggle" id="quartalTabs">
+                <button class="quartal-btn active-quartal" data-q="Kuartal_I">Kuartal I</button>
+                <button class="quartal-btn" data-q="Kuartal_II">Kuartal II</button>
+                <button class="quartal-btn" data-q="Kuartal_III">Kuartal III</button>
+            </div>
+            <span class="chip" id="quartal-status"><i class="fa-solid fa-circle-info"></i> Upload akan tersimpan sebagai Kuartal I</span>
         </div>
 
         <!-- SHEET SELECTOR -->
@@ -822,6 +849,15 @@
         let groupedData = {};
         let allSheetsData = {};
 
+        let currentQuartal = 'Kuartal_I';
+        let quartalCache = {}; // { Kuartal_I: {groupedData, allSheetsData}, ... }
+        const QUARTAL_LABELS = { Kuartal_I: 'Kuartal I', Kuartal_II: 'Kuartal II', Kuartal_III: 'Kuartal III' };
+        const quartalTabs = document.getElementById('quartalTabs');
+        const quartalStatus = document.getElementById('quartal-status');
+
+        // GANTI URL INI dengan URL Web App Apps Script kamu (Deploy > New deployment > Web app)
+        const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxwyDkitjsFq5fJJB5DkrcMoGg0YrivBatcd18qYilaof4FJDnvitjGZrJoqp29GKoySg/exec';
+
         const fileInput = document.getElementById('file-input');
         const fileStatusSpan = document.getElementById('file-status');
         const sheetSelectorDiv = document.getElementById('sheet-selector-area');
@@ -886,14 +922,26 @@
                 "الديانة", "هداية الصبيان", "عقيدة العوام", "جواهر الكلامية", "التصريف", "رياض البديعة"
             ];
 
+            // 1) Cara paling andal: cari baris yang punya kolom "NAMA" (selalu ada di semua format leger/rekap)
             let headerRowIndex = -1, dataStartRow = -1;
             for (let i = 0; i < rows.length && i < 50; i++) {
-                let matchCount = 0;
-                for (let j = 0; j < rows[i].length && j < 30; j++) {
-                    const cell = String(rows[i][j]).trim();
-                    if (cell.length > 0 && subjectKeywords.some(kw => cell.includes(kw))) matchCount++;
+                for (let j = 0; j < rows[i].length && j < 15; j++) {
+                    const cell = String(rows[i][j]).trim().toUpperCase();
+                    if (cell === 'NAMA' || cell === 'NAMA SISWA') { headerRowIndex = i; dataStartRow = i + 1; break; }
                 }
-                if (matchCount >= 3) { headerRowIndex = i; dataStartRow = i + 1; break; }
+                if (headerRowIndex !== -1) break;
+            }
+
+            // 2) Fallback: cocokkan ke daftar nama mapel yang dikenal
+            if (headerRowIndex === -1) {
+                for (let i = 0; i < rows.length && i < 50; i++) {
+                    let matchCount = 0;
+                    for (let j = 0; j < rows[i].length && j < 30; j++) {
+                        const cell = String(rows[i][j]).trim();
+                        if (cell.length > 0 && subjectKeywords.some(kw => cell.includes(kw))) matchCount++;
+                    }
+                    if (matchCount >= 3) { headerRowIndex = i; dataStartRow = i + 1; break; }
+                }
             }
             if (headerRowIndex === -1 && rows.length > 6) { headerRowIndex = 5; dataStartRow = 6; }
             if (headerRowIndex === -1 || dataStartRow === -1) return { subjects: [], scores: [] };
@@ -1590,6 +1638,10 @@
                     renderDashboard(currentSubjectNames, currentAverages, first, currentStudentCount); metaSheet.innerText = first;
                 } else { renderDashboard([], [], ''); }
             }
+
+            // simpan hasil parsing ini ke cache kuartal yang lagi aktif
+            quartalCache[currentQuartal] = { groupedData: { ...groupedData }, allSheetsData: { ...allSheetsData } };
+            updateQuartalTabsUI();
         }
 
         function loadExcel(file) {
@@ -1599,8 +1651,11 @@
                 try {
                     workbookData = XLSX.read(data, { type: 'array', cellDates: false });
                     processAllSheets();
-                    fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i> ${file.name}`;
+                    fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i> ${file.name} <span style="opacity:.6;">(menyimpan...)</span>`;
                     metaDataStatus.innerText = "Dimuat";
+                    syncToSheet().then(() => {
+                        fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i> ${file.name} <span style="opacity:.6;">(tersimpan di sheet)</span>`;
+                    });
                 } catch (err) {
                     fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Gagal: ${file.name}`;
                     metaDataStatus.innerText = "Gagal";
@@ -1608,6 +1663,128 @@
             };
             reader.readAsArrayBuffer(file);
         }
+
+        // ============================================================
+        //  PERSISTENCE (Google Sheet via Apps Script) — sadar Kuartal
+        // ============================================================
+        const clearDataBtn = document.getElementById('clearDataBtn');
+        const QSEP = '::';
+
+        async function syncToSheet() {
+            const keys = Object.keys(groupedData).length ? groupedData : allSheetsData;
+            for (const [key, data] of Object.entries(keys)) {
+                if (!data || !data.subjects || !data.subjects.length) continue;
+                const compositeKey = `${currentQuartal}${QSEP}${key}`;
+                try {
+                    await fetch(WEBAPP_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            action: 'save', jenis_ujian: compositeKey,
+                            subjects: data.subjects, averages: data.averages, studentCount: data.studentCount || 0
+                        })
+                    });
+                } catch (e) { console.warn('Gagal sync ke sheet:', compositeKey, e); }
+            }
+        }
+
+        function renderQuartalView(quartal) {
+            const cache = quartalCache[quartal];
+            if (!cache || !Object.keys(cache.groupedData).length) {
+                sheetSelectorDiv.style.display = 'none';
+                sheetSelect.innerHTML = '';
+                fileStatusSpan.innerHTML = `<i class="fa-regular fa-file-lines"></i> Belum ada data ${QUARTAL_LABELS[quartal]}`;
+                metaDataStatus.innerText = "Menunggu"; metaSheet.innerText = "-";
+                groupedData = {}; allSheetsData = {};
+                renderDashboard([], [], '');
+                jenjangTabs.innerHTML = '<span class="chip"><i class="fa-regular fa-folder-open"></i> Belum ada data</span>';
+                jenjangContent.innerHTML = '';
+                rekapSection.style.display = 'none';
+                return;
+            }
+
+            groupedData = cache.groupedData; allSheetsData = cache.allSheetsData;
+            const sheetNames = Object.keys(groupedData);
+
+            renderJenjangTabs();
+            sheetSelect.innerHTML = '';
+            sheetNames.forEach(name => { const opt = document.createElement('option'); opt.value = name; opt.textContent = name.replace('_', ' '); sheetSelect.appendChild(opt); });
+            sheetSelectorDiv.style.display = 'flex';
+            currentSheetName = sheetNames[0];
+            sheetSelect.value = currentSheetName;
+
+            const first = groupedData[currentSheetName];
+            currentSubjectNames = first.subjects; currentAverages = first.averages; currentStudentCount = first.studentCount || 0;
+            renderDashboard(currentSubjectNames, currentAverages, currentSheetName.replace('_', ' '), currentStudentCount);
+            metaSheet.innerText = currentSheetName.replace('_', ' ');
+
+            fileStatusSpan.innerHTML = `<i class="fa-solid fa-cloud" style="color:var(--info);"></i> ${QUARTAL_LABELS[quartal]} · dari Google Sheet`;
+            metaDataStatus.innerText = "Dimuat (sheet)";
+        }
+
+        function updateQuartalTabsUI() {
+            quartalTabs.querySelectorAll('.quartal-btn').forEach(btn => {
+                const q = btn.dataset.q;
+                const hasData = quartalCache[q] && Object.keys(quartalCache[q].groupedData).length;
+                btn.innerHTML = QUARTAL_LABELS[q] + (hasData ? ' <span class="qdot"></span>' : '');
+                btn.classList.toggle('active-quartal', q === currentQuartal);
+            });
+            quartalStatus.innerHTML = `<i class="fa-solid fa-circle-info"></i> Upload akan tersimpan sebagai ${QUARTAL_LABELS[currentQuartal]}`;
+        }
+
+        quartalTabs.querySelectorAll('.quartal-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentQuartal = btn.dataset.q;
+                updateQuartalTabsUI();
+                renderQuartalView(currentQuartal);
+            });
+        });
+
+        async function loadFromSheet() {
+            try {
+                const res = await fetch(WEBAPP_URL);
+                const json = await res.json();
+                if (!json.ok || !json.data || !Object.keys(json.data).length) { updateQuartalTabsUI(); return false; }
+
+                quartalCache = { Kuartal_I: { groupedData: {}, allSheetsData: {} }, Kuartal_II: { groupedData: {}, allSheetsData: {} }, Kuartal_III: { groupedData: {}, allSheetsData: {} } };
+                for (const [compositeKey, data] of Object.entries(json.data)) {
+                    const sepIdx = compositeKey.indexOf(QSEP);
+                    let quartal = 'Kuartal_I', realKey = compositeKey;
+                    if (sepIdx !== -1) { quartal = compositeKey.slice(0, sepIdx); realKey = compositeKey.slice(sepIdx + QSEP.length); }
+                    if (!quartalCache[quartal]) quartalCache[quartal] = { groupedData: {}, allSheetsData: {} };
+                    quartalCache[quartal].groupedData[realKey] = data;
+                }
+
+                const firstWithData = ['Kuartal_I', 'Kuartal_II', 'Kuartal_III'].find(q => Object.keys(quartalCache[q].groupedData).length);
+                currentQuartal = firstWithData || 'Kuartal_I';
+                updateQuartalTabsUI();
+                renderQuartalView(currentQuartal);
+                return true;
+            } catch (e) { console.warn('Gagal ambil data dari sheet:', e); return false; }
+        }
+
+        async function deleteFromSheet(prefixOrKey, isPrefix) {
+            try {
+                await fetch(WEBAPP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: isPrefix ? 'deletePrefix' : 'delete', jenis_ujian: prefixOrKey })
+                });
+            } catch (e) { console.warn('Gagal hapus dari sheet:', e); }
+        }
+
+        async function clearStoredData() {
+            if (!confirm(`Hapus semua data ${QUARTAL_LABELS[currentQuartal]} dari Google Sheet? Aksi ini tidak bisa dibatalkan.`)) return;
+            await deleteFromSheet(currentQuartal + QSEP, true);
+            quartalCache[currentQuartal] = { groupedData: {}, allSheetsData: {} };
+            workbookData = null;
+            currentSubjectNames = []; currentAverages = []; currentStudentCount = 0; currentSheetName = '';
+            jenjangChartInstances = {};
+            updateQuartalTabsUI();
+            renderQuartalView(currentQuartal);
+        }
+
+        clearDataBtn.addEventListener('click', clearStoredData);
 
         // ============================================================
         //  EVENT LISTENERS
@@ -1654,6 +1831,8 @@
         darkBtn.addEventListener('click', () => { document.body.classList.add('dark'); localStorage.setItem('theme', 'dark'); updateThemeUI(); refreshAllCharts(); });
         if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
         updateThemeUI();
+        updateQuartalTabsUI();
+        loadFromSheet();
 
         const dashboardEl = document.querySelector('.dashboard');
         dashboardEl.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); });
