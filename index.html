@@ -701,6 +701,9 @@
                         <i class="fa-solid fa-cloud-arrow-up"></i> Upload Excel
                     </label>
                     <input type="file" id="file-input" accept=".xlsx, .xls, .csv" />
+                    <button id="clearDataBtn" class="btn btn-sm" style="background:var(--danger-soft);color:var(--danger);border:1px solid var(--danger);" title="Hapus data yang tersimpan di browser ini">
+                        <i class="fa-solid fa-trash"></i> Hapus Data
+                    </button>
                     <span id="file-status" class="chip">
                         <i class="fa-regular fa-file-lines"></i> Belum ada file
                     </span>
@@ -821,6 +824,9 @@
         let jenjangChartInstances = {};
         let groupedData = {};
         let allSheetsData = {};
+
+        // GANTI URL INI dengan URL Web App Apps Script kamu (Deploy > New deployment > Web app)
+        const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzzXTWE0CymAwDZWsObPPQ2_xS72UsJqbWlBuy2QNYAGq9jaHM-rcp_bU_0b7Erd_Eggg/exec';
 
         const fileInput = document.getElementById('file-input');
         const fileStatusSpan = document.getElementById('file-status');
@@ -1599,8 +1605,11 @@
                 try {
                     workbookData = XLSX.read(data, { type: 'array', cellDates: false });
                     processAllSheets();
-                    fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i> ${file.name}`;
+                    fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i> ${file.name} <span style="opacity:.6;">(menyimpan...)</span>`;
                     metaDataStatus.innerText = "Dimuat";
+                    syncToSheet().then(() => {
+                        fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i> ${file.name} <span style="opacity:.6;">(tersimpan di sheet)</span>`;
+                    });
                 } catch (err) {
                     fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Gagal: ${file.name}`;
                     metaDataStatus.innerText = "Gagal";
@@ -1608,6 +1617,85 @@
             };
             reader.readAsArrayBuffer(file);
         }
+
+        // ============================================================
+        //  PERSISTENCE (Google Sheet via Apps Script)
+        // ============================================================
+        const clearDataBtn = document.getElementById('clearDataBtn');
+
+        async function syncToSheet() {
+            const keys = Object.keys(groupedData).length ? groupedData : allSheetsData;
+            for (const [key, data] of Object.entries(keys)) {
+                if (!data || !data.subjects || !data.subjects.length) continue;
+                try {
+                    await fetch(WEBAPP_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            action: 'save', jenis_ujian: key,
+                            subjects: data.subjects, averages: data.averages, studentCount: data.studentCount || 0
+                        })
+                    });
+                } catch (e) { console.warn('Gagal sync ke sheet:', key, e); }
+            }
+        }
+
+        async function loadFromSheet() {
+            try {
+                const res = await fetch(WEBAPP_URL);
+                const json = await res.json();
+                if (!json.ok || !json.data || !Object.keys(json.data).length) return false;
+
+                groupedData = json.data;
+                allSheetsData = {};
+                const sheetNames = Object.keys(groupedData);
+
+                renderJenjangTabs();
+                sheetSelect.innerHTML = '';
+                sheetNames.forEach(name => { const opt = document.createElement('option'); opt.value = name; opt.textContent = name.replace('_',' '); sheetSelect.appendChild(opt); });
+                sheetSelectorDiv.style.display = 'flex';
+                currentSheetName = sheetNames[0];
+                sheetSelect.value = currentSheetName;
+
+                const first = groupedData[currentSheetName];
+                currentSubjectNames = first.subjects; currentAverages = first.averages; currentStudentCount = first.studentCount || 0;
+                renderDashboard(currentSubjectNames, currentAverages, currentSheetName.replace('_',' '), currentStudentCount);
+                metaSheet.innerText = currentSheetName.replace('_',' ');
+
+                fileStatusSpan.innerHTML = `<i class="fa-solid fa-cloud" style="color:var(--info);"></i> Data dari Google Sheet`;
+                metaDataStatus.innerText = "Dimuat (sheet)";
+                return true;
+            } catch (e) { console.warn('Gagal ambil data dari sheet:', e); return false; }
+        }
+
+        async function deleteFromSheet(jenis) {
+            try {
+                await fetch(WEBAPP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: jenis === 'ALL' ? 'deleteAll' : 'delete', jenis_ujian: jenis })
+                });
+            } catch (e) { console.warn('Gagal hapus dari sheet:', e); }
+        }
+
+        async function clearStoredData() {
+            if (!confirm('Hapus SEMUA data nilai dari Google Sheet? Aksi ini tidak bisa dibatalkan.')) return;
+            await deleteFromSheet('ALL');
+            workbookData = null; groupedData = {}; allSheetsData = {};
+            currentSubjectNames = []; currentAverages = []; currentStudentCount = 0; currentSheetName = '';
+            jenjangChartInstances = {};
+
+            sheetSelectorDiv.style.display = 'none';
+            sheetSelect.innerHTML = '';
+            fileStatusSpan.innerHTML = `<i class="fa-regular fa-file-lines"></i> Belum ada file`;
+            metaDataStatus.innerText = "Menunggu"; metaSheet.innerText = "-";
+            renderDashboard([], [], '');
+            jenjangTabs.innerHTML = '<span class="chip"><i class="fa-regular fa-folder-open"></i> Belum ada data</span>';
+            jenjangContent.innerHTML = '';
+            rekapSection.style.display = 'none';
+        }
+
+        clearDataBtn.addEventListener('click', clearStoredData);
 
         // ============================================================
         //  EVENT LISTENERS
@@ -1654,6 +1742,7 @@
         darkBtn.addEventListener('click', () => { document.body.classList.add('dark'); localStorage.setItem('theme', 'dark'); updateThemeUI(); refreshAllCharts(); });
         if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
         updateThemeUI();
+        loadFromSheet();
 
         const dashboardEl = document.querySelector('.dashboard');
         dashboardEl.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); });
