@@ -702,7 +702,6 @@
 </head>
 <body>
     <div class="dashboard">
-        <!-- TOPBAR -->
         <div class="topbar">
             <div class="topbar-wrap">
                 <div class="brand">
@@ -732,13 +731,12 @@
             </div>
         </div>
 
-        <!-- HERO -->
         <div class="hero">
             <div class="hero-grid">
                 <div class="headline">
                     <span class="kicker"><i class="fa-solid fa-bolt"></i> Realtime Insight</span>
                     <h2>Analisis Rata-rata Nilai per Mata Pelajaran</h2>
-                    <p>Gunakan file <strong>LEGER I.xlsx</strong> · Export PDF & CSV · Progress bar visual</p>
+                    <p>Upload file Excel · Export PDF & CSV · Progress bar visual</p>
                 </div>
                 <div class="hero-meta">
                     <div class="meta-card">
@@ -753,7 +751,6 @@
             </div>
         </div>
 
-        <!-- QUARTAL SELECTOR -->
         <div class="quartal-bar" id="quartal-bar">
             <span class="meta-title"><i class="fa-solid fa-calendar-days"></i> Periode Ujian</span>
             <div class="quartal-toggle" id="quartalTabs">
@@ -764,14 +761,12 @@
             <span class="chip" id="quartal-status"><i class="fa-solid fa-circle-info"></i> Upload akan tersimpan sebagai Kuartal I</span>
         </div>
 
-        <!-- SHEET SELECTOR -->
         <div class="sheet-bar" id="sheet-selector-area">
             <span class="meta-title"><i class="fa-solid fa-layer-group"></i> Pilih Kelas</span>
             <select id="sheet-select" class="select-control"></select>
             <span class="chip"><i class="fa-solid fa-wand-magic-sparkles"></i> Otomatis</span>
         </div>
 
-        <!-- STATS -->
         <div class="stats">
             <div class="stat"><div class="label"><i class="fa-solid fa-book-open"></i> Total Mapel</div><div class="value" id="total-mapel">0</div><div class="sub">Mapel terdeteksi</div></div>
             <div class="stat"><div class="label"><i class="fa-solid fa-trophy"></i> Tertinggi</div><div class="value" id="max-avg">-</div><div class="sub" id="max-mapel">-</div></div>
@@ -779,7 +774,6 @@
             <div class="stat"><div class="label"><i class="fa-solid fa-bullseye"></i> Keseluruhan</div><div class="value" id="overall-avg">-</div><div class="sub">Rerata mapel</div></div>
         </div>
 
-        <!-- LAYOUT PER KELAS -->
         <div class="kelas-section" id="kelasSection">
             <div class="kelas-row" id="kelasRow">
                 <div class="rank-card">
@@ -807,7 +801,6 @@
             </div>
         </div>
 
-        <!-- TAB JENJANG -->
         <div class="jenjang-section" id="jenjangSection">
             <div class="jenjang-tabs" id="jenjangTabs">
                 <span class="chip" style="margin:4px 0;background:transparent;border:none;box-shadow:none;">
@@ -817,7 +810,6 @@
             <div class="jenjang-content" id="jenjangContent"></div>
         </div>
 
-        <!-- REKAP: NILAI TERENDAH & TERTINGGI PER KELAS -->
         <div class="rekap-section" id="rekapSection" style="display:none;">
             <div class="rekap-title"><i class="fa-solid fa-ranking-star"></i> Rekap Nilai Terendah & Tertinggi — Semua Kelas</div>
             <div class="rekap-grid" id="rekapGrid"></div>
@@ -829,7 +821,6 @@
         </div>
     </div>
 
-    <!-- Hidden PDF export container -->
     <div id="pdf-export-container"></div>
 
     <script>
@@ -848,15 +839,15 @@
         let jenjangChartInstances = {};
         let groupedData = {};
         let allSheetsData = {};
+        let originalSheetNames = [];
 
         let currentQuartal = 'Kuartal_I';
-        let quartalCache = {}; // { Kuartal_I: {groupedData, allSheetsData}, ... }
+        let quartalCache = {};
         const QUARTAL_LABELS = { Kuartal_I: 'Kuartal I', Kuartal_II: 'Kuartal II', Kuartal_III: 'Kuartal III' };
         const quartalTabs = document.getElementById('quartalTabs');
         const quartalStatus = document.getElementById('quartal-status');
 
-        // GANTI URL INI dengan URL Web App Apps Script kamu (Deploy > New deployment > Web app)
-        const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxwyDkitjsFq5fJJB5DkrcMoGg0YrivBatcd18qYilaof4FJDnvitjGZrJoqp29GKoySg/exec';
+        const STORAGE_PREFIX = 'dashboard_akademik_';
 
         const fileInput = document.getElementById('file-input');
         const fileStatusSpan = document.getElementById('file-status');
@@ -881,6 +872,28 @@
         const rekapGrid = document.getElementById('rekapGrid');
 
         // ============================================================
+        //  UI STATE HELPERS
+        // ============================================================
+        function getUIState() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'ui_state')) || {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveUIState() {
+            const activeJenjang = document.querySelector('.jenjang-tab.active');
+            const jenjangVal = activeJenjang ? (activeJenjang.dataset.sheet || activeJenjang.dataset.key) : '';
+            const state = {
+                quartal: currentQuartal,
+                sheet: currentSheetName,
+                jenjangTab: jenjangVal
+            };
+            localStorage.setItem(STORAGE_PREFIX + 'ui_state', JSON.stringify(state));
+        }
+
+        // ============================================================
         //  THEME COLORS
         // ============================================================
         function getThemeColors() {
@@ -892,6 +905,33 @@
                 tooltipBg: dark ? '#1e293b' : '#ffffff',
                 legendColor: dark ? '#cbd5e1' : '#334155',
             };
+        }
+
+        // ============================================================
+        //  LOCAL STORAGE HELPERS
+        // ============================================================
+        function saveToLocalStorage() {
+            const data = { groupedData, allSheetsData, originalSheetNames };
+            try {
+                localStorage.setItem(STORAGE_PREFIX + currentQuartal, JSON.stringify(data));
+            } catch (e) {
+                console.warn('Gagal simpan ke localStorage:', e);
+            }
+        }
+
+        function loadFromLocalStorage(quartal) {
+            try {
+                const raw = localStorage.getItem(STORAGE_PREFIX + quartal);
+                if (!raw) return null;
+                return JSON.parse(raw);
+            } catch (e) {
+                console.warn('Gagal baca localStorage:', e);
+                return null;
+            }
+        }
+
+        function clearLocalStorage(quartal) {
+            localStorage.removeItem(STORAGE_PREFIX + quartal);
         }
 
         // ============================================================
@@ -922,7 +962,6 @@
                 "الديانة", "هداية الصبيان", "عقيدة العوام", "جواهر الكلامية", "التصريف", "رياض البديعة"
             ];
 
-            // 1) Cara paling andal: cari baris yang punya kolom "NAMA" (selalu ada di semua format leger/rekap)
             let headerRowIndex = -1, dataStartRow = -1;
             for (let i = 0; i < rows.length && i < 50; i++) {
                 for (let j = 0; j < rows[i].length && j < 15; j++) {
@@ -932,7 +971,6 @@
                 if (headerRowIndex !== -1) break;
             }
 
-            // 2) Fallback: cocokkan ke daftar nama mapel yang dikenal
             if (headerRowIndex === -1) {
                 for (let i = 0; i < rows.length && i < 50; i++) {
                     let matchCount = 0;
@@ -1265,27 +1303,28 @@
         }
 
         // ============================================================
-        //  RENDER REKAP
+        //  RENDER REKAP (PERBAIKAN BUG)
         // ============================================================
         function renderRekapSection() {
-            if (!workbookData || !workbookData.SheetNames.length) {
+            // BUG FIX: Sekarang baca dari allSheetsData yang udah di-cache di localStorage,
+            // bukan lagi dari file mentah Excel (workbookData) yang kehapus pas di-refresh.
+            const sheetKeys = Object.keys(allSheetsData);
+            
+            if (!sheetKeys.length) {
                 rekapSection.style.display = 'none';
                 return;
             }
 
-            const sheetNames = workbookData.SheetNames;
             const rekapEntries = [];
 
-            for (const name of sheetNames) {
-                const ws = workbookData.Sheets[name];
-                if (!ws) continue;
+            for (const name of sheetKeys) {
+                const data = allSheetsData[name];
                 
-                const { subjects, scores, studentCount } = detectHeaderAndData(ws);
-                if (!subjects.length || !scores.length) continue;
+                if (!data || !data.subjects || !data.subjects.length) continue;
                 
-                const avgs = computeAverages(subjects, scores);
-                if (!avgs.length) continue;
-
+                const avgs = data.averages;
+                const subjects = data.subjects;
+                
                 const maxVal = Math.max(...avgs);
                 const minVal = Math.min(...avgs);
                 const maxIdx = avgs.indexOf(maxVal);
@@ -1305,7 +1344,7 @@
                     label: name,
                     maxVal, maxSubject: subjects[maxIdx],
                     minVal, minSubject: subjects[minIdx],
-                    overall, studentCount, belowCount,
+                    overall, studentCount: data.studentCount || 0, belowCount,
                     totalMapel: subjects.length,
                     isMid, kelasNum,
                     delta: parseFloat((maxVal - minVal).toFixed(2)),
@@ -1360,23 +1399,29 @@
             Object.values(jenjangChartInstances).forEach(ch => ch.destroy());
             jenjangChartInstances = {};
 
+            const uiState = getUIState();
+            const targetTab = uiState.jenjangTab;
+
             const keys = Object.keys(groupedData);
             if (!keys.length) {
                 const sheetKeys = Object.keys(allSheetsData);
                 if (sheetKeys.length) {
+                    let activeSheetKey = sheetKeys.includes(targetTab) ? targetTab : sheetKeys[0];
+
                     let tabsHtml = '';
-                    sheetKeys.forEach((name, idx) => {
-                        const active = idx === 0 ? 'active' : '';
+                    sheetKeys.forEach((name) => {
+                        const active = (name === activeSheetKey) ? 'active' : '';
                         tabsHtml += `<button class="jenjang-tab ${active}" data-sheet="${name}">${name}</button>`;
                     });
                     jenjangTabs.innerHTML = tabsHtml;
 
                     let panesHtml = '';
-                    sheetKeys.forEach((name, idx) => {
-                        const active = idx === 0 ? 'active' : '';
+                    sheetKeys.forEach((name) => {
+                        const active = (name === activeSheetKey) ? 'active' : '';
                         const data = allSheetsData[name];
                         const safeName = name.replace(/[^a-zA-Z0-9]/g, '_');
                         const canvasId = `jenjangChart_${safeName}`;
+                        
                         if (!data || !data.subjects.length) {
                             panesHtml += `<div class="jenjang-pane ${active}" data-sheet="${name}"><div class="jenjang-row"><div class="rank-card"><h4><i class="fa-solid fa-table-list"></i> Semua Mapel</h4><p style="color:var(--muted);">Tidak ada data</p></div></div></div>`;
                             return;
@@ -1406,7 +1451,11 @@
                                     <button class="btn btn-csv btn-sm export-csv-jenjang" data-sheet="${name}"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
                                 </div>
                             </div>`;
-                        setTimeout(() => renderJenjangChart(canvasId, sorted.subjects, sorted.averages, name), 120);
+                        
+                        // BUG FIX: Hanya render chart yang aktif pas halaman dimuat biar nggak gepeng/error
+                        if (name === activeSheetKey) {
+                            setTimeout(() => renderJenjangChart(canvasId, sorted.subjects, sorted.averages, name), 150);
+                        }
                     });
                     jenjangContent.innerHTML = panesHtml;
 
@@ -1440,6 +1489,7 @@
                                 const s = sortSubjectsByAverageDesc(allSheetsData[sheet].subjects, allSheetsData[sheet].averages);
                                 renderJenjangChart(canvasId, s.subjects, s.averages, sheet);
                             }
+                            saveUIState(); 
                         });
                     });
                     renderRekapSection();
@@ -1458,15 +1508,18 @@
                 return (parseInt(a) || 0) - (parseInt(b) || 0);
             });
 
+            let activeGroupKey = sortedKeys.includes(targetTab) ? targetTab : sortedKeys[0];
+
             let tabsHtml = '';
-            sortedKeys.forEach((key, idx) => {
-                tabsHtml += `<button class="jenjang-tab ${idx===0?'active':''}" data-key="${key}">${key.replace('_', ' ')}</button>`;
+            sortedKeys.forEach((key) => {
+                const active = (key === activeGroupKey) ? 'active' : '';
+                tabsHtml += `<button class="jenjang-tab ${active}" data-key="${key}">${key.replace('_', ' ')}</button>`;
             });
             jenjangTabs.innerHTML = tabsHtml;
 
             let panesHtml = '';
-            sortedKeys.forEach((key, idx) => {
-                const active = idx === 0 ? 'active' : '';
+            sortedKeys.forEach((key) => {
+                const active = (key === activeGroupKey) ? 'active' : '';
                 const data = groupedData[key];
                 const safeKey = key.replace(/[^a-zA-Z0-9]/g, '_');
                 const canvasId = `jenjangChart_${safeKey}`;
@@ -1499,7 +1552,11 @@
                             <button class="btn btn-csv btn-sm export-csv-group" data-key="${key}"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
                         </div>
                     </div>`;
-                setTimeout(() => renderJenjangChart(canvasId, sorted.subjects, sorted.averages, key), 150);
+                
+                // BUG FIX: Sama halnya, hanya render yang sedang aktif
+                if (key === activeGroupKey) {
+                    setTimeout(() => renderJenjangChart(canvasId, sorted.subjects, sorted.averages, key), 150);
+                }
             });
             jenjangContent.innerHTML = panesHtml;
 
@@ -1533,6 +1590,7 @@
                         const s = sortSubjectsByAverageDesc(groupedData[key].subjects, groupedData[key].averages);
                         renderJenjangChart(canvasId, s.subjects, s.averages, key);
                     }
+                    saveUIState(); 
                 });
             });
 
@@ -1593,10 +1651,20 @@
             if (!workbookData) return;
             const sheetNames = workbookData.SheetNames;
             if (!sheetNames.length) return;
+            
+            originalSheetNames = [...sheetNames];
             groupedData = {}; allSheetsData = {};
 
             let hasMidMtsd = false;
             for (const name of sheetNames) { if (/MID|MTSD/i.test(name)) { hasMidMtsd = true; break; } }
+
+            // BUG FIX: Selalu populate allSheetsData untuk keperluan Rekap walau jenisnya MID/MTSD
+            for (const name of sheetNames) {
+                const ws = workbookData.Sheets[name];
+                if (!ws) { allSheetsData[name] = { subjects: [], averages: [], studentCount: 0 }; continue; }
+                const { subjects, scores, studentCount } = detectHeaderAndData(ws);
+                allSheetsData[name] = subjects.length && scores.length ? { subjects, averages: computeAverages(subjects, scores), studentCount } : { subjects: [], averages: [], studentCount: 0 };
+            }
 
             if (hasMidMtsd) {
                 const groupMap = {};
@@ -1607,40 +1675,63 @@
                     const key = `${kelas}_${jenis}`; if (!groupMap[key]) groupMap[key] = []; groupMap[key].push(name);
                 }
                 for (const [key, sheetList] of Object.entries(groupMap)) { groupedData[key] = mergeSheetData(sheetList); }
-            } else {
-                for (const name of sheetNames) {
-                    const ws = workbookData.Sheets[name];
-                    if (!ws) { allSheetsData[name] = { subjects: [], averages: [], studentCount: 0 }; continue; }
-                    const { subjects, scores, studentCount } = detectHeaderAndData(ws);
-                    allSheetsData[name] = subjects.length && scores.length ? { subjects, averages: computeAverages(subjects, scores), studentCount } : { subjects: [], averages: [], studentCount: 0 };
-                }
             }
 
             renderJenjangTabs();
+            renderRekapSection();
+            
+            const uiState = getUIState();
+            let targetSheet = uiState.sheet;
+
             sheetSelect.innerHTML = '';
-            sheetNames.forEach(name => { const opt = document.createElement('option'); opt.value = name; opt.textContent = name; sheetSelect.appendChild(opt); });
+            originalSheetNames.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.textContent = name;
+                sheetSelect.appendChild(opt);
+            });
             sheetSelectorDiv.style.display = 'flex';
-            currentSheetName = sheetNames[0]; sheetSelect.value = currentSheetName;
+            currentSheetName = originalSheetNames.includes(targetSheet) ? targetSheet : originalSheetNames[0];
+            sheetSelect.value = currentSheetName;
 
             let found = false;
-            for (const [key, data] of Object.entries(groupedData)) {
-                if (data.subjects.length) {
-                    currentSubjectNames = data.subjects; currentAverages = data.averages; currentStudentCount = data.studentCount || 0;
-                    renderDashboard(currentSubjectNames, currentAverages, key.replace('_', ' '), currentStudentCount);
-                    metaSheet.innerText = key.replace('_', ' '); found = true; break;
+
+            if (targetSheet) {
+                if (groupedData[targetSheet] && groupedData[targetSheet].subjects && groupedData[targetSheet].subjects.length) {
+                    currentSubjectNames = groupedData[targetSheet].subjects;
+                    currentAverages = groupedData[targetSheet].averages;
+                    currentStudentCount = groupedData[targetSheet].studentCount || 0;
+                    renderDashboard(currentSubjectNames, currentAverages, targetSheet.replace('_', ' '), currentStudentCount);
+                    metaSheet.innerText = targetSheet.replace('_', ' '); found = true; 
+                } else if (allSheetsData[targetSheet] && allSheetsData[targetSheet].subjects && allSheetsData[targetSheet].subjects.length) {
+                    currentSubjectNames = allSheetsData[targetSheet].subjects;
+                    currentAverages = allSheetsData[targetSheet].averages;
+                    currentStudentCount = allSheetsData[targetSheet].studentCount || 0;
+                    renderDashboard(currentSubjectNames, currentAverages, targetSheet, currentStudentCount);
+                    metaSheet.innerText = targetSheet; found = true;
                 }
             }
+
             if (!found) {
-                const first = sheetNames[0];
-                const fd = allSheetsData[first];
-                if (fd?.subjects.length) {
-                    currentSubjectNames = fd.subjects; currentAverages = fd.averages; currentStudentCount = fd.studentCount || 0;
-                    renderDashboard(currentSubjectNames, currentAverages, first, currentStudentCount); metaSheet.innerText = first;
-                } else { renderDashboard([], [], ''); }
+                for (const [key, data] of Object.entries(groupedData)) {
+                    if (data.subjects.length) {
+                        currentSubjectNames = data.subjects; currentAverages = data.averages; currentStudentCount = data.studentCount || 0;
+                        renderDashboard(currentSubjectNames, currentAverages, key.replace('_', ' '), currentStudentCount);
+                        metaSheet.innerText = key.replace('_', ' '); found = true; break;
+                    }
+                }
+                if (!found) {
+                    const first = originalSheetNames[0];
+                    const fd = allSheetsData[first];
+                    if (fd?.subjects.length) {
+                        currentSubjectNames = fd.subjects; currentAverages = fd.averages; currentStudentCount = fd.studentCount || 0;
+                        renderDashboard(currentSubjectNames, currentAverages, first, currentStudentCount); metaSheet.innerText = first;
+                    } else { renderDashboard([], [], ''); }
+                }
             }
 
-            // simpan hasil parsing ini ke cache kuartal yang lagi aktif
-            quartalCache[currentQuartal] = { groupedData: { ...groupedData }, allSheetsData: { ...allSheetsData } };
+            saveToLocalStorage();
+            saveUIState();
             updateQuartalTabsUI();
         }
 
@@ -1651,11 +1742,8 @@
                 try {
                     workbookData = XLSX.read(data, { type: 'array', cellDates: false });
                     processAllSheets();
-                    fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i> ${file.name} <span style="opacity:.6;">(menyimpan...)</span>`;
+                    fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i> ${file.name} <span style="opacity:.6;">(tersimpan)</span>`;
                     metaDataStatus.innerText = "Dimuat";
-                    syncToSheet().then(() => {
-                        fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i> ${file.name} <span style="opacity:.6;">(tersimpan di sheet)</span>`;
-                    });
                 } catch (err) {
                     fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Gagal: ${file.name}`;
                     metaDataStatus.innerText = "Gagal";
@@ -1665,67 +1753,126 @@
         }
 
         // ============================================================
-        //  PERSISTENCE (Google Sheet via Apps Script) — sadar Kuartal
+        //  RENDER QUARTAL VIEW
         // ============================================================
-        const clearDataBtn = document.getElementById('clearDataBtn');
-        const QSEP = '::';
-
-        async function syncToSheet() {
-            const keys = Object.keys(groupedData).length ? groupedData : allSheetsData;
-            for (const [key, data] of Object.entries(keys)) {
-                if (!data || !data.subjects || !data.subjects.length) continue;
-                const compositeKey = `${currentQuartal}${QSEP}${key}`;
-                try {
-                    await fetch(WEBAPP_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({
-                            action: 'save', jenis_ujian: compositeKey,
-                            subjects: data.subjects, averages: data.averages, studentCount: data.studentCount || 0
-                        })
-                    });
-                } catch (e) { console.warn('Gagal sync ke sheet:', compositeKey, e); }
-            }
-        }
-
         function renderQuartalView(quartal) {
             const cache = quartalCache[quartal];
-            if (!cache || !Object.keys(cache.groupedData).length) {
+            if (!cache || (!Object.keys(cache.groupedData).length && !Object.keys(cache.allSheetsData || {}).length)) {
                 sheetSelectorDiv.style.display = 'none';
                 sheetSelect.innerHTML = '';
                 fileStatusSpan.innerHTML = `<i class="fa-regular fa-file-lines"></i> Belum ada data ${QUARTAL_LABELS[quartal]}`;
                 metaDataStatus.innerText = "Menunggu"; metaSheet.innerText = "-";
-                groupedData = {}; allSheetsData = {};
+                groupedData = {}; allSheetsData = {}; originalSheetNames = [];
                 renderDashboard([], [], '');
                 jenjangTabs.innerHTML = '<span class="chip"><i class="fa-regular fa-folder-open"></i> Belum ada data</span>';
                 jenjangContent.innerHTML = '';
                 rekapSection.style.display = 'none';
+                saveUIState();
                 return;
             }
 
-            groupedData = cache.groupedData; allSheetsData = cache.allSheetsData;
-            const sheetNames = Object.keys(groupedData);
+            groupedData = cache.groupedData;
+            allSheetsData = cache.allSheetsData || {};
+            originalSheetNames = cache.originalSheetNames || Object.keys(allSheetsData);
+
+            if (!originalSheetNames.length && Object.keys(allSheetsData).length) {
+                originalSheetNames = Object.keys(allSheetsData);
+            }
 
             renderJenjangTabs();
+            renderRekapSection();
+
+            const uiState = getUIState();
+            let targetSheet = uiState.sheet;
+
             sheetSelect.innerHTML = '';
-            sheetNames.forEach(name => { const opt = document.createElement('option'); opt.value = name; opt.textContent = name.replace('_', ' '); sheetSelect.appendChild(opt); });
-            sheetSelectorDiv.style.display = 'flex';
-            currentSheetName = sheetNames[0];
-            sheetSelect.value = currentSheetName;
+            if (originalSheetNames.length) {
+                originalSheetNames.forEach(name => {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    sheetSelect.appendChild(opt);
+                });
+                sheetSelectorDiv.style.display = 'flex';
+                currentSheetName = originalSheetNames.includes(targetSheet) ? targetSheet : originalSheetNames[0];
+                sheetSelect.value = currentSheetName;
+            } else {
+                const gKeys = Object.keys(groupedData);
+                gKeys.forEach(name => {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name.replace('_', ' ');
+                    sheetSelect.appendChild(opt);
+                });
+                sheetSelectorDiv.style.display = 'flex';
+                currentSheetName = gKeys.includes(targetSheet) ? targetSheet : gKeys[0];
+                if (currentSheetName) sheetSelect.value = currentSheetName;
+            }
 
-            const first = groupedData[currentSheetName];
-            currentSubjectNames = first.subjects; currentAverages = first.averages; currentStudentCount = first.studentCount || 0;
-            renderDashboard(currentSubjectNames, currentAverages, currentSheetName.replace('_', ' '), currentStudentCount);
-            metaSheet.innerText = currentSheetName.replace('_', ' ');
+            let found = false;
+            
+            if (targetSheet) {
+                if (groupedData[targetSheet] && groupedData[targetSheet].subjects && groupedData[targetSheet].subjects.length) {
+                    currentSubjectNames = groupedData[targetSheet].subjects;
+                    currentAverages = groupedData[targetSheet].averages;
+                    currentStudentCount = groupedData[targetSheet].studentCount || 0;
+                    renderDashboard(currentSubjectNames, currentAverages, targetSheet.replace('_', ' '), currentStudentCount);
+                    metaSheet.innerText = targetSheet.replace('_', ' ');
+                    found = true;
+                } else if (allSheetsData[targetSheet] && allSheetsData[targetSheet].subjects && allSheetsData[targetSheet].subjects.length) {
+                    currentSubjectNames = allSheetsData[targetSheet].subjects;
+                    currentAverages = allSheetsData[targetSheet].averages;
+                    currentStudentCount = allSheetsData[targetSheet].studentCount || 0;
+                    renderDashboard(currentSubjectNames, currentAverages, targetSheet, currentStudentCount);
+                    metaSheet.innerText = targetSheet;
+                    found = true;
+                }
+            }
 
-            fileStatusSpan.innerHTML = `<i class="fa-solid fa-cloud" style="color:var(--info);"></i> ${QUARTAL_LABELS[quartal]} · dari Google Sheet`;
-            metaDataStatus.innerText = "Dimuat (sheet)";
+            if (!found) {
+                for (const [key, data] of Object.entries(groupedData)) {
+                    if (data.subjects && data.subjects.length) {
+                        currentSubjectNames = data.subjects;
+                        currentAverages = data.averages;
+                        currentStudentCount = data.studentCount || 0;
+                        renderDashboard(currentSubjectNames, currentAverages, key.replace('_', ' '), currentStudentCount);
+                        metaSheet.innerText = key.replace('_', ' ');
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found && originalSheetNames.length) {
+                    const first = originalSheetNames[0];
+                    const fd = allSheetsData[first];
+                    if (fd && fd.subjects && fd.subjects.length) {
+                        currentSubjectNames = fd.subjects;
+                        currentAverages = fd.averages;
+                        currentStudentCount = fd.studentCount || 0;
+                        renderDashboard(currentSubjectNames, currentAverages, first, currentStudentCount);
+                        metaSheet.innerText = first;
+                        found = true;
+                    }
+                }
+            }
+
+            if (!found) {
+                renderDashboard([], [], '');
+            }
+
+            fileStatusSpan.innerHTML = `<i class="fa-solid fa-floppy-disk" style="color:var(--info);"></i> ${QUARTAL_LABELS[quartal]} · dari localStorage`;
+            metaDataStatus.innerText = "Dimuat (local)";
+            
+            saveUIState();
         }
 
         function updateQuartalTabsUI() {
             quartalTabs.querySelectorAll('.quartal-btn').forEach(btn => {
                 const q = btn.dataset.q;
-                const hasData = quartalCache[q] && Object.keys(quartalCache[q].groupedData).length;
+                const cache = quartalCache[q];
+                const hasData = cache && (
+                    Object.keys(cache.groupedData || {}).length ||
+                    Object.keys(cache.allSheetsData || {}).length
+                );
                 btn.innerHTML = QUARTAL_LABELS[q] + (hasData ? ' <span class="qdot"></span>' : '');
                 btn.classList.toggle('active-quartal', q === currentQuartal);
             });
@@ -1735,55 +1882,59 @@
         quartalTabs.querySelectorAll('.quartal-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 currentQuartal = btn.dataset.q;
+                saveUIState();
                 updateQuartalTabsUI();
                 renderQuartalView(currentQuartal);
             });
         });
 
-        async function loadFromSheet() {
-            try {
-                const res = await fetch(WEBAPP_URL);
-                const json = await res.json();
-                if (!json.ok || !json.data || !Object.keys(json.data).length) { updateQuartalTabsUI(); return false; }
-
-                quartalCache = { Kuartal_I: { groupedData: {}, allSheetsData: {} }, Kuartal_II: { groupedData: {}, allSheetsData: {} }, Kuartal_III: { groupedData: {}, allSheetsData: {} } };
-                for (const [compositeKey, data] of Object.entries(json.data)) {
-                    const sepIdx = compositeKey.indexOf(QSEP);
-                    let quartal = 'Kuartal_I', realKey = compositeKey;
-                    if (sepIdx !== -1) { quartal = compositeKey.slice(0, sepIdx); realKey = compositeKey.slice(sepIdx + QSEP.length); }
-                    if (!quartalCache[quartal]) quartalCache[quartal] = { groupedData: {}, allSheetsData: {} };
-                    quartalCache[quartal].groupedData[realKey] = data;
+        // ============================================================
+        //  INIT: Load semua kuartal dari localStorage
+        // ============================================================
+        function loadAllFromLocalStorage() {
+            quartalCache = {};
+            ['Kuartal_I', 'Kuartal_II', 'Kuartal_III'].forEach(q => {
+                const data = loadFromLocalStorage(q);
+                if (data) {
+                    quartalCache[q] = data;
+                } else {
+                    quartalCache[q] = { groupedData: {}, allSheetsData: {}, originalSheetNames: [] };
                 }
+            });
 
-                const firstWithData = ['Kuartal_I', 'Kuartal_II', 'Kuartal_III'].find(q => Object.keys(quartalCache[q].groupedData).length);
-                currentQuartal = firstWithData || 'Kuartal_I';
-                updateQuartalTabsUI();
-                renderQuartalView(currentQuartal);
-                return true;
-            } catch (e) { console.warn('Gagal ambil data dari sheet:', e); return false; }
-        }
-
-        async function deleteFromSheet(prefixOrKey, isPrefix) {
-            try {
-                await fetch(WEBAPP_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: isPrefix ? 'deletePrefix' : 'delete', jenis_ujian: prefixOrKey })
+            const uiState = getUIState();
+            if (uiState.quartal && ['Kuartal_I', 'Kuartal_II', 'Kuartal_III'].includes(uiState.quartal)) {
+                currentQuartal = uiState.quartal;
+            } else {
+                const firstWithData = ['Kuartal_I', 'Kuartal_II', 'Kuartal_III'].find(q => {
+                    const c = quartalCache[q];
+                    return c && (Object.keys(c.groupedData).length || Object.keys(c.allSheetsData || {}).length);
                 });
-            } catch (e) { console.warn('Gagal hapus dari sheet:', e); }
-        }
-
-        async function clearStoredData() {
-            if (!confirm(`Hapus semua data ${QUARTAL_LABELS[currentQuartal]} dari Google Sheet? Aksi ini tidak bisa dibatalkan.`)) return;
-            await deleteFromSheet(currentQuartal + QSEP, true);
-            quartalCache[currentQuartal] = { groupedData: {}, allSheetsData: {} };
-            workbookData = null;
-            currentSubjectNames = []; currentAverages = []; currentStudentCount = 0; currentSheetName = '';
-            jenjangChartInstances = {};
+                currentQuartal = firstWithData || 'Kuartal_I';
+            }
+            
             updateQuartalTabsUI();
             renderQuartalView(currentQuartal);
         }
 
+        // ============================================================
+        //  CLEAR DATA
+        // ============================================================
+        function clearStoredData() {
+            if (!confirm(`Hapus semua data ${QUARTAL_LABELS[currentQuartal]}? Aksi ini tidak bisa dibatalkan.`)) return;
+            clearLocalStorage(currentQuartal);
+            quartalCache[currentQuartal] = { groupedData: {}, allSheetsData: {}, originalSheetNames: [] };
+            workbookData = null;
+            currentSubjectNames = []; currentAverages = []; currentStudentCount = 0; currentSheetName = '';
+            originalSheetNames = [];
+            jenjangChartInstances = {};
+            
+            saveUIState();
+            updateQuartalTabsUI();
+            renderQuartalView(currentQuartal);
+        }
+
+        const clearDataBtn = document.getElementById('clearDataBtn');
         clearDataBtn.addEventListener('click', clearStoredData);
 
         // ============================================================
@@ -1791,22 +1942,48 @@
         // ============================================================
         fileInput.addEventListener('change', (e) => { if (e.target.files.length) loadExcel(e.target.files[0]); fileInput.value = ''; });
         sheetSelect.addEventListener('change', (e) => {
-            if (!workbookData || !e.target.value) return;
-            const name = e.target.value; currentSheetName = name;
-            if (allSheetsData[name]?.subjects.length) {
+            if (!e.target.value) return;
+            const name = e.target.value;
+            currentSheetName = name;
+            saveUIState();
+
+            if (allSheetsData[name]?.subjects?.length) {
                 const d = allSheetsData[name];
-                currentSubjectNames = d.subjects; currentAverages = d.averages; currentStudentCount = d.studentCount || 0;
-                renderDashboard(currentSubjectNames, currentAverages, name, currentStudentCount); metaSheet.innerText = name; return;
+                currentSubjectNames = d.subjects;
+                currentAverages = d.averages;
+                currentStudentCount = d.studentCount || 0;
+                renderDashboard(currentSubjectNames, currentAverages, name, currentStudentCount);
+                metaSheet.innerText = name;
+                return;
             }
-            const ws = workbookData.Sheets[name];
-            if (ws) {
-                const { subjects, scores, studentCount } = detectHeaderAndData(ws);
-                if (subjects.length && scores.length) {
-                    const avgs = computeAverages(subjects, scores);
-                    allSheetsData[name] = { subjects, averages: avgs, studentCount };
-                    currentSubjectNames = subjects; currentAverages = avgs; currentStudentCount = studentCount;
-                    renderDashboard(currentSubjectNames, currentAverages, name, currentStudentCount); metaSheet.innerText = name;
-                } else { renderDashboard([], [], name); }
+
+            for (const [key, data] of Object.entries(groupedData)) {
+                if (key.includes(name) || name.includes(key)) {
+                    if (data.subjects && data.subjects.length) {
+                        currentSubjectNames = data.subjects;
+                        currentAverages = data.averages;
+                        currentStudentCount = data.studentCount || 0;
+                        renderDashboard(currentSubjectNames, currentAverages, key.replace('_', ' '), currentStudentCount);
+                        metaSheet.innerText = key.replace('_', ' ');
+                        return;
+                    }
+                }
+            }
+
+            if (workbookData) {
+                const ws = workbookData.Sheets[name];
+                if (ws) {
+                    const { subjects, scores, studentCount } = detectHeaderAndData(ws);
+                    if (subjects.length && scores.length) {
+                        const avgs = computeAverages(subjects, scores);
+                        allSheetsData[name] = { subjects, averages: avgs, studentCount };
+                        currentSubjectNames = subjects; currentAverages = avgs; currentStudentCount = studentCount;
+                        renderDashboard(currentSubjectNames, currentAverages, name, currentStudentCount);
+                        metaSheet.innerText = name;
+                    } else {
+                        renderDashboard([], [], name);
+                    }
+                }
             }
         });
 
@@ -1832,7 +2009,7 @@
         if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
         updateThemeUI();
         updateQuartalTabsUI();
-        loadFromSheet();
+        loadAllFromLocalStorage();
 
         const dashboardEl = document.querySelector('.dashboard');
         dashboardEl.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); });
