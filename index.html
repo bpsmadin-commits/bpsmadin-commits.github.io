@@ -3,822 +3,934 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-    <title>Dashboard Nilai Rata-rata | 2026 Ultra UI</title>
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
-    </script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js">
-    </script>
+    <title>Dashboard Enterprise | 2026 Premium UI</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
+        /* ==========================================================
+           1. RESET & CORE VARIABLES (2026 SaaS Premium Standard)
+           ========================================================== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
         :root {
-            --bg: #f0f4f8;
-            --bg-2: #e2e8f0;
-            --surface: rgba(255, 255, 255, 0.75);
-            --surface-solid: #ffffff;
-            --surface-soft: #f8fafc;
-            --border: rgba(203, 213, 225, 0.5);
-            --border-soft: rgba(226, 232, 240, 0.8);
-            --text: #0f172a;
-            --text-soft: #334155;
-            --muted: #64748b;
-            --muted-2: #94a3b8;
-            --primary: #6366f1;
-            --primary-2: #818cf8;
+            /* Light Mode Variables */
+            --bg: #F8FAFC;
+            --bg-2: #F1F5F9;
+            --surface: rgba(255, 255, 255, 0.7);
+            --surface-solid: #FFFFFF;
+            --surface-soft: rgba(255, 255, 255, 0.5);
+            --border: rgba(15, 23, 42, 0.08);
+            --border-soft: rgba(15, 23, 42, 0.04);
+            --text: #0F172A;
+            --text-soft: #475569;
+            --muted: #64748B;
+            --muted-2: #94A3B8;
+            --primary: #6366F1;
+            --primary-2: #8B5CF6;
             --primary-glow: rgba(99, 102, 241, 0.15);
-            --accent: #8b5cf6;
-            --info: #0ea5e9;
-            --success: #10b981;
-            --success-soft: #d1fae5;
-            --warning: #f59e0b;
-            --warning-soft: #fef3c7;
-            --danger: #ef4444;
-            --danger-soft: #fee2e2;
-            --secondary: #475569;
-            --chart-bg: #ffffff;
-            --kkm-line: #ef4444;
-
-            --radius-2xl: 28px;
-            --radius-xl: 20px;
-            --radius-lg: 16px;
-            --radius-md: 12px;
-            --radius-sm: 8px;
-
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
-            --shadow-md: 0 4px 6px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.06);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.06), 0 4px 10px rgba(0,0,0,0.04);
-            --shadow-xl: 0 20px 50px rgba(0,0,0,0.08), 0 8px 20px rgba(0,0,0,0.04);
-            --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.12);
-            --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04);
-
-            --glass-bg: rgba(255, 255, 255, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.7);
-            --glass-blur: blur(20px);
-            --glass-sat: saturate(180%);
-
-            --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --accent: #3B82F6;
+            --info: #06B6D4;
+            --success: #10B981;
+            --success-soft: rgba(16, 185, 129, 0.15);
+            --warning: #F59E0B;
+            --warning-soft: rgba(245, 158, 11, 0.15);
+            --danger: #EF4444;
+            --danger-soft: rgba(239, 68, 68, 0.15);
+            --chart-bg: rgba(255, 255, 255, 0.4);
+            
+            /* Glassmorphism Specs */
+            --glass-blur: blur(40px);
+            --glass-sat: saturate(150%);
+            
+            /* Borders & Shadows */
+            --radius-pill: 9999px;
+            --radius-3xl: 32px;
+            --radius-2xl: 24px;
+            --radius-xl: 16px;
+            --radius-lg: 12px;
+            --radius-md: 8px;
+            
+            --shadow-float: 0 20px 40px -10px rgba(0,0,0,0.05), 0 10px 20px -5px rgba(0,0,0,0.02);
+            --shadow-hover: 0 30px 60px -15px rgba(99, 102, 241, 0.15), 0 15px 30px -10px rgba(139, 92, 246, 0.1);
+            --shadow-inner: inset 0 1px 1px rgba(255,255,255,0.8);
+            
+            /* Transitions */
+            --t-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+            --t-smooth: 400ms cubic-bezier(0.16, 1, 0.3, 1);
+            --t-spring: 600ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         body.dark {
-            --bg: #0b1120;
-            --bg-2: #111827;
-            --surface: rgba(15, 23, 42, 0.75);
-            --surface-solid: #0f172a;
-            --surface-soft: #1e293b;
-            --border: rgba(51, 65, 85, 0.6);
-            --border-soft: rgba(30, 41, 59, 0.8);
-            --text: #f1f5f9;
-            --text-soft: #cbd5e1;
-            --muted: #94a3b8;
-            --muted-2: #64748b;
-            --primary: #818cf8;
-            --primary-2: #a5b4fc;
-            --primary-glow: rgba(129, 140, 248, 0.2);
-            --accent: #a78bfa;
-            --info: #38bdf8;
-            --success: #34d399;
+            /* Dark Mode Variables */
+            --bg: #050816;
+            --bg-2: #081020;
+            --surface: rgba(255, 255, 255, 0.03);
+            --surface-solid: #0B1120;
+            --surface-soft: rgba(255, 255, 255, 0.02);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-soft: rgba(255, 255, 255, 0.04);
+            --text: #F8FAFC;
+            --text-soft: #CBD5E1;
+            --muted: #94A3B8;
+            --muted-2: #475569;
+            --primary: #6366F1;
+            --primary-2: #8B5CF6;
+            --primary-glow: rgba(99, 102, 241, 0.25);
+            --accent: #22D3EE;
+            --info: #38BDF8;
+            --success: #34D399;
             --success-soft: rgba(52, 211, 153, 0.15);
-            --warning: #fbbf24;
+            --warning: #FBBF24;
             --warning-soft: rgba(251, 191, 36, 0.15);
-            --danger: #f87171;
+            --danger: #F87171;
             --danger-soft: rgba(248, 113, 113, 0.15);
-            --chart-bg: #111827;
-            --kkm-line: #f87171;
-
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
-            --shadow-md: 0 4px 6px rgba(0,0,0,0.25);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.3);
-            --shadow-xl: 0 20px 50px rgba(0,0,0,0.35);
-            --shadow-glow: 0 0 40px rgba(129, 140, 248, 0.15);
-            --shadow-card: 0 1px 3px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.2);
-
-            --glass-bg: rgba(15, 23, 42, 0.6);
-            --glass-border: rgba(51, 65, 85, 0.5);
+            --chart-bg: rgba(0, 0, 0, 0.2);
+            
+            --shadow-float: 0 20px 40px -10px rgba(0,0,0,0.4), 0 10px 20px -5px rgba(0,0,0,0.2);
+            --shadow-inner: inset 0 1px 1px rgba(255,255,255,0.05);
         }
 
+        /* ==========================================================
+           2. GLOBAL & ANIMATED BACKGROUND
+           ========================================================== */
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
             color: var(--text);
-            background: var(--bg);
-            background-image:
-                radial-gradient(ellipse 80% 50% at 20% 0%, var(--primary-glow), transparent),
-                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(139, 92, 246, 0.08), transparent);
             min-height: 100vh;
-            transition: background 0.5s ease, color 0.5s ease;
-            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color var(--t-smooth), color var(--t-smooth);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
 
-        .dashboard {
-            max-width: 1920px;
-            margin: 0 auto;
-            padding: 20px 24px 30px;
+        /* Premium 2026 Animated Background */
+        .ambient-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            background: radial-gradient(circle at top left, var(--bg-2), var(--bg));
+        }
+        
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: floatOrb 20s infinite alternate ease-in-out;
+        }
+        
+        .ambient-orb:nth-child(1) {
+            top: -10%; left: -10%; width: 50vw; height: 50vw;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            animation-delay: 0s;
+        }
+        
+        .ambient-orb:nth-child(2) {
+            bottom: -20%; right: -10%; width: 60vw; height: 60vw;
+            background: radial-gradient(circle, var(--primary-2) 0%, transparent 70%);
+            animation-delay: -5s;
+        }
+        
+        .ambient-orb:nth-child(3) {
+            top: 30%; left: 40%; width: 40vw; height: 40vw;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            opacity: 0.2;
+            animation-delay: -10s;
+        }
+        
+        .noise-overlay {
+            position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
         }
 
-        /* ============ TOP BAR ============ */
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        /* ==========================================================
+           3. APP LAYOUT (Full Width - No Sidebar)
+           ========================================================== */
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+            max-width: 1920px;
+            margin: 0 auto;
+        }
+
+        /* Main Content Area - Full Width */
+        .saas-main {
+            flex: 1;
+            padding: 24px 40px 60px;
+            width: 100%;
+        }
+
+        /* ==========================================================
+           4. TOP NAV (Floating Glass)
+           ========================================================== */
         .topbar {
             position: sticky;
-            top: 12px;
-            z-index: 100;
-            background: var(--glass-bg);
+            top: 24px;
+            z-index: 99;
+            background: var(--surface);
             backdrop-filter: var(--glass-blur) var(--glass-sat);
-            -webkit-backdrop-filter: var(--glass-blur) var(--glass-sat);
-            border: 1px solid var(--glass-border);
+            border: 1px solid var(--border);
             border-radius: var(--radius-2xl);
             padding: 16px 24px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow-lg);
-            transition: all var(--transition-smooth);
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-float), var(--shadow-inner);
+            animation: slideDown 0.6s var(--t-spring);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .topbar-wrap {
             display: flex;
-            gap: 16px;
+            gap: 24px;
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
         }
 
         .brand {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
+            display: flex; flex-direction: column; gap: 4px;
         }
 
         .brand h1 {
-            font-family: 'Space Grotesk', 'Inter', sans-serif;
-            font-size: 1.15rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem; font-weight: 700;
+            display: flex; align-items: center; gap: 12px;
+            color: var(--text); letter-spacing: -0.02em;
+        }
+
+        .brand h1 i { 
+            color: var(--primary); font-size: 1.2rem; 
+            filter: drop-shadow(0 0 8px var(--primary-glow));
+        }
+        
+        .brand p { 
+            color: var(--muted); font-size: 0.8rem; font-weight: 500; 
+        }
+
+        /* Mock Search Box inside topbar */
+        .saas-search {
+            flex: 1; max-width: 400px;
+            position: relative;
+            display: flex; align-items: center;
+        }
+        
+        .saas-search i {
+            position: absolute; left: 16px; color: var(--muted);
+        }
+        
+        .saas-search input {
+            width: 100%;
+            background: var(--surface-soft);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-pill);
+            padding: 12px 16px 12px 42px;
             color: var(--text);
+            font-family: 'Inter', sans-serif; font-size: 0.875rem;
+            transition: all var(--t-fast);
+            box-shadow: var(--shadow-inner);
+        }
+        
+        .saas-search input:focus {
+            outline: none; border-color: var(--primary);
+            background: var(--surface); box-shadow: 0 0 0 4px var(--primary-glow);
+        }
+        
+        .saas-search .shortcut {
+            position: absolute; right: 12px;
+            background: var(--surface-solid); border: 1px solid var(--border);
+            border-radius: 6px; padding: 2px 6px;
+            font-size: 0.7rem; font-weight: 600; color: var(--muted);
+            font-family: 'Manrope', sans-serif;
         }
 
-        .brand h1 i { color: var(--primary); font-size: 1rem; }
-        .brand p { color: var(--muted); font-size: 0.75rem; font-weight: 400; letter-spacing: 0.01em; }
-        .top-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .top-actions { 
+            display: flex; gap: 12px; align-items: center; 
+        }
 
-        /* ============ BUTTONS ============ */
+        /* ==========================================================
+           5. BUTTONS, INPUTS & CHIPS
+           ========================================================== */
         .btn {
-            display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
-            font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.01em;
-            border-radius: var(--radius-md); border: none; cursor: pointer;
-            transition: all var(--transition-bounce); white-space: nowrap;
-            font-family: 'Inter', sans-serif; position: relative; overflow: hidden;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 10px 20px; font-size: 0.875rem; font-weight: 600;
+            border-radius: var(--radius-pill); border: none; cursor: pointer;
+            transition: all var(--t-spring);
+            font-family: 'Manrope', sans-serif;
+            position: relative; overflow: hidden;
+            box-shadow: var(--shadow-inner);
+            z-index: 1;
         }
+        
         .btn::after {
-            content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.1);
-            opacity: 0; transition: opacity var(--transition-fast); border-radius: inherit;
+            content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.15);
+            opacity: 0; transition: opacity var(--t-fast); z-index: -1;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px) scale(1.02);
         }
         .btn:hover::after { opacity: 1; }
-        .btn:active { transform: scale(0.97); }
+        .btn:active { transform: scale(0.95); }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: #fff; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: #FFFFFF;
+            box-shadow: 0 8px 20px -6px var(--primary-glow), inset 0 1px 1px rgba(255,255,255,0.3);
         }
-        .btn-primary:hover { box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5); transform: translateY(-2px); }
+        .btn-primary:hover { box-shadow: 0 12px 24px -6px rgba(99, 102, 241, 0.4), inset 0 1px 1px rgba(255,255,255,0.3); }
+        
         .btn-pdf {
-            background: linear-gradient(135deg, #dc2626, #b91c1c);
-            color: #fff; box-shadow: 0 4px 15px rgba(220, 38, 38, 0.35);
+            background: linear-gradient(135deg, #EF4444, #B91C1C); color: #fff;
+            box-shadow: 0 8px 20px -6px rgba(239, 68, 68, 0.3);
         }
-        .btn-pdf:hover { box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5); transform: translateY(-2px); }
-        .btn-outline {
-            background: transparent; border: 1.5px solid var(--border); color: var(--text);
-        }
-        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-        .btn-sm { padding: 6px 12px; font-size: 0.75rem; border-radius: var(--radius-sm); }
         .btn-csv {
-            background: linear-gradient(135deg, #059669, #047857);
-            color: #fff; box-shadow: 0 4px 15px rgba(5, 150, 105, 0.35);
+            background: linear-gradient(135deg, #10B981, #047857); color: #fff;
+            box-shadow: 0 8px 20px -6px rgba(16, 185, 129, 0.3);
         }
-        .btn-csv:hover { box-shadow: 0 6px 20px rgba(5, 150, 105, 0.5); transform: translateY(-2px); }
 
-        /* ============ CHIPS & INPUTS ============ */
-        .chip {
-            display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
-            font-size: 0.75rem; font-weight: 500; background: var(--surface-soft);
-            color: var(--muted); border-radius: 999px; border: 1px solid var(--border-soft);
-            max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
-        .chip i { font-size: 0.7rem; }
-
+        .btn-sm { padding: 8px 16px; font-size: 0.8rem; }
+        
+        /* Glass Input */
         .select-control {
-            padding: 8px 32px 8px 12px; font-size: 0.8125rem; font-weight: 500;
-            font-family: 'Inter', sans-serif; border-radius: var(--radius-md);
-            border: 1px solid var(--border); background: var(--surface-solid); color: var(--text);
-            cursor: pointer; appearance: none; -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 10px center;
-            transition: all var(--transition-fast); box-shadow: var(--shadow-sm);
+            padding: 10px 36px 10px 16px; font-size: 0.875rem; font-weight: 600;
+            font-family: 'Manrope', sans-serif;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            background: var(--surface); color: var(--text);
+            backdrop-filter: var(--glass-blur);
+            cursor: pointer; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 12px center;
+            transition: all var(--t-fast);
+            box-shadow: var(--shadow-inner);
         }
-        .select-control:hover { border-color: var(--primary-2); }
+        
+        .select-control option {
+            background-color: var(--surface-solid);
+            color: var(--text);
+        }
+        
         .select-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+        
+        .kkm-group {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--surface-soft); border: 1px solid var(--border);
+            border-radius: var(--radius-pill); padding: 4px 6px;
+            box-shadow: var(--shadow-inner);
+        }
+        .kkm-group label {
+            font-size: 0.75rem; font-weight: 700; color: var(--muted);
+            padding-left: 8px; font-family: 'Manrope', sans-serif;
+        }
+        .kkm-group input {
+            width: 60px; padding: 6px 8px;
+            border: 1px solid var(--border-soft); border-radius: var(--radius-pill);
+            background: var(--surface-solid); color: var(--text);
+            font-size: 0.875rem; font-weight: 700;
+            font-family: 'Space Grotesk', monospace; text-align: center;
+            transition: all var(--t-fast);
+        }
+        .kkm-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+        
+        .btn-kkm-reset {
+            padding: 6px 12px; font-size: 0.75rem; border-radius: var(--radius-pill);
+            background: var(--surface-solid); color: var(--muted);
+            border: 1px solid var(--border-soft); cursor: pointer; font-weight: 600;
+            transition: all var(--t-fast);
+        }
+        .btn-kkm-reset:hover { background: var(--danger-soft); color: var(--danger); border-color: var(--danger); }
+
+        .chip {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 16px; font-size: 0.75rem; font-weight: 600;
+            background: var(--surface-soft); color: var(--text-soft);
+            border-radius: var(--radius-pill); border: 1px solid var(--border);
+            max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            box-shadow: var(--shadow-inner); font-family: 'Manrope', sans-serif;
+        }
+
         #file-input { display: none; }
 
-        /* ============ HERO SECTION ============ */
-        .hero {
-            background: var(--glass-bg); backdrop-filter: var(--glass-blur) var(--glass-sat);
-            -webkit-backdrop-filter: var(--glass-blur) var(--glass-sat);
-            border: 1px solid var(--glass-border); border-radius: var(--radius-2xl);
-            padding: 20px 24px; margin-bottom: 16px; box-shadow: var(--shadow-lg);
-            position: relative; overflow: hidden;
+        .theme-toggle {
+            display: flex; gap: 4px; background: var(--surface-soft);
+            border-radius: var(--radius-pill); padding: 4px; border: 1px solid var(--border);
         }
+        .theme-btn {
+            width: 36px; height: 36px; border-radius: 50%; border: none;
+            background: transparent; cursor: pointer; color: var(--muted);
+            font-size: 1rem; transition: all var(--t-spring);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .theme-btn:hover { color: var(--text); background: var(--surface); transform: scale(1.1); }
+        .theme-btn.active-theme { background: var(--surface-solid); color: var(--primary); box-shadow: 0 4px 12px var(--primary-glow); }
+
+        /* ==========================================================
+           6. HERO SECTION & DRAG DROP
+           ========================================================== */
+        .hero {
+            background: var(--surface);
+            backdrop-filter: var(--glass-blur) var(--glass-sat);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-3xl);
+            padding: 40px; margin-bottom: 24px;
+            box-shadow: var(--shadow-float), var(--shadow-inner);
+            position: relative; overflow: hidden;
+            animation: fadeUp 0.8s var(--t-spring) 0.1s both;
+        }
+        
         .hero::before {
-            content: ''; position: absolute; top: -50%; right: -10%; width: 250px; height: 250px;
+            content: ''; position: absolute; top: -50%; right: -10%;
+            width: 400px; height: 400px;
             background: radial-gradient(circle, var(--primary-glow), transparent 70%);
             pointer-events: none; z-index: 0;
         }
-        .hero-grid { display: grid; grid-template-columns: 1.6fr 0.4fr; gap: 20px; position: relative; z-index: 1; }
-        .headline { display: flex; flex-direction: column; gap: 8px; }
+
+        .hero-grid { 
+            display: grid; grid-template-columns: 1fr 350px; gap: 40px; position: relative; z-index: 1; align-items: center;
+        }
+        
+        .headline { display: flex; flex-direction: column; gap: 16px; }
+        
         .kicker {
-            display: inline-flex; width: fit-content; padding: 4px 12px; border-radius: 999px;
-            background: var(--primary-glow); color: var(--primary); font-size: 0.7rem;
-            font-weight: 700; letter-spacing: 0.02em; align-items: center; gap: 4px; text-transform: uppercase;
+            display: inline-flex; width: fit-content; padding: 6px 16px;
+            border-radius: var(--radius-pill); background: var(--primary-glow);
+            color: var(--primary); font-size: 0.75rem; font-weight: 700;
+            letter-spacing: 0.04em; align-items: center; gap: 8px; text-transform: uppercase;
+            border: 1px solid rgba(99,102,241,0.2);
         }
-        .headline h2 { font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: 1.4rem; font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; color: var(--text); }
-        .headline p { color: var(--muted); line-height: 1.6; font-size: 0.8125rem; }
-        .hero-meta { display: grid; gap: 8px; }
+        
+        .headline h2 { 
+            font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; 
+            font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; color: var(--text); 
+        }
+        
+        .headline p { 
+            color: var(--text-soft); line-height: 1.6; font-size: 1.1rem; max-width: 600px;
+        }
+        
+        .drag-drop-zone {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: var(--surface-soft);
+            border: 2px dashed var(--primary);
+            border-radius: var(--radius-2xl);
+            padding: 32px 24px; text-align: center;
+            transition: all var(--t-spring);
+            cursor: pointer;
+            box-shadow: inset 0 0 20px var(--primary-glow);
+        }
+        .drag-drop-zone:hover {
+            background: var(--primary-glow); transform: scale(1.02);
+            border-style: solid; box-shadow: 0 10px 30px var(--primary-glow);
+        }
+        .drag-drop-zone i { font-size: 2.5rem; color: var(--primary); margin-bottom: 16px; transition: transform var(--t-spring); }
+        .drag-drop-zone:hover i { transform: translateY(-5px); }
+        .drag-drop-zone h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+        .drag-drop-zone p { font-size: 0.8rem; color: var(--muted); }
+
+        .hero-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+        
         .meta-card {
-            background: var(--surface-solid); border: 1px solid var(--border-soft);
-            border-radius: var(--radius-lg); padding: 12px 16px; box-shadow: var(--shadow-card);
-            transition: all var(--transition-smooth); cursor: default;
+            background: var(--surface-solid); border: 1px solid var(--border);
+            border-radius: var(--radius-xl); padding: 16px 20px;
+            box-shadow: var(--shadow-inner); transition: all var(--t-spring);
         }
-        .meta-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); border-color: var(--primary-2); }
-        .meta-title { color: var(--muted-2); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
-        .meta-title i { color: var(--primary); font-size: 0.75rem; }
-        .meta-value { font-size: 0.95rem; font-weight: 700; color: var(--text); font-family: 'Space Grotesk', 'Inter', sans-serif; letter-spacing: -0.01em; }
+        .meta-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--primary); }
+        
+        .meta-title { color: var(--muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-family: 'Manrope', sans-serif; }
+        .meta-title i { color: var(--primary); font-size: 0.9rem; }
+        .meta-value { font-size: 1.1rem; font-weight: 700; color: var(--text); font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.01em; }
 
-        /* ============ QUARTAL BAR ============ */
-        .quartal-bar {
-            display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 16px;
-            margin-bottom: 16px; background: var(--glass-bg); backdrop-filter: var(--glass-blur) var(--glass-sat);
-            -webkit-backdrop-filter: var(--glass-blur) var(--glass-sat);
-            border: 1px solid var(--glass-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md);
+        /* ==========================================================
+           7. BARS (Quartal & Sheet)
+           ========================================================== */
+        .quartal-bar, .sheet-bar {
+            display: flex; align-items: center; gap: 16px; flex-wrap: wrap; 
+            padding: 16px 24px; margin-bottom: 24px;
+            background: var(--surface); backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border); border-radius: var(--radius-2xl); 
+            box-shadow: var(--shadow-float), var(--shadow-inner);
+            animation: fadeUp 0.8s var(--t-spring) 0.2s both;
         }
-        .quartal-toggle { display: flex; gap: 3px; background: var(--surface-soft); border-radius: var(--radius-md); padding: 3px; border: 1px solid var(--border-soft); }
-        .quartal-btn { padding: 7px 16px; border-radius: 8px; border: none; background: transparent; cursor: pointer; color: var(--muted); font-size: 0.8rem; font-weight: 600; transition: all var(--transition-bounce); white-space: nowrap; }
-        .quartal-btn:hover { color: var(--text); background: var(--surface-solid); box-shadow: var(--shadow-sm); }
-        .quartal-btn.active-quartal { background: var(--primary); color: #fff; box-shadow: var(--shadow-sm); }
-        .quartal-btn .qdot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); display: inline-block; margin-left: 6px; }
-
-        /* ============ SHEET BAR ============ */
-        .sheet-bar {
-            display: none; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 16px;
-            margin-bottom: 16px; background: var(--glass-bg); backdrop-filter: var(--glass-blur) var(--glass-sat);
-            -webkit-backdrop-filter: var(--glass-blur) var(--glass-sat);
-            border: 1px solid var(--glass-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md);
+        
+        .quartal-toggle { 
+            display: flex; gap: 4px; background: var(--surface-soft); 
+            border-radius: var(--radius-pill); padding: 4px; border: 1px solid var(--border-soft); 
         }
-        .sheet-bar .meta-title { margin-bottom: 0; color: var(--muted); }
+        .quartal-btn { 
+            padding: 8px 24px; border-radius: var(--radius-pill); border: none; background: transparent; 
+            cursor: pointer; color: var(--muted); font-size: 0.875rem; font-weight: 600; 
+            transition: all var(--t-spring); font-family: 'Manrope', sans-serif;
+        }
+        .quartal-btn:hover { color: var(--text); background: var(--surface); }
+        .quartal-btn.active-quartal { background: var(--primary); color: #fff; box-shadow: 0 4px 12px var(--primary-glow); }
+        .quartal-btn .qdot { width: 8px; height: 8px; border-radius: 50%; background: #10B981; display: inline-block; margin-left: 8px; box-shadow: 0 0 8px #10B981; }
 
-        /* ============ STATS GRID ============ */
-        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+        .sheet-bar { display: none; }
+
+        /* ==========================================================
+           8. STATS GRID (Micro-interactions)
+           ========================================================== */
+        .stats { 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 24px; 
+            animation: fadeUp 0.8s var(--t-spring) 0.3s both;
+        }
+        
         .stat {
-            background: var(--surface-solid); border: 1px solid var(--border-soft);
-            border-radius: var(--radius-xl); padding: 16px 20px; box-shadow: var(--shadow-card);
-            transition: all var(--transition-bounce); cursor: default; position: relative; overflow: hidden;
+            background: var(--surface); backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border); border-radius: var(--radius-2xl); 
+            padding: 24px; box-shadow: var(--shadow-float), var(--shadow-inner);
+            transition: all var(--t-spring); position: relative; overflow: hidden;
+            display: flex; flex-direction: column; gap: 8px;
         }
-        .stat:hover { transform: translateY(-3px); box-shadow: var(--shadow-xl); border-color: var(--primary-2); }
+        
+        .stat:hover { 
+            transform: translateY(-8px) scale(1.02); 
+            box-shadow: var(--shadow-hover); 
+            border-color: rgba(99,102,241,0.3);
+        }
+        
         .stat::after {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
             background: linear-gradient(90deg, var(--primary), var(--accent));
-            transform: scaleX(0); transform-origin: left; transition: transform var(--transition-smooth);
+            transform: scaleX(0); transform-origin: left; transition: transform var(--t-smooth);
         }
         .stat:hover::after { transform: scaleX(1); }
-        .stat .label { font-size: 0.65rem; font-weight: 700; color: var(--muted-2); letter-spacing: 0.04em; text-transform: uppercase; display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
-        .stat .label i { color: var(--primary); font-size: 0.8rem; }
-        .stat .value { font-size: 1.75rem; font-weight: 800; font-family: 'Space Grotesk', 'JetBrains Mono', monospace; letter-spacing: -0.02em; color: var(--text); line-height: 1.1; }
-        .stat .sub { margin-top: 2px; color: var(--primary); font-size: 0.72rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        /* Mini stats untuk jenjang */
-        .mini-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
+        
+        .stat .label { 
+            font-size: 0.75rem; font-weight: 700; color: var(--muted); letter-spacing: 0.05em; 
+            text-transform: uppercase; display: flex; align-items: center; gap: 8px; font-family: 'Manrope', sans-serif;
         }
-        .mini-stat {
-            background: var(--surface-soft); border: 1px solid var(--border-soft);
-            border-radius: var(--radius-md); padding: 10px 14px;
-            text-align: center; transition: all var(--transition-fast);
-            width: auto;
+        .stat .label i { 
+            display: flex; align-items: center; justify-content: center;
+            width: 28px; height: 28px; border-radius: 8px;
+            background: var(--primary-glow); color: var(--primary); font-size: 0.9rem; 
         }
-        .mini-stat:hover { border-color: var(--primary-2); box-shadow: var(--shadow-sm); }
-        .mini-stat .mini-label { font-size: 0.6rem; font-weight: 700; color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
-        .mini-stat .mini-value { font-size: 1.1rem; font-weight: 800; font-family: 'Space Grotesk', 'JetBrains Mono', monospace; color: var(--text); }
-        .mini-stat .mini-sub { font-size: 0.65rem; color: var(--primary); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        /* ============ KELAS SECTION ============ */
-        .kelas-section,
-        .jenjang-section {
-            margin-bottom: 16px; background: var(--glass-bg); backdrop-filter: var(--glass-blur) var(--glass-sat);
-            -webkit-backdrop-filter: var(--glass-blur) var(--glass-sat);
-            border: 1px solid var(--glass-border); border-radius: var(--radius-2xl);
-            padding: 20px; box-shadow: var(--shadow-lg);
+        
+        .stat .value { 
+            font-size: 2.5rem; font-weight: 800; font-family: 'Space Grotesk', monospace; 
+            letter-spacing: -0.03em; color: var(--text); line-height: 1; 
+        }
+        .stat .sub { 
+            color: var(--primary-2); font-size: 0.875rem; font-weight: 600; font-family: 'Manrope', sans-serif;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+            background: var(--surface-soft); padding: 4px 8px; border-radius: 6px; width: fit-content;
         }
 
-        .kelas-row,
-        .jenjang-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            align-items: stretch;
+        /* ==========================================================
+           9. SECTIONS, TABLES & CHARTS (Glassmorphism)
+           ========================================================== */
+        .kelas-section, .jenjang-section, .rekap-section {
+            margin-bottom: 24px; background: var(--surface); backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border); border-radius: var(--radius-3xl);
+            padding: 32px; box-shadow: var(--shadow-float), var(--shadow-inner);
+            animation: fadeUp 0.8s var(--t-spring) 0.4s both;
         }
 
-        .rank-card {
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-            height: 100%;
+        .kelas-row, .jenjang-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: stretch;
         }
+
+        .rank-card { display: flex; flex-direction: column; min-width: 0; height: 100%; gap: 16px; }
 
         .rank-card h4 {
-            font-family: 'Space Grotesk', 'Inter', sans-serif;
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            letter-spacing: -0.01em;
-            flex-shrink: 0;
-            margin-bottom: 6px;
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 700;
+            color: var(--text); display: flex; align-items: center; gap: 12px; letter-spacing: -0.02em;
         }
-        .rank-card h4 i { color: var(--primary); }
-
-        .kelas-table-wrap,
-        .jenjang-table-wrap {
-            flex: 1;
-            min-height: 0;
-            overflow: auto;
-            border-radius: var(--radius-lg);
-            background: var(--surface-solid);
-            border: 1px solid var(--border-soft);
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            flex-direction: column;
-            margin-top: 4px;
+        .rank-card h4 i { 
+            padding: 8px; border-radius: var(--radius-md); background: var(--surface-soft);
+            color: var(--primary); border: 1px solid var(--border); box-shadow: var(--shadow-inner);
         }
 
-        .kelas-table-wrap table,
-        .jenjang-table-wrap table {
-            border-collapse: collapse;
-            width: 100%;
-            min-width: 420px;
-            font-size: 0.8125rem;
-            flex: 1;
+        .kelas-table-wrap, .jenjang-table-wrap {
+            flex: 1; overflow: auto; border-radius: var(--radius-xl);
+            background: var(--surface-solid); border: 1px solid var(--border);
+            box-shadow: var(--shadow-inner); display: flex; flex-direction: column;
         }
+
+        table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 500px; }
 
         thead { position: sticky; top: 0; z-index: 3; }
+        
         th {
-            background: var(--surface-soft); color: var(--muted); font-size: 0.65rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.05em; padding: 12px 14px;
-            border-bottom: 2px solid var(--border); text-align: left; white-space: nowrap;
+            background: var(--surface-soft); color: var(--muted); font-size: 0.75rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.05em; padding: 16px 20px;
+            border-bottom: 1px solid var(--border); text-align: left; white-space: nowrap;
+            backdrop-filter: blur(10px); font-family: 'Manrope', sans-serif;
         }
-        td { padding: 11px 14px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; color: var(--text-soft); font-weight: 500; }
-        tbody tr { transition: all var(--transition-fast); }
-        tbody tr:hover { background: var(--primary-glow); }
+        
+        td { 
+            padding: 16px 20px; border-bottom: 1px solid var(--border-soft); 
+            vertical-align: middle; color: var(--text-soft); font-weight: 500; font-size: 0.9rem;
+            transition: background var(--t-fast);
+        }
+        
+        tbody tr { transition: all var(--t-fast); }
+        tbody tr:hover { background: var(--surface-soft); transform: scale(1.002); }
         tbody tr:last-child td { border-bottom: none; }
-        td:nth-child(1) { font-weight: 700; color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; }
-        td:nth-child(3) { font-weight: 700; font-family: 'Space Grotesk', 'JetBrains Mono', monospace; color: var(--text); }
+        
+        td:nth-child(1) { font-weight: 700; color: var(--muted-2); font-family: 'Space Grotesk', monospace; }
+        td:nth-child(3) { font-weight: 800; font-family: 'Space Grotesk', monospace; color: var(--text); font-size: 1rem; }
 
-        /* Progress bar */
-        .progress-cell {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        tbody tr td[colspan="5"] {
+            padding: 60px 20px !important; text-align: center;
         }
+        tbody tr td[colspan="5"] i {
+            font-size: 3rem !important; color: var(--primary) !important;
+            opacity: 0.5; margin-bottom: 16px !important; display: block;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse { 0% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 0.8; } 100% { transform: scale(1); opacity: 0.5; } }
+
+        .progress-cell { display: flex; align-items: center; gap: 12px; }
         .progress-bar-wrap {
-            flex: 1;
-            height: 6px;
-            background: var(--bg-2);
-            border-radius: 10px;
-            overflow: hidden;
-            min-width: 50px;
+            flex: 1; height: 8px; background: var(--border-soft);
+            border-radius: var(--radius-pill); overflow: hidden; min-width: 80px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
         }
         .progress-bar-fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%; border-radius: var(--radius-pill);
+            transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative; overflow: hidden;
         }
-        .progress-bar-fill.good { background: linear-gradient(90deg, #10b981, #34d399); }
-        .progress-bar-fill.ok { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
-        .progress-bar-fill.bad { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .progress-bar-fill::after {
+            content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: translateX(-100%); animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer { 100% { transform: translateX(100%); } }
+        
+        .progress-bar-fill.good { background: linear-gradient(90deg, #10B981, #34D399); box-shadow: 0 0 10px rgba(16,185,129,0.5); }
+        .progress-bar-fill.ok { background: linear-gradient(90deg, #F59E0B, #FBBF24); box-shadow: 0 0 10px rgba(245,158,11,0.5); }
+        .progress-bar-fill.bad { background: linear-gradient(90deg, #EF4444, #F87171); box-shadow: 0 0 10px rgba(239,68,68,0.5); }
 
-        /* KKM highlight */
-        .below-kkm {
-            background: rgba(239, 68, 68, 0.06) !important;
-        }
-        body.dark .below-kkm {
-            background: rgba(248, 113, 113, 0.08) !important;
-        }
-        .below-kkm td:nth-child(3) {
-            color: var(--danger) !important;
-        }
+        .below-kkm { background: var(--danger-soft) !important; }
+        .below-kkm td:nth-child(3) { color: var(--danger) !important; }
 
         .badge {
-            display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px;
-            border-radius: 999px; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.02em;
+            display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+            border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 700; 
+            letter-spacing: 0.02em; font-family: 'Manrope', sans-serif;
+            box-shadow: var(--shadow-inner);
         }
-        .badge-success { background: var(--success-soft); color: var(--success); }
-        .badge-warning { background: var(--warning-soft); color: var(--warning); }
-        .badge-danger { background: var(--danger-soft); color: var(--danger); }
+        .badge-success { background: var(--success-soft); color: var(--success); border: 1px solid rgba(16,185,129,0.2); }
+        .badge-warning { background: var(--warning-soft); color: var(--warning); border: 1px solid rgba(245,158,11,0.2); }
+        .badge-danger { background: var(--danger-soft); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
 
-        .kelas-chart-wrap,
-        .jenjang-chart-wrap {
-            flex: 1;
-            min-height: 0;
-            background: var(--chart-bg);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-soft);
-            padding: 16px;
-            box-shadow: var(--shadow-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
+        .kelas-chart-wrap, .jenjang-chart-wrap {
+            flex: 1; background: var(--chart-bg); border-radius: var(--radius-xl);
+            border: 1px solid var(--border); padding: 24px;
+            box-shadow: var(--shadow-inner); display: flex; align-items: center; justify-content: center;
+            position: relative; backdrop-filter: blur(20px);
         }
 
-        .kelas-chart-wrap canvas,
-        .jenjang-chart-wrap canvas {
-            max-width: 100%;
-            max-height: 100%;
-            width: 100% !important;
-            height: 100% !important;
-        }
+        .export-row { margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap; }
 
-        .export-row {
-            margin-top: 12px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+        /* ==========================================================
+           10. TABS & REKAP
+           ========================================================== */
+        .jenjang-tabs { 
+            display: flex; gap: 8px; padding: 4px; background: var(--surface-soft);
+            border-radius: var(--radius-xl); margin-bottom: 24px; flex-wrap: wrap; 
+            border: 1px solid var(--border); box-shadow: var(--shadow-inner); width: fit-content;
         }
-
-        /* ============ JENJANG TABS ============ */
-        .jenjang-tabs { display: flex; gap: 5px; padding: 4px 6px 0; flex-wrap: wrap; border-bottom: 2px solid var(--border-soft); margin-bottom: 16px; }
+        
         .jenjang-tab {
-            padding: 8px 18px; border-radius: var(--radius-md) var(--radius-md) 0 0;
-            background: transparent; color: var(--muted); font-weight: 600; font-size: 0.8125rem;
-            cursor: pointer; transition: all var(--transition-bounce); border: none;
-            font-family: 'Inter', sans-serif; position: relative; letter-spacing: 0.01em;
+            padding: 10px 24px; border-radius: var(--radius-lg); background: transparent; 
+            color: var(--muted); font-weight: 600; font-size: 0.875rem; cursor: pointer; 
+            transition: all var(--t-spring); border: none; font-family: 'Manrope', sans-serif;
         }
-        .jenjang-tab:hover { color: var(--text); background: var(--surface-soft); }
-        .jenjang-tab.active { color: var(--primary); background: var(--surface-soft); font-weight: 700; }
-        .jenjang-tab.active::after {
-            content: ''; position: absolute; bottom: -2px; left: 15%; width: 70%; height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            border-radius: 3px 3px 0 0; animation: tabIndicatorIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        .jenjang-tab:hover { color: var(--text); }
+        .jenjang-tab.active { 
+            color: var(--primary); background: var(--surface-solid); font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
         }
-        @keyframes tabIndicatorIn { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-        .jenjang-content { min-height: 180px; }
+
         .jenjang-pane { display: none; }
-        .jenjang-pane.active { display: block; animation: fadeSlideIn 0.4s ease; }
-        @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .jenjang-pane.active { display: block; animation: fadeUp 0.4s var(--t-spring); }
 
-        /* ============ REKAP SECTION ============ */
-        .rekap-section {
-            margin-bottom: 16px;
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur) var(--glass-sat);
-            -webkit-backdrop-filter: var(--glass-blur) var(--glass-sat);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-2xl);
-            padding: 20px;
-            box-shadow: var(--shadow-lg);
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .rekap-title {
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 800;
+            color: var(--text); display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+        }
+        .rekap-title i { 
+            padding: 10px; border-radius: var(--radius-lg); background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: #fff; box-shadow: 0 4px 15px var(--primary-glow);
         }
 
-        .rekap-section .rekap-title {
-            font-family: 'Space Grotesk', 'Inter', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-        .rekap-section .rekap-title i { color: var(--primary); }
-
-        .rekap-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-            gap: 14px;
-        }
+        .rekap-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 24px; }
 
         .rekap-card {
-            background: var(--surface-solid);
-            border: 1px solid var(--border-soft);
-            border-radius: var(--radius-xl);
-            padding: 16px;
-            box-shadow: var(--shadow-card);
-            transition: all var(--transition-smooth);
+            background: var(--surface-solid); border: 1px solid var(--border);
+            border-radius: var(--radius-2xl); padding: 24px; box-shadow: var(--shadow-inner);
+            transition: all var(--t-spring); position: relative; overflow: hidden;
+            cursor: pointer;
         }
-        .rekap-card:hover {
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary-2);
+        .rekap-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: var(--shadow-hover); 
+            border-color: var(--primary); 
+            background: var(--surface);
         }
-        .rekap-card .rekap-card-title {
-            font-family: 'Space Grotesk', 'Inter', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
+        .rekap-card:active { transform: scale(0.98); }
+        
+        .rekap-card-title {
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700;
+            color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
         }
-        .rekap-card .rekap-card-title i { color: var(--primary); }
-        .rekap-card .rekap-card-title .chip-sm {
-            font-size: 0.65rem;
-            padding: 2px 8px;
-            border-radius: 999px;
-            background: var(--primary-glow);
-            color: var(--primary);
-            font-weight: 600;
+        .rekap-card-title i { color: var(--primary); }
+        .rekap-card-title .chip-sm {
+            font-size: 0.7rem; padding: 4px 10px; border-radius: var(--radius-pill);
+            background: var(--primary-glow); color: var(--primary); font-weight: 700; font-family: 'Manrope', sans-serif;
         }
 
-        .rekap-info-row {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
+        .rekap-info-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
         .rekap-info-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.68rem;
-            color: var(--muted);
-            background: var(--surface-soft);
-            padding: 4px 10px;
-            border-radius: 999px;
-            font-weight: 500;
+            display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-soft);
+            background: var(--surface-soft); padding: 6px 12px; border-radius: var(--radius-pill); font-weight: 600; border: 1px solid var(--border-soft);
         }
-        .rekap-info-chip i { font-size: 0.6rem; color: var(--primary); }
+        .rekap-info-chip i { color: var(--primary); }
 
-        .rekap-minmax {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
+        .rekap-minmax { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .rekap-mm-card {
-            background: var(--surface-soft);
-            border: 1px solid var(--border-soft);
-            border-radius: var(--radius-md);
-            padding: 10px 12px;
-            text-align: center;
-            transition: all var(--transition-fast);
+            background: var(--surface-soft); border: 1px solid var(--border);
+            border-radius: var(--radius-xl); padding: 16px; text-align: center;
+            transition: all var(--t-fast);
         }
-        .rekap-mm-card:hover { border-color: var(--primary-2); }
-        .rekap-mm-card .mm-label {
-            font-size: 0.6rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
+        .rekap-mm-card:hover { border-color: var(--primary); background: var(--surface); }
+        .mm-label {
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+            margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: 'Manrope', sans-serif;
         }
-        .rekap-mm-card .mm-label.trend-up { color: var(--success); }
-        .rekap-mm-card .mm-label.trend-down { color: var(--danger); }
-        .rekap-mm-card .mm-value {
-            font-size: 1.5rem;
-            font-weight: 800;
-            font-family: 'Space Grotesk', 'JetBrains Mono', monospace;
-            color: var(--text);
-            line-height: 1.1;
-        }
-        .rekap-mm-card .mm-subject {
-            font-size: 0.7rem;
-            font-weight: 500;
-            color: var(--muted);
-            margin-top: 2px;
-            font-family: 'Amiri', 'Traditional Arabic', serif;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        .mm-label.trend-up { color: var(--success); }
+        .mm-label.trend-down { color: var(--danger); }
+        .mm-value { font-size: 2rem; font-weight: 800; font-family: 'Space Grotesk', monospace; color: var(--text); line-height: 1; }
+        .mm-subject { font-size: 0.85rem; font-weight: 600; color: var(--text-soft); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* ============ THEME TOGGLE ============ */
-        .theme-toggle { display: flex; gap: 3px; background: var(--surface-soft); border-radius: var(--radius-md); padding: 3px; border: 1px solid var(--border-soft); }
-        .theme-btn { width: 32px; height: 32px; border-radius: 8px; border: none; background: transparent; cursor: pointer; color: var(--muted); font-size: 0.9rem; transition: all var(--transition-bounce); display: flex; align-items: center; justify-content: center; }
-        .theme-btn:hover { color: var(--text); background: var(--surface-solid); box-shadow: var(--shadow-sm); }
-        .theme-btn.active-theme { background: var(--surface-solid); color: var(--primary); box-shadow: var(--shadow-sm); }
-
-        /* ============ FOOTER ============ */
-        .footer-note { text-align: center; color: var(--muted-2); font-size: 0.7rem; padding: 8px 4px 0; display: flex; gap: 6px; align-items: center; justify-content: center; letter-spacing: 0.02em; }
-        .footer-note i { color: var(--primary); }
-
-        /* ============ PDF EXPORT CONTAINER (hidden) ============ */
-        #pdf-export-container {
-            position: absolute; left: -9999px; top: 0; width: 800px;
-            background: #ffffff; padding: 20px; font-family: 'Amiri', 'Inter', 'Arial', sans-serif;
+        .mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+        .mini-stat {
+            background: var(--surface-solid); border: 1px solid var(--border);
+            border-radius: var(--radius-xl); padding: 16px; text-align: center;
+            transition: all var(--t-spring); box-shadow: var(--shadow-inner);
         }
-        #pdf-export-container .pdf-title { font-size: 18px; font-weight: 700; color: #1e293b; text-align: center; margin-bottom: 4px; font-family: 'Inter', 'Arial', sans-serif; }
-        #pdf-export-container .pdf-subtitle { font-size: 11px; color: #64748b; text-align: center; margin-bottom: 10px; font-family: 'Inter', 'Arial', sans-serif; }
-        #pdf-export-container .pdf-stats { text-align: center; font-size: 10px; color: #475569; margin-bottom: 10px; font-family: 'Inter', 'Arial', sans-serif; }
-        #pdf-export-container table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        #pdf-export-container th { background: #f1f5f9; color: #64748b; font-size: 9px; font-weight: 700; text-transform: uppercase; padding: 8px 10px; border-bottom: 2px solid #cbd5e1; text-align: left; font-family: 'Inter', 'Arial', sans-serif; }
-        #pdf-export-container td { padding: 7px 10px; border-bottom: 1px solid #e2e8f0; color: #334155; }
-        #pdf-export-container td:first-child { font-family: 'JetBrains Mono', monospace; color: #64748b; }
-        #pdf-export-container td:nth-child(3) { font-weight: 700; }
-        #pdf-export-container .pdf-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 9px; font-weight: 600; }
-        #pdf-export-container .pdf-badge-good { background: #d1fae5; color: #10b981; }
-        #pdf-export-container .pdf-badge-ok { background: #fef3c7; color: #f59e0b; }
-        #pdf-export-container .pdf-badge-bad { background: #fee2e2; color: #ef4444; }
+        .mini-stat:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); border-color: var(--primary); }
+        .mini-stat .mini-label { font-size: 0.7rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; font-family: 'Manrope', sans-serif; }
+        .mini-stat .mini-value { font-size: 1.5rem; font-weight: 800; font-family: 'Space Grotesk', monospace; color: var(--text); line-height: 1.2; }
+        .mini-stat .mini-sub { font-size: 0.8rem; color: var(--primary); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: var(--primary-glow); padding: 2px 8px; border-radius: 4px; width: fit-content; margin: 0 auto;}
 
-        /* ============ SCROLLBAR ============ */
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; border-radius: 10px; }
+        .footer-note { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 24px 0; display: flex; gap: 8px; align-items: center; justify-content: center; font-weight: 500; font-family: 'Manrope', sans-serif;}
+        .footer-note i { color: var(--primary); font-size: 1rem; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--muted-2); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
-        /* ============ RESPONSIVE ============ */
+        #pdf-export-container { position: absolute; left: -9999px; top: 0; width: 800px; background: #ffffff; padding: 20px; font-family: 'Inter', sans-serif; }
+
         @media (max-width: 1400px) {
             .hero-grid { grid-template-columns: 1fr; }
             .stats { grid-template-columns: repeat(2, 1fr); }
+            .kelas-row, .jenjang-row { grid-template-columns: 1fr; }
         }
-        @media (max-width: 768px) {
-            .dashboard { padding: 10px 8px 24px; }
-            .topbar { padding: 12px 14px; border-radius: var(--radius-xl); top: 6px; }
-            .topbar-wrap { gap: 8px; }
-            .brand h1 { font-size: 1rem; }
-            .headline h2 { font-size: 1.2rem; }
-            .stats { grid-template-columns: 1fr; gap: 8px; }
-            .stat { padding: 14px 16px; }
-            .hero { padding: 16px; border-radius: var(--radius-xl); }
-            .kelas-section,
-            .jenjang-section,
-            .rekap-section { padding: 14px; border-radius: var(--radius-xl); }
-            th, td { padding: 8px 10px; font-size: 0.72rem; }
-            .chip { max-width: 180px; }
-            .jenjang-tab { padding: 6px 12px; font-size: 0.72rem; }
-            .btn { padding: 6px 12px; font-size: 0.72rem; }
-            .kelas-chart-wrap,
-            .jenjang-chart-wrap { min-height: 280px; padding: 12px; }
-            .kelas-chart-wrap canvas,
-            .jenjang-chart-wrap canvas { max-height: 340px !important; }
-            .mini-stats { grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
-            .kelas-row,
-            .jenjang-row { grid-template-columns: 1fr; }
+        @media (max-width: 900px) {
+            .saas-main { padding: 16px 16px 60px; }
+            .saas-search { display: none; }
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 24px; }
+            .headline h2 { font-size: 1.8rem; }
+            .stats { grid-template-columns: 1fr; }
             .rekap-grid { grid-template-columns: 1fr; }
-            .progress-bar-wrap { min-width: 35px; }
-        }
-        @media (max-width: 480px) {
-            .top-actions { flex-wrap: wrap; gap: 5px; }
-            .btn { width: 100%; justify-content: center; }
-            .theme-toggle { width: 100%; justify-content: center; }
-            .chip { max-width: 100%; width: 100%; justify-content: center; }
-            .sheet-bar { flex-direction: column; align-items: stretch; }
-            .select-control { width: 100%; }
-            .kelas-chart-wrap,
-            .jenjang-chart-wrap { min-height: 250px; padding: 8px; }
-            .kelas-chart-wrap canvas,
-            .jenjang-chart-wrap canvas { max-height: 280px !important; }
-            .mini-stats { grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-            .rekap-minmax { grid-template-columns: 1fr 1fr; }
+            .mini-stats { grid-template-columns: 1fr; }
+            .top-actions { flex-direction: column; align-items: stretch; width: 100%; }
+            .btn { width: 100%; }
+            .kkm-group { justify-content: center; }
+            .kelas-section, .jenjang-section, .rekap-section { padding: 20px; }
+            .quartal-bar, .sheet-bar { padding: 16px; flex-direction: column; align-items: stretch; }
+            .quartal-toggle { display: flex; flex-direction: column; }
         }
     </style>
 </head>
-<body>
-    <div class="dashboard">
-        <div class="topbar">
-            <div class="topbar-wrap">
-                <div class="brand">
-                    <h1><i class="fa-solid fa-graduation-cap"></i> Dashboard Akademik 2026</h1>
-                    <p>Analisis rata-rata nilai mapel · MTs & MI Diniyah "Miftahul Ulum" Putri · 1446-1447 H</p>
-                </div>
-                <div class="top-actions">
-                    <label for="file-input" class="btn btn-primary">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload Excel
-                    </label>
-                    <input type="file" id="file-input" accept=".xlsx, .xls, .csv" />
-                    <button id="clearDataBtn" class="btn btn-sm" style="background:var(--danger-soft);color:var(--danger);border:1px solid var(--danger);" title="Hapus data yang tersimpan di browser ini">
-                        <i class="fa-solid fa-trash"></i> Hapus Data
-                    </button>
-                    <span id="file-status" class="chip">
-                        <i class="fa-regular fa-file-lines"></i> Belum ada file
-                    </span>
-                    <div class="theme-toggle">
-                        <button id="lightModeBtn" class="theme-btn active-theme" title="Mode Terang">
-                            <i class="fa-regular fa-sun"></i>
-                        </button>
-                        <button id="darkModeBtn" class="theme-btn" title="Mode Gelap">
-                            <i class="fa-regular fa-moon"></i>
-                        </button>
+<body class="dark">
+    <div class="ambient-bg">
+        <div class="ambient-orb"></div>
+        <div class="ambient-orb"></div>
+        <div class="ambient-orb"></div>
+        <div class="noise-overlay"></div>
+    </div>
+
+    <div class="app-layout">
+        <main class="saas-main">
+            <div class="dashboard">
+                
+                <div class="topbar">
+                    <div class="topbar-wrap">
+                        <div class="brand">
+                            <h1><i class="fa-solid fa-graduation-cap"></i> Data Nexus</h1>
+                            <p>Akademik MTs & MI Diniyah "Miftahul Ulum"</p>
+                        </div>
+                        
+                        <div class="saas-search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Search analytics or press CMD+K..." readonly>
+                            <div class="shortcut">⌘ K</div>
+                        </div>
+
+                        <div class="top-actions">
+                            <label for="file-input" class="btn btn-primary" style="display:none;">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Upload Excel
+                            </label>
+                            <input type="file" id="file-input" accept=".xlsx, .xls, .csv" />
+                            
+                            <div class="kkm-group">
+                                <label for="kkmInput">KKM</label>
+                                <input type="number" id="kkmInput" value="5.0" min="0" max="10" step="0.1" title="Kriteria Ketuntasan Minimal">
+                                <button id="resetKkmBtn" class="btn-kkm-reset" title="Reset ke 5.0"><i class="fa-solid fa-rotate-left"></i></button>
+                            </div>
+                            
+                            <button id="clearDataBtn" class="btn btn-sm" style="background:var(--danger-soft);color:var(--danger);" title="Hapus data">
+                                <i class="fa-solid fa-trash"></i> Reset
+                            </button>
+                            
+                            <div class="theme-toggle">
+                                <button id="lightModeBtn" class="theme-btn" title="Mode Terang"><i class="fa-regular fa-sun"></i></button>
+                                <button id="darkModeBtn" class="theme-btn active-theme" title="Mode Gelap"><i class="fa-regular fa-moon"></i></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="hero">
-            <div class="hero-grid">
-                <div class="headline">
-                    <span class="kicker"><i class="fa-solid fa-bolt"></i> Realtime Insight</span>
-                    <h2>Analisis Rata-rata Nilai per Mata Pelajaran</h2>
-                    <p>Upload file Excel · Export PDF & CSV · Progress bar visual</p>
-                </div>
-                <div class="hero-meta">
-                    <div class="meta-card">
-                        <div class="meta-title"><i class="fa-solid fa-database"></i> Status</div>
-                        <div class="meta-value" id="meta-data-status">Menunggu</div>
-                    </div>
-                    <div class="meta-card">
-                        <div class="meta-title"><i class="fa-regular fa-clone"></i> Sheet Aktif</div>
-                        <div class="meta-value" id="meta-sheet">-</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="quartal-bar" id="quartal-bar">
-            <span class="meta-title"><i class="fa-solid fa-calendar-days"></i> Periode Ujian</span>
-            <div class="quartal-toggle" id="quartalTabs">
-                <button class="quartal-btn active-quartal" data-q="Kuartal_I">Kuartal I</button>
-                <button class="quartal-btn" data-q="Kuartal_II">Kuartal II</button>
-                <button class="quartal-btn" data-q="Kuartal_III">Kuartal III</button>
-            </div>
-            <span class="chip" id="quartal-status"><i class="fa-solid fa-circle-info"></i> Upload akan tersimpan sebagai Kuartal I</span>
-        </div>
-
-        <div class="sheet-bar" id="sheet-selector-area">
-            <span class="meta-title"><i class="fa-solid fa-layer-group"></i> Pilih Kelas</span>
-            <select id="sheet-select" class="select-control"></select>
-            <span class="chip"><i class="fa-solid fa-wand-magic-sparkles"></i> Otomatis</span>
-        </div>
-
-        <div class="stats">
-            <div class="stat"><div class="label"><i class="fa-solid fa-book-open"></i> Total Mapel</div><div class="value" id="total-mapel">0</div><div class="sub">Mapel terdeteksi</div></div>
-            <div class="stat"><div class="label"><i class="fa-solid fa-trophy"></i> Tertinggi</div><div class="value" id="max-avg">-</div><div class="sub" id="max-mapel">-</div></div>
-            <div class="stat"><div class="label"><i class="fa-solid fa-arrow-trend-down"></i> Terendah</div><div class="value" id="min-avg">-</div><div class="sub" id="min-mapel">-</div></div>
-            <div class="stat"><div class="label"><i class="fa-solid fa-bullseye"></i> Keseluruhan</div><div class="value" id="overall-avg">-</div><div class="sub">Rerata mapel</div></div>
-        </div>
-
-        <div class="kelas-section" id="kelasSection">
-            <div class="kelas-row" id="kelasRow">
-                <div class="rank-card">
-                    <h4><i class="fa-solid fa-table-list"></i> <span id="kelasTableTitle">Tabel Rata-rata</span></h4>
-                    <div class="kelas-table-wrap">
-                        <table id="avg-table">
-                            <thead><tr><th>#</th><th>Mata Pelajaran</th><th>Rata-rata</th><th>Progress</th><th>Status</th></tr></thead>
-                            <tbody id="table-body">
-                                <tr><td colspan="5" style="text-align:center;padding:28px;">
-                                    <i class="fa-solid fa-file-arrow-up" style="font-size:1.3rem;color:var(--muted-2);display:block;margin-bottom:6px;"></i>
-                                    Silakan upload file Excel
-                                </td></tr>
-                            </tbody>
-                        </table>
+                <div class="hero">
+                    <div class="hero-grid">
+                        <div class="headline">
+                            <span class="kicker"><i class="fa-solid fa-sparkles"></i> AI Powered Insight 2026</span>
+                            <h2>Analisis Performa<br>Akademik.</h2>
+                            <p>Visualisasi canggih dari data Excel Anda. Dapatkan insight nilai rata-rata, tren, dan pencapaian siswa secara real-time.</p>
+                            
+                            <div class="hero-meta">
+                                <div class="meta-card">
+                                    <div class="meta-title"><i class="fa-solid fa-signal"></i> System Status</div>
+                                    <div class="meta-value" id="meta-data-status">Menunggu Data</div>
+                                </div>
+                                <div class="meta-card">
+                                    <div class="meta-title"><i class="fa-solid fa-layer-group"></i> Active Dataset</div>
+                                    <div class="meta-value" id="meta-sheet">-</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <label for="file-input" style="text-decoration: none;">
+                            <div class="drag-drop-zone">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <h3>Upload Data Excel</h3>
+                                <p>Drag & drop file .xlsx, .xls, .csv ke area ini, atau klik untuk browse file lokal Anda.</p>
+                                <span id="file-status" class="chip" style="margin-top: 16px; background: var(--surface-solid);">
+                                    <i class="fa-regular fa-file-lines"></i> Belum ada file
+                                </span>
+                            </div>
+                        </label>
                     </div>
                 </div>
-                <div class="rank-card">
-                    <h4><i class="fa-solid fa-chart-bar"></i> Diagram Batang</h4>
-                    <div class="kelas-chart-wrap"><canvas id="avgChart"></canvas></div>
+
+                <div class="quartal-bar" id="quartal-bar">
+                    <span class="meta-title" style="margin:0;"><i class="fa-solid fa-calendar-days"></i> Timeline</span>
+                    <div class="quartal-toggle" id="quartalTabs">
+                        <button class="quartal-btn active-quartal" data-q="Kuartal_I">Kuartal I</button>
+                        <button class="quartal-btn" data-q="Kuartal_II">Kuartal II</button>
+                        <button class="quartal-btn" data-q="Kuartal_III">Kuartal III</button>
+                    </div>
+                    <span class="chip" id="quartal-status" style="margin-left: auto;"><i class="fa-solid fa-circle-info"></i> Upload akan tersimpan sebagai Kuartal I</span>
+                </div>
+
+                <div class="sheet-bar" id="sheet-selector-area">
+                    <span class="meta-title" style="margin:0;"><i class="fa-solid fa-filter"></i> Filter Kelas</span>
+                    <select id="sheet-select" class="select-control"></select>
+                    <span class="chip" style="margin-left: auto; border:none; background:transparent;"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--primary);"></i> Auto-detected</span>
+                </div>
+
+                <div class="stats">
+                    <div class="stat"><div class="label"><i class="fa-solid fa-book-open"></i> Total Mapel</div><div class="value" id="total-mapel">0</div><div class="sub">Terdeteksi di sistem</div></div>
+                    <div class="stat"><div class="label"><i class="fa-solid fa-trophy"></i> Tertinggi</div><div class="value" id="max-avg">-</div><div class="sub" id="max-mapel">-</div></div>
+                    <div class="stat"><div class="label"><i class="fa-solid fa-arrow-trend-down"></i> Terendah</div><div class="value" id="min-avg">-</div><div class="sub" id="min-mapel">-</div></div>
+                    <div class="stat"><div class="label"><i class="fa-solid fa-bullseye"></i> Keseluruhan</div><div class="value" id="overall-avg">-</div><div class="sub">Rerata seluruh mapel</div></div>
+                </div>
+
+                <div class="kelas-section" id="kelasSection">
+                    <div class="kelas-row" id="kelasRow">
+                        <div class="rank-card">
+                            <h4><i class="fa-solid fa-table-cells-large"></i> <span id="kelasTableTitle">Tabel Analisis</span></h4>
+                            <div class="kelas-table-wrap">
+                                <table id="avg-table">
+                                    <thead><tr><th>#</th><th>Mata Pelajaran</th><th>Skor</th><th>Status Akademik</th></tr></thead>
+                                    <tbody id="table-body">
+                                        <tr><td colspan="4">
+                                            <i class="fa-solid fa-inbox"></i>
+                                            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);">Belum ada data</div>
+                                            <div style="font-size:0.85rem;color:var(--muted);margin-top:4px;">Silakan upload file Excel untuk memulai analisis.</div>
+                                        </td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="export-row">
+                                <button id="exportPDFBtn" class="btn btn-pdf"><i class="fa-solid fa-file-pdf"></i> Export Laporan (PDF)</button>
+                                <button id="exportCSVBtn" class="btn btn-csv"><i class="fa-solid fa-file-csv"></i> Data Mentah (CSV)</button>
+                            </div>
+                        </div>
+                        <div class="rank-card">
+                            <h4><i class="fa-solid fa-chart-simple"></i> Visualisasi Data</h4>
+                            <div class="kelas-chart-wrap"><canvas id="avgChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="jenjang-section" id="jenjangSection">
+                    <div class="jenjang-tabs" id="jenjangTabs">
+                        <span class="chip" style="background:transparent;border:none;box-shadow:none;">
+                            <i class="fa-regular fa-folder-open"></i> Menunggu data komparatif...
+                        </span>
+                    </div>
+                    <div class="jenjang-content" id="jenjangContent"></div>
+                </div>
+
+                <div class="rekap-section" id="rekapSection" style="display:none;">
+                    <div class="rekap-title"><i class="fa-solid fa-ranking-star"></i> Executive Summary</div>
+                    <div class="rekap-grid" id="rekapGrid"></div>
+                </div>
+
+                <div class="footer-note">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Engineered for Data Privacy · 2026 Premium SaaS Architecture · Local Storage Encrypted
                 </div>
             </div>
-            <div class="export-row">
-                <button id="exportPDFBtn" class="btn btn-pdf btn-sm"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
-                <button id="exportCSVBtn" class="btn btn-csv btn-sm"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
-            </div>
-        </div>
-
-        <div class="jenjang-section" id="jenjangSection">
-            <div class="jenjang-tabs" id="jenjangTabs">
-                <span class="chip" style="margin:4px 0;background:transparent;border:none;box-shadow:none;">
-                    <i class="fa-regular fa-folder-open"></i> Menunggu data...
-                </span>
-            </div>
-            <div class="jenjang-content" id="jenjangContent"></div>
-        </div>
-
-        <div class="rekap-section" id="rekapSection" style="display:none;">
-            <div class="rekap-title"><i class="fa-solid fa-ranking-star"></i> Rekap Nilai Terendah & Tertinggi — Semua Kelas</div>
-            <div class="rekap-grid" id="rekapGrid"></div>
-        </div>
-
-        <div class="footer-note">
-            <i class="fa-solid fa-circle-check"></i>
-            Export PDF & CSV · Progress bar visual · Highlight KKM · Dark/Light mode
-        </div>
+        </main>
     </div>
 
     <div id="pdf-export-container"></div>
@@ -834,7 +946,8 @@
         let currentStudentCount = 0;
         let chartInstance = null;
         let chartConfig = null;
-        const KKM = 5.0;
+        let KKM = 5.0;
+        const DEFAULT_KKM = 5.0;
 
         let jenjangChartInstances = {};
         let groupedData = {};
@@ -870,10 +983,10 @@
         const pdfContainer = document.getElementById('pdf-export-container');
         const rekapSection = document.getElementById('rekapSection');
         const rekapGrid = document.getElementById('rekapGrid');
+        const kkmInput = document.getElementById('kkmInput');
+        const resetKkmBtn = document.getElementById('resetKkmBtn');
+        const kelasSection = document.getElementById('kelasSection');
 
-        // ============================================================
-        //  UI STATE HELPERS
-        // ============================================================
         function getUIState() {
             try {
                 return JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'ui_state')) || {};
@@ -888,14 +1001,12 @@
             const state = {
                 quartal: currentQuartal,
                 sheet: currentSheetName,
-                jenjangTab: jenjangVal
+                jenjangTab: jenjangVal,
+                kkm: KKM
             };
             localStorage.setItem(STORAGE_PREFIX + 'ui_state', JSON.stringify(state));
         }
 
-        // ============================================================
-        //  THEME COLORS
-        // ============================================================
         function getThemeColors() {
             const dark = document.body.classList.contains('dark');
             return {
@@ -907,9 +1018,6 @@
             };
         }
 
-        // ============================================================
-        //  LOCAL STORAGE HELPERS
-        // ============================================================
         function saveToLocalStorage() {
             const data = { groupedData, allSheetsData, originalSheetNames };
             try {
@@ -934,9 +1042,6 @@
             localStorage.removeItem(STORAGE_PREFIX + quartal);
         }
 
-        // ============================================================
-        //  UTILS
-        // ============================================================
         function detectHeaderAndData(worksheet) {
             const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1:Z1000');
             const rows = [];
@@ -1063,7 +1168,7 @@
 
         function getProgressBarClass(avg) {
             if (avg >= 7.5) return 'good';
-            if (avg >= 5) return 'ok';
+            if (avg >= KKM) return 'ok';
             return 'bad';
         }
 
@@ -1078,27 +1183,24 @@
 
         function getStatusBadge(avg) {
             if (avg >= 7.5) return '<span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> Baik</span>';
-            if (avg >= 5) return '<span class="badge badge-warning"><i class="fa-solid fa-exclamation-triangle"></i> Cukup</span>';
+            if (avg >= KKM) return '<span class="badge badge-warning"><i class="fa-solid fa-exclamation-triangle"></i> Cukup</span>';
             return '<span class="badge badge-danger"><i class="fa-solid fa-circle-exclamation"></i> Perlu Bimbingan</span>';
         }
 
         function getStatusText(avg) {
             if (avg >= 7.5) return "Baik";
-            if (avg >= 5) return "Cukup";
+            if (avg >= KKM) return "Cukup";
             return "Perlu Bimbingan";
         }
 
         function getPDFBadgeClass(avg) {
             if (avg >= 7.5) return 'pdf-badge-good';
-            if (avg >= 5) return 'pdf-badge-ok';
+            if (avg >= KKM) return 'pdf-badge-ok';
             return 'pdf-badge-bad';
         }
 
         function isBelowKKM(avg) { return avg < KKM && avg > 0; }
 
-        // ============================================================
-        //  BUILD CHART CONFIG
-        // ============================================================
         function buildChartConfig(subjects, averages, themeColors, extraOpts = {}) {
             const isExport = extraOpts.isExport || false;
             return {
@@ -1108,14 +1210,14 @@
                     datasets: [{
                         label: 'Rata-rata Nilai',
                         data: averages,
-                        backgroundColor: averages.map(a => a >= 7.5 ? '#10b981' : (a >= 5 ? '#f59e0b' : '#ef4444')),
-                        borderColor: averages.map(a => a >= 7.5 ? '#059669' : (a >= 5 ? '#d97706' : '#dc2626')),
+                        backgroundColor: averages.map(a => a >= 7.5 ? '#10b981' : (a >= KKM ? '#f59e0b' : '#ef4444')),
+                        borderColor: averages.map(a => a >= 7.5 ? '#059669' : (a >= KKM ? '#d97706' : '#dc2626')),
                         borderWidth: isExport ? 2 : 1.5,
                         borderRadius: isExport ? 10 : 6,
                         borderSkipped: false,
                         maxBarThickness: isExport ? 65 : 45,
                     }, {
-                        label: 'Batas KKM (5.0)',
+                        label: `Batas KKM (${KKM.toFixed(1)})`,
                         data: new Array(averages.length).fill(KKM),
                         type: 'line',
                         borderColor: '#ef4444',
@@ -1161,9 +1263,6 @@
             };
         }
 
-        // ============================================================
-        //  EXPORT PDF
-        // ============================================================
         async function exportPDF(subjects, averages, title) {
             if (!subjects.length) { alert("Tidak ada data untuk diekspor."); return; }
 
@@ -1187,7 +1286,7 @@
             pdfContainer.innerHTML = `
                 <div class="pdf-title">Laporan Rata-rata Nilai — ${title}</div>
                 <div class="pdf-subtitle">Madrasah Diniyah "Miftahul Ulum" Putri · Tahun 1446-1447 H · ${new Date().toLocaleDateString('id-ID')}</div>
-                <div class="pdf-stats">Total Mapel: ${sorted.subjects.length} &nbsp;|&nbsp; Tertinggi: ${maxVal.toFixed(2)} &nbsp;|&nbsp; Terendah: ${minVal.toFixed(2)} &nbsp;|&nbsp; Rerata: ${overall}</div>
+                <div class="pdf-stats">Total Mapel: ${sorted.subjects.length} &nbsp;|&nbsp; Tertinggi: ${maxVal.toFixed(2)} &nbsp;|&nbsp; Terendah: ${minVal.toFixed(2)} &nbsp;|&nbsp; Rerata: ${overall} &nbsp;|&nbsp; KKM: ${KKM.toFixed(1)}</div>
                 <table>
                     <thead><tr><th>#</th><th>Mata Pelajaran</th><th>Rata2</th><th>Status</th></tr></thead>
                     <tbody>${tableRows}</tbody>
@@ -1246,9 +1345,6 @@
             doc.save(`Laporan_${safe}.pdf`);
         }
 
-        // ============================================================
-        //  EXPORT CSV
-        // ============================================================
         function exportCSV(subjects, averages, title) {
             if (!subjects.length) { alert("Tidak ada data."); return; }
             const sorted = sortSubjectsByAverageDesc(subjects, averages);
@@ -1264,9 +1360,6 @@
             a.click(); URL.revokeObjectURL(url);
         }
 
-        // ============================================================
-        //  RENDER JENJANG CHART
-        // ============================================================
         function renderJenjangChart(canvasId, subjects, averages, key) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return;
@@ -1302,14 +1395,40 @@
                 </div>`;
         }
 
-        // ============================================================
-        //  RENDER REKAP (PERBAIKAN BUG)
-        // ============================================================
-        function renderRekapSection() {
-            // BUG FIX: Sekarang baca dari allSheetsData yang udah di-cache di localStorage,
-            // bukan lagi dari file mentah Excel (workbookData) yang kehapus pas di-refresh.
-            const sheetKeys = Object.keys(allSheetsData);
+        function filterBySheet(sheetName) {
+            sheetSelect.value = sheetName;
             
+            if (allSheetsData[sheetName]?.subjects?.length) {
+                const d = allSheetsData[sheetName];
+                currentSubjectNames = d.subjects;
+                currentAverages = d.averages;
+                currentStudentCount = d.studentCount || 0;
+                currentSheetName = sheetName;
+                renderDashboard(currentSubjectNames, currentAverages, sheetName, currentStudentCount);
+                metaSheet.innerText = sheetName;
+            } else {
+                for (const [key, data] of Object.entries(groupedData)) {
+                    if (key.includes(sheetName) || sheetName.includes(key)) {
+                        if (data.subjects && data.subjects.length) {
+                            currentSubjectNames = data.subjects;
+                            currentAverages = data.averages;
+                            currentStudentCount = data.studentCount || 0;
+                            currentSheetName = key;
+                            renderDashboard(currentSubjectNames, currentAverages, key.replace('_', ' '), currentStudentCount);
+                            metaSheet.innerText = key.replace('_', ' ');
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            saveUIState();
+            
+            kelasSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function renderRekapSection() {
+            const sheetKeys = Object.keys(allSheetsData);
             if (!sheetKeys.length) {
                 rekapSection.style.display = 'none';
                 return;
@@ -1319,71 +1438,82 @@
 
             for (const name of sheetKeys) {
                 const data = allSheetsData[name];
-                
                 if (!data || !data.subjects || !data.subjects.length) continue;
-                
+
+                const scores = data.scores;
+                let totalStudents = data.studentCount || 0;
+                let tuntas = 0, tidakTuntas = 0;
+                let persentaseTuntas = 0;
+
+                if (scores && scores.length) {
+                    const studentAverages = scores.map(student => {
+                        let sum = 0, count = 0;
+                        for (let val of student) {
+                            if (typeof val === 'number' && !isNaN(val)) { sum += val; count++; }
+                        }
+                        return count > 0 ? sum / count : 0;
+                    });
+                    totalStudents = studentAverages.length;
+                    tuntas = studentAverages.filter(avg => avg >= KKM).length;
+                    tidakTuntas = totalStudents - tuntas;
+                    persentaseTuntas = totalStudents > 0 ? (tuntas / totalStudents) * 100 : 0;
+                }
+
                 const avgs = data.averages;
-                const subjects = data.subjects;
-                
-                const maxVal = Math.max(...avgs);
-                const minVal = Math.min(...avgs);
-                const maxIdx = avgs.indexOf(maxVal);
-                const minIdx = avgs.indexOf(minVal);
-                const overall = (avgs.reduce((a, b) => a + b, 0) / avgs.length).toFixed(2);
-                const belowCount = avgs.filter(a => isBelowKKM(a)).length;
-
-                let isMid = 0;
-                if (/MTSD/i.test(name)) { isMid = 1; }
-                else if (/MID/i.test(name)) { isMid = 0; }
-                else { isMid = 2; }
-
-                const numMatch = name.match(/\d+/);
-                const kelasNum = numMatch ? parseInt(numMatch[0]) : 0;
+                const overall = avgs.length ? (avgs.reduce((a,b) => a+b,0) / avgs.length).toFixed(2) : '-';
 
                 rekapEntries.push({
                     label: name,
-                    maxVal, maxSubject: subjects[maxIdx],
-                    minVal, minSubject: subjects[minIdx],
-                    overall, studentCount: data.studentCount || 0, belowCount,
-                    totalMapel: subjects.length,
-                    isMid, kelasNum,
-                    delta: parseFloat((maxVal - minVal).toFixed(2)),
+                    totalStudents,
+                    tuntas,
+                    tidakTuntas,
+                    persentaseTuntas,
+                    overall,
+                    totalMapel: data.subjects.length,
                 });
             }
 
             if (!rekapEntries.length) { rekapSection.style.display = 'none'; return; }
 
             rekapEntries.sort((a, b) => {
-                if (a.isMid !== b.isMid) return a.isMid - b.isMid;
-                if (a.kelasNum !== b.kelasNum) return a.kelasNum - b.kelasNum;
+                const numA = parseInt(a.label.match(/\d+/)?.[0] || 0);
+                const numB = parseInt(b.label.match(/\d+/)?.[0] || 0);
+                if (numA !== numB) return numA - numB;
                 return a.label.localeCompare(b.label);
             });
 
             let html = '';
             rekapEntries.forEach(entry => {
+                const tuntasPct = entry.persentaseTuntas.toFixed(1);
+                const tidakTuntasPct = (100 - entry.persentaseTuntas).toFixed(1);
+                const noData = (entry.totalStudents === 0 && entry.tuntas === 0 && entry.tidakTuntas === 0);
+
                 html += `
-                    <div class="rekap-card">
+                    <div class="rekap-card" data-sheet="${entry.label}" onclick="filterBySheet('${entry.label}')" title="Klik untuk melihat detail kelas ${entry.label}">
                         <div class="rekap-card-title">
                             <i class="fa-solid fa-layer-group"></i> ${entry.label}
                             <span class="chip-sm">${entry.totalMapel} mapel</span>
                         </div>
                         <div class="rekap-info-row">
-                            <span class="rekap-info-chip"><i class="fa-solid fa-users"></i> ${entry.studentCount} siswa</span>
-                            <span class="rekap-info-chip"><i class="fa-solid fa-calculator"></i> Rerata: ${entry.overall}</span>
-                            <span class="rekap-info-chip"><i class="fa-solid fa-arrows-left-right"></i> Selisih: ${entry.delta}</span>
-                            ${entry.belowCount > 0 ? `<span class="rekap-info-chip" style="color:var(--danger);"><i class="fa-solid fa-triangle-exclamation"></i> ${entry.belowCount} mapel &lt; KKM</span>` : ''}
+                            <span class="rekap-info-chip"><i class="fa-solid fa-users"></i> Total Siswa: ${noData ? 'Tidak tersedia' : entry.totalStudents}</span>
+                            <span class="rekap-info-chip"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i> Tuntas (≥ KKM): ${noData ? '-' : entry.tuntas}</span>
+                            <span class="rekap-info-chip"><i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Tidak Tuntas: ${noData ? '-' : entry.tidakTuntas}</span>
                         </div>
-                        <div class="rekap-minmax">
+                        <div class="rekap-minmax" style="grid-template-columns: 1fr 1fr;">
                             <div class="rekap-mm-card">
-                                <div class="mm-label trend-up"><i class="fa-solid fa-trophy"></i> Tertinggi</div>
-                                <div class="mm-value">${entry.maxVal.toFixed(2)}</div>
-                                <div class="mm-subject">${entry.maxSubject}</div>
+                                <div class="mm-label trend-up" style="color:var(--success);"><i class="fa-solid fa-check-circle"></i> Tuntas</div>
+                                <div class="mm-value">${noData ? '?' : tuntasPct + '%'}</div>
+                                <div class="mm-subject">${noData ? 'Data tidak tersedia' : entry.tuntas + ' siswa'}</div>
                             </div>
                             <div class="rekap-mm-card">
-                                <div class="mm-label trend-down"><i class="fa-solid fa-arrow-trend-down"></i> Terendah</div>
-                                <div class="mm-value">${entry.minVal.toFixed(2)}</div>
-                                <div class="mm-subject">${entry.minSubject}</div>
+                                <div class="mm-label trend-down" style="color:var(--danger);"><i class="fa-solid fa-times-circle"></i> Tidak Tuntas</div>
+                                <div class="mm-value">${noData ? '?' : tidakTuntasPct + '%'}</div>
+                                <div class="mm-subject">${noData ? 'Data tidak tersedia' : entry.tidakTuntas + ' siswa'}</div>
                             </div>
+                        </div>
+                        <div style="margin-top: 12px; background: var(--surface-soft); border-radius: var(--radius-lg); padding: 8px 12px; display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted);">
+                            <span>Rerata Nilai Keseluruhan: ${entry.overall}</span>
+                            <span>KKM: ${KKM.toFixed(1)}</span>
                         </div>
                     </div>`;
             });
@@ -1392,9 +1522,6 @@
             rekapSection.style.display = 'block';
         }
 
-        // ============================================================
-        //  RENDER JENJANG TABS
-        // ============================================================
         function renderJenjangTabs() {
             Object.values(jenjangChartInstances).forEach(ch => ch.destroy());
             jenjangChartInstances = {};
@@ -1452,7 +1579,6 @@
                                 </div>
                             </div>`;
                         
-                        // BUG FIX: Hanya render chart yang aktif pas halaman dimuat biar nggak gepeng/error
                         if (name === activeSheetKey) {
                             setTimeout(() => renderJenjangChart(canvasId, sorted.subjects, sorted.averages, name), 150);
                         }
@@ -1553,7 +1679,6 @@
                         </div>
                     </div>`;
                 
-                // BUG FIX: Sama halnya, hanya render yang sedang aktif
                 if (key === activeGroupKey) {
                     setTimeout(() => renderJenjangChart(canvasId, sorted.subjects, sorted.averages, key), 150);
                 }
@@ -1597,15 +1722,19 @@
             renderRekapSection();
         }
 
-        // ============================================================
-        //  RENDER UTAMA
-        // ============================================================
+        function refreshAllViews() {
+            if (!currentSubjectNames.length) return;
+            renderDashboard(currentSubjectNames, currentAverages, currentSheetName, currentStudentCount);
+            renderJenjangTabs();
+            renderRekapSection();
+        }
+
         function renderDashboard(subjects, averages, sheetName, studentCount = 0) {
             const title = sheetName || currentSheetName || 'Kelas';
-            kelasTableTitle.textContent = `Tabel Rata-rata — ${title}` + (studentCount ? ` (${studentCount} siswa)` : '');
+            kelasTableTitle.textContent = `Tabel Analisis — ${title}` + (studentCount ? ` (${studentCount} siswa)` : '');
 
             if (!subjects.length || !averages.length) {
-                tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:28px;color:var(--muted);">Tidak ada data mapel.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="4"><i class="fa-solid fa-inbox"></i><div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);">Belum ada data</div><div style="font-size:0.85rem;color:var(--muted);margin-top:4px;">Silakan upload file Excel untuk memulai analisis.</div></td></tr>`;
                 if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
                 totalMapelSpan.innerText = "0"; maxAvgSpan.innerText = "-"; minAvgSpan.innerText = "-"; overallAvgSpan.innerText = "-";
                 maxMapelSpan.innerText = "-"; minMapelSpan.innerText = "-"; metaDataStatus.innerText = "Tidak ditemukan";
@@ -1623,7 +1752,7 @@
             maxAvgSpan.innerText = maxVal.toFixed(2); maxMapelSpan.innerText = currentSubjectNames[maxIdx];
             minAvgSpan.innerText = minVal.toFixed(2); minMapelSpan.innerText = currentSubjectNames[minIdx];
             overallAvgSpan.innerText = overall;
-            metaDataStatus.innerText = "Aktif"; metaSheet.innerText = currentSheetName || "-";
+            metaDataStatus.innerText = "Sistem Aktif"; metaSheet.innerText = currentSheetName || "-";
 
             tableBody.innerHTML = '';
             currentSubjectNames.forEach((sub, idx) => {
@@ -1658,12 +1787,15 @@
             let hasMidMtsd = false;
             for (const name of sheetNames) { if (/MID|MTSD/i.test(name)) { hasMidMtsd = true; break; } }
 
-            // BUG FIX: Selalu populate allSheetsData untuk keperluan Rekap walau jenisnya MID/MTSD
             for (const name of sheetNames) {
                 const ws = workbookData.Sheets[name];
-                if (!ws) { allSheetsData[name] = { subjects: [], averages: [], studentCount: 0 }; continue; }
+                if (!ws) {
+                    allSheetsData[name] = { subjects: [], averages: [], studentCount: 0, scores: [] };
+                    continue;
+                }
                 const { subjects, scores, studentCount } = detectHeaderAndData(ws);
-                allSheetsData[name] = subjects.length && scores.length ? { subjects, averages: computeAverages(subjects, scores), studentCount } : { subjects: [], averages: [], studentCount: 0 };
+                const avgs = computeAverages(subjects, scores);
+                allSheetsData[name] = { subjects, averages: avgs, studentCount, scores: scores || [] };
             }
 
             if (hasMidMtsd) {
@@ -1742,29 +1874,26 @@
                 try {
                     workbookData = XLSX.read(data, { type: 'array', cellDates: false });
                     processAllSheets();
-                    fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i> ${file.name} <span style="opacity:.6;">(tersimpan)</span>`;
-                    metaDataStatus.innerText = "Dimuat";
+                    fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i> ${file.name}`;
+                    metaDataStatus.innerText = "Data Dimuat";
                 } catch (err) {
-                    fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Gagal: ${file.name}`;
+                    fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Gagal membaca file: ${file.name}`;
                     metaDataStatus.innerText = "Gagal";
                 }
             };
             reader.readAsArrayBuffer(file);
         }
 
-        // ============================================================
-        //  RENDER QUARTAL VIEW
-        // ============================================================
         function renderQuartalView(quartal) {
             const cache = quartalCache[quartal];
             if (!cache || (!Object.keys(cache.groupedData).length && !Object.keys(cache.allSheetsData || {}).length)) {
                 sheetSelectorDiv.style.display = 'none';
                 sheetSelect.innerHTML = '';
-                fileStatusSpan.innerHTML = `<i class="fa-regular fa-file-lines"></i> Belum ada data ${QUARTAL_LABELS[quartal]}`;
+                fileStatusSpan.innerHTML = `<i class="fa-regular fa-file-lines"></i> Area kosong. Upload data untuk ${QUARTAL_LABELS[quartal]}`;
                 metaDataStatus.innerText = "Menunggu"; metaSheet.innerText = "-";
                 groupedData = {}; allSheetsData = {}; originalSheetNames = [];
                 renderDashboard([], [], '');
-                jenjangTabs.innerHTML = '<span class="chip"><i class="fa-regular fa-folder-open"></i> Belum ada data</span>';
+                jenjangTabs.innerHTML = '<span class="chip" style="background:transparent;border:none;box-shadow:none;"><i class="fa-regular fa-folder-open"></i> Menunggu data komparatif...</span>';
                 jenjangContent.innerHTML = '';
                 rekapSection.style.display = 'none';
                 saveUIState();
@@ -1859,8 +1988,8 @@
                 renderDashboard([], [], '');
             }
 
-            fileStatusSpan.innerHTML = `<i class="fa-solid fa-floppy-disk" style="color:var(--info);"></i> ${QUARTAL_LABELS[quartal]} · dari localStorage`;
-            metaDataStatus.innerText = "Dimuat (local)";
+            fileStatusSpan.innerHTML = `<i class="fa-solid fa-floppy-disk" style="color:var(--info);"></i> Memuat ${QUARTAL_LABELS[quartal]} dari LocalStorage`;
+            metaDataStatus.innerText = "Tersinkronisasi";
             
             saveUIState();
         }
@@ -1876,7 +2005,7 @@
                 btn.innerHTML = QUARTAL_LABELS[q] + (hasData ? ' <span class="qdot"></span>' : '');
                 btn.classList.toggle('active-quartal', q === currentQuartal);
             });
-            quartalStatus.innerHTML = `<i class="fa-solid fa-circle-info"></i> Upload akan tersimpan sebagai ${QUARTAL_LABELS[currentQuartal]}`;
+            quartalStatus.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Drop file untuk menyimpan data di ${QUARTAL_LABELS[currentQuartal]}`;
         }
 
         quartalTabs.querySelectorAll('.quartal-btn').forEach(btn => {
@@ -1888,9 +2017,6 @@
             });
         });
 
-        // ============================================================
-        //  INIT: Load semua kuartal dari localStorage
-        // ============================================================
         function loadAllFromLocalStorage() {
             quartalCache = {};
             ['Kuartal_I', 'Kuartal_II', 'Kuartal_III'].forEach(q => {
@@ -1913,13 +2039,15 @@
                 currentQuartal = firstWithData || 'Kuartal_I';
             }
             
+            if (uiState.kkm !== undefined && !isNaN(uiState.kkm) && uiState.kkm >= 0 && uiState.kkm <= 10) {
+                KKM = parseFloat(uiState.kkm);
+                kkmInput.value = KKM.toFixed(1);
+            }
+            
             updateQuartalTabsUI();
             renderQuartalView(currentQuartal);
         }
 
-        // ============================================================
-        //  CLEAR DATA
-        // ============================================================
         function clearStoredData() {
             if (!confirm(`Hapus semua data ${QUARTAL_LABELS[currentQuartal]}? Aksi ini tidak bisa dibatalkan.`)) return;
             clearLocalStorage(currentQuartal);
@@ -1937,54 +2065,41 @@
         const clearDataBtn = document.getElementById('clearDataBtn');
         clearDataBtn.addEventListener('click', clearStoredData);
 
-        // ============================================================
-        //  EVENT LISTENERS
-        // ============================================================
+        function handleKKMChange(newValue) {
+            const val = parseFloat(newValue);
+            if (isNaN(val) || val < 0 || val > 10) {
+                kkmInput.value = KKM.toFixed(1);
+                return;
+            }
+            KKM = parseFloat(val.toFixed(1));
+            kkmInput.value = KKM.toFixed(1);
+            saveUIState();
+            refreshAllViews();
+        }
+
+        kkmInput.addEventListener('change', function() {
+            handleKKMChange(this.value);
+        });
+
+        kkmInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleKKMChange(this.value);
+                this.blur();
+            }
+        });
+
+        resetKkmBtn.addEventListener('click', function() {
+            KKM = DEFAULT_KKM;
+            kkmInput.value = KKM.toFixed(1);
+            saveUIState();
+            refreshAllViews();
+        });
+
         fileInput.addEventListener('change', (e) => { if (e.target.files.length) loadExcel(e.target.files[0]); fileInput.value = ''; });
         sheetSelect.addEventListener('change', (e) => {
             if (!e.target.value) return;
-            const name = e.target.value;
-            currentSheetName = name;
-            saveUIState();
-
-            if (allSheetsData[name]?.subjects?.length) {
-                const d = allSheetsData[name];
-                currentSubjectNames = d.subjects;
-                currentAverages = d.averages;
-                currentStudentCount = d.studentCount || 0;
-                renderDashboard(currentSubjectNames, currentAverages, name, currentStudentCount);
-                metaSheet.innerText = name;
-                return;
-            }
-
-            for (const [key, data] of Object.entries(groupedData)) {
-                if (key.includes(name) || name.includes(key)) {
-                    if (data.subjects && data.subjects.length) {
-                        currentSubjectNames = data.subjects;
-                        currentAverages = data.averages;
-                        currentStudentCount = data.studentCount || 0;
-                        renderDashboard(currentSubjectNames, currentAverages, key.replace('_', ' '), currentStudentCount);
-                        metaSheet.innerText = key.replace('_', ' ');
-                        return;
-                    }
-                }
-            }
-
-            if (workbookData) {
-                const ws = workbookData.Sheets[name];
-                if (ws) {
-                    const { subjects, scores, studentCount } = detectHeaderAndData(ws);
-                    if (subjects.length && scores.length) {
-                        const avgs = computeAverages(subjects, scores);
-                        allSheetsData[name] = { subjects, averages: avgs, studentCount };
-                        currentSubjectNames = subjects; currentAverages = avgs; currentStudentCount = studentCount;
-                        renderDashboard(currentSubjectNames, currentAverages, name, currentStudentCount);
-                        metaSheet.innerText = name;
-                    } else {
-                        renderDashboard([], [], name);
-                    }
-                }
-            }
+            filterBySheet(e.target.value);
         });
 
         document.getElementById('exportPDFBtn').addEventListener('click', () => {
