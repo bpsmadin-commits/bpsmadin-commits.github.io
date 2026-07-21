@@ -4,15 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <title>Dashboard Enterprise | 2026 Premium UI</title>
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js">
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <style>
         /* ==========================================================
            1. RESET & CORE VARIABLES (2026 SaaS Premium Standard)
@@ -49,11 +51,11 @@
             --danger: #EF4444;
             --danger-soft: rgba(239, 68, 68, 0.15);
             --chart-bg: rgba(255, 255, 255, 0.4);
-            
+
             /* Glassmorphism Specs */
             --glass-blur: blur(40px);
             --glass-sat: saturate(150%);
-            
+
             /* Borders & Shadows */
             --radius-pill: 9999px;
             --radius-3xl: 32px;
@@ -61,15 +63,21 @@
             --radius-xl: 16px;
             --radius-lg: 12px;
             --radius-md: 8px;
-            
-            --shadow-float: 0 20px 40px -10px rgba(0,0,0,0.05), 0 10px 20px -5px rgba(0,0,0,0.02);
+
+            --shadow-float: 0 20px 40px -10px rgba(0, 0, 0, 0.05), 0 10px 20px -5px rgba(0, 0, 0, 0.02);
             --shadow-hover: 0 30px 60px -15px rgba(99, 102, 241, 0.15), 0 15px 30px -10px rgba(139, 92, 246, 0.1);
-            --shadow-inner: inset 0 1px 1px rgba(255,255,255,0.8);
-            
+            --shadow-inner: inset 0 1px 1px rgba(255, 255, 255, 0.8);
+
             /* Transitions */
             --t-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
             --t-smooth: 400ms cubic-bezier(0.16, 1, 0.3, 1);
             --t-spring: 600ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+            /* --- PROYEKTOR: ukuran besar --- */
+            --table-font-base: 1.15rem;
+            --table-font-large: 1.4rem;
+            --table-font-xl: 1.6rem;
+            --table-padding: 18px 24px;
         }
 
         body.dark {
@@ -97,9 +105,9 @@
             --danger: #F87171;
             --danger-soft: rgba(248, 113, 113, 0.15);
             --chart-bg: rgba(0, 0, 0, 0.2);
-            
-            --shadow-float: 0 20px 40px -10px rgba(0,0,0,0.4), 0 10px 20px -5px rgba(0,0,0,0.2);
-            --shadow-inner: inset 0 1px 1px rgba(255,255,255,0.05);
+
+            --shadow-float: 0 20px 40px -10px rgba(0, 0, 0, 0.4), 0 10px 20px -5px rgba(0, 0, 0, 0.2);
+            --shadow-inner: inset 0 1px 1px rgba(255, 255, 255, 0.05);
         }
 
         /* ==========================================================
@@ -118,13 +126,16 @@
         /* Premium 2026 Animated Background */
         .ambient-bg {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             z-index: -1;
             overflow: hidden;
             pointer-events: none;
             background: radial-gradient(circle at top left, var(--bg-2), var(--bg));
         }
-        
+
         .ambient-orb {
             position: absolute;
             border-radius: 50%;
@@ -132,37 +143,55 @@
             opacity: 0.4;
             animation: floatOrb 20s infinite alternate ease-in-out;
         }
-        
+
         .ambient-orb:nth-child(1) {
-            top: -10%; left: -10%; width: 50vw; height: 50vw;
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
             background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
             animation-delay: 0s;
         }
-        
+
         .ambient-orb:nth-child(2) {
-            bottom: -20%; right: -10%; width: 60vw; height: 60vw;
+            bottom: -20%;
+            right: -10%;
+            width: 60vw;
+            height: 60vw;
             background: radial-gradient(circle, var(--primary-2) 0%, transparent 70%);
             animation-delay: -5s;
         }
-        
+
         .ambient-orb:nth-child(3) {
-            top: 30%; left: 40%; width: 40vw; height: 40vw;
+            top: 30%;
+            left: 40%;
+            width: 40vw;
+            height: 40vw;
             background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
             opacity: 0.2;
             animation-delay: -10s;
         }
-        
+
         .noise-overlay {
-            position: absolute; inset: 0;
+            position: absolute;
+            inset: 0;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
             mix-blend-mode: overlay;
         }
 
         @keyframes floatOrb {
-            0% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-            100% { transform: translate(0, 0) scale(1); }
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
         }
 
         /* ==========================================================
@@ -200,8 +229,14 @@
         }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .topbar-wrap {
@@ -213,36 +248,49 @@
         }
 
         .brand {
-            display: flex; flex-direction: column; gap: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .brand h1 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.25rem; font-weight: 700;
-            display: flex; align-items: center; gap: 12px;
-            color: var(--text); letter-spacing: -0.02em;
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text);
+            letter-spacing: -0.02em;
         }
 
-        .brand h1 i { 
-            color: var(--primary); font-size: 1.2rem; 
+        .brand h1 i {
+            color: var(--primary);
+            font-size: 1.2rem;
             filter: drop-shadow(0 0 8px var(--primary-glow));
         }
-        
-        .brand p { 
-            color: var(--muted); font-size: 0.8rem; font-weight: 500; 
+
+        .brand p {
+            color: var(--muted);
+            font-size: 0.8rem;
+            font-weight: 500;
         }
 
         /* Mock Search Box inside topbar */
         .saas-search {
-            flex: 1; max-width: 400px;
+            flex: 1;
+            max-width: 400px;
             position: relative;
-            display: flex; align-items: center;
+            display: flex;
+            align-items: center;
         }
-        
+
         .saas-search i {
-            position: absolute; left: 16px; color: var(--muted);
+            position: absolute;
+            left: 16px;
+            color: var(--muted);
         }
-        
+
         .saas-search input {
             width: 100%;
             background: var(--surface-soft);
@@ -250,144 +298,244 @@
             border-radius: var(--radius-pill);
             padding: 12px 16px 12px 42px;
             color: var(--text);
-            font-family: 'Inter', sans-serif; font-size: 0.875rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
             transition: all var(--t-fast);
             box-shadow: var(--shadow-inner);
         }
-        
+
         .saas-search input:focus {
-            outline: none; border-color: var(--primary);
-            background: var(--surface); box-shadow: 0 0 0 4px var(--primary-glow);
+            outline: none;
+            border-color: var(--primary);
+            background: var(--surface);
+            box-shadow: 0 0 0 4px var(--primary-glow);
         }
-        
+
         .saas-search .shortcut {
-            position: absolute; right: 12px;
-            background: var(--surface-solid); border: 1px solid var(--border);
-            border-radius: 6px; padding: 2px 6px;
-            font-size: 0.7rem; font-weight: 600; color: var(--muted);
+            position: absolute;
+            right: 12px;
+            background: var(--surface-solid);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--muted);
             font-family: 'Manrope', sans-serif;
         }
 
-        .top-actions { 
-            display: flex; gap: 12px; align-items: center; 
+        .top-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
         }
 
         /* ==========================================================
            5. BUTTONS, INPUTS & CHIPS
            ========================================================== */
         .btn {
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            padding: 10px 20px; font-size: 0.875rem; font-weight: 600;
-            border-radius: var(--radius-pill); border: none; cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: var(--radius-pill);
+            border: none;
+            cursor: pointer;
             transition: all var(--t-spring);
             font-family: 'Manrope', sans-serif;
-            position: relative; overflow: hidden;
+            position: relative;
+            overflow: hidden;
             box-shadow: var(--shadow-inner);
             z-index: 1;
         }
-        
+
         .btn::after {
-            content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.15);
-            opacity: 0; transition: opacity var(--t-fast); z-index: -1;
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.15);
+            opacity: 0;
+            transition: opacity var(--t-fast);
+            z-index: -1;
         }
-        
+
         .btn:hover {
             transform: translateY(-2px) scale(1.02);
         }
-        .btn:hover::after { opacity: 1; }
-        .btn:active { transform: scale(0.95); }
+        .btn:hover::after {
+            opacity: 1;
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--primary-2));
             color: #FFFFFF;
-            box-shadow: 0 8px 20px -6px var(--primary-glow), inset 0 1px 1px rgba(255,255,255,0.3);
+            box-shadow: 0 8px 20px -6px var(--primary-glow), inset 0 1px 1px rgba(255, 255, 255, 0.3);
         }
-        .btn-primary:hover { box-shadow: 0 12px 24px -6px rgba(99, 102, 241, 0.4), inset 0 1px 1px rgba(255,255,255,0.3); }
-        
+        .btn-primary:hover {
+            box-shadow: 0 12px 24px -6px rgba(99, 102, 241, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+        }
+
         .btn-pdf {
-            background: linear-gradient(135deg, #EF4444, #B91C1C); color: #fff;
+            background: linear-gradient(135deg, #EF4444, #B91C1C);
+            color: #fff;
             box-shadow: 0 8px 20px -6px rgba(239, 68, 68, 0.3);
         }
         .btn-csv {
-            background: linear-gradient(135deg, #10B981, #047857); color: #fff;
+            background: linear-gradient(135deg, #10B981, #047857);
+            color: #fff;
             box-shadow: 0 8px 20px -6px rgba(16, 185, 129, 0.3);
         }
 
-        .btn-sm { padding: 8px 16px; font-size: 0.8rem; }
-        
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.8rem;
+        }
+
         /* Glass Input */
         .select-control {
-            padding: 10px 36px 10px 16px; font-size: 0.875rem; font-weight: 600;
+            padding: 10px 36px 10px 16px;
+            font-size: 0.875rem;
+            font-weight: 600;
             font-family: 'Manrope', sans-serif;
             border-radius: var(--radius-lg);
             border: 1px solid var(--border);
-            background: var(--surface); color: var(--text);
+            background: var(--surface);
+            color: var(--text);
             backdrop-filter: var(--glass-blur);
-            cursor: pointer; appearance: none;
+            cursor: pointer;
+            appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-position: right 12px center;
             transition: all var(--t-fast);
             box-shadow: var(--shadow-inner);
         }
-        
+
         .select-control option {
             background-color: var(--surface-solid);
             color: var(--text);
         }
-        
-        .select-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
-        
+
+        .select-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
         .kkm-group {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: var(--surface-soft); border: 1px solid var(--border);
-            border-radius: var(--radius-pill); padding: 4px 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-pill);
+            padding: 4px 6px;
             box-shadow: var(--shadow-inner);
         }
         .kkm-group label {
-            font-size: 0.75rem; font-weight: 700; color: var(--muted);
-            padding-left: 8px; font-family: 'Manrope', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--muted);
+            padding-left: 8px;
+            font-family: 'Manrope', sans-serif;
         }
         .kkm-group input {
-            width: 60px; padding: 6px 8px;
-            border: 1px solid var(--border-soft); border-radius: var(--radius-pill);
-            background: var(--surface-solid); color: var(--text);
-            font-size: 0.875rem; font-weight: 700;
-            font-family: 'Space Grotesk', monospace; text-align: center;
+            width: 60px;
+            padding: 6px 8px;
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-pill);
+            background: var(--surface-solid);
+            color: var(--text);
+            font-size: 0.875rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', monospace;
+            text-align: center;
             transition: all var(--t-fast);
         }
-        .kkm-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
-        
+        .kkm-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
         .btn-kkm-reset {
-            padding: 6px 12px; font-size: 0.75rem; border-radius: var(--radius-pill);
-            background: var(--surface-solid); color: var(--muted);
-            border: 1px solid var(--border-soft); cursor: pointer; font-weight: 600;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            border-radius: var(--radius-pill);
+            background: var(--surface-solid);
+            color: var(--muted);
+            border: 1px solid var(--border-soft);
+            cursor: pointer;
+            font-weight: 600;
             transition: all var(--t-fast);
         }
-        .btn-kkm-reset:hover { background: var(--danger-soft); color: var(--danger); border-color: var(--danger); }
+        .btn-kkm-reset:hover {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border-color: var(--danger);
+        }
 
         .chip {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 8px 16px; font-size: 0.75rem; font-weight: 600;
-            background: var(--surface-soft); color: var(--text-soft);
-            border-radius: var(--radius-pill); border: 1px solid var(--border);
-            max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            box-shadow: var(--shadow-inner); font-family: 'Manrope', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--surface-soft);
+            color: var(--text-soft);
+            border-radius: var(--radius-pill);
+            border: 1px solid var(--border);
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-shadow: var(--shadow-inner);
+            font-family: 'Manrope', sans-serif;
         }
 
-        #file-input { display: none; }
+        #file-input {
+            display: none;
+        }
 
         .theme-toggle {
-            display: flex; gap: 4px; background: var(--surface-soft);
-            border-radius: var(--radius-pill); padding: 4px; border: 1px solid var(--border);
+            display: flex;
+            gap: 4px;
+            background: var(--surface-soft);
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            border: 1px solid var(--border);
         }
         .theme-btn {
-            width: 36px; height: 36px; border-radius: 50%; border: none;
-            background: transparent; cursor: pointer; color: var(--muted);
-            font-size: 1rem; transition: all var(--t-spring);
-            display: flex; align-items: center; justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 1rem;
+            transition: all var(--t-spring);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .theme-btn:hover { color: var(--text); background: var(--surface); transform: scale(1.1); }
-        .theme-btn.active-theme { background: var(--surface-solid); color: var(--primary); box-shadow: 0 4px 12px var(--primary-glow); }
+        .theme-btn:hover {
+            color: var(--text);
+            background: var(--surface);
+            transform: scale(1.1);
+        }
+        .theme-btn.active-theme {
+            background: var(--surface-solid);
+            color: var(--primary);
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
 
         /* ==========================================================
            6. HERO SECTION & DRAG DROP
@@ -397,385 +545,1093 @@
             backdrop-filter: var(--glass-blur) var(--glass-sat);
             border: 1px solid var(--border);
             border-radius: var(--radius-3xl);
-            padding: 40px; margin-bottom: 24px;
+            padding: 40px;
+            margin-bottom: 24px;
             box-shadow: var(--shadow-float), var(--shadow-inner);
-            position: relative; overflow: hidden;
+            position: relative;
+            overflow: hidden;
             animation: fadeUp 0.8s var(--t-spring) 0.1s both;
         }
-        
+
         .hero::before {
-            content: ''; position: absolute; top: -50%; right: -10%;
-            width: 400px; height: 400px;
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
             background: radial-gradient(circle, var(--primary-glow), transparent 70%);
-            pointer-events: none; z-index: 0;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .hero-grid { 
-            display: grid; grid-template-columns: 1fr 350px; gap: 40px; position: relative; z-index: 1; align-items: center;
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 40px;
+            position: relative;
+            z-index: 1;
+            align-items: center;
         }
-        
-        .headline { display: flex; flex-direction: column; gap: 16px; }
-        
+
+        .headline {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
         .kicker {
-            display: inline-flex; width: fit-content; padding: 6px 16px;
-            border-radius: var(--radius-pill); background: var(--primary-glow);
-            color: var(--primary); font-size: 0.75rem; font-weight: 700;
-            letter-spacing: 0.04em; align-items: center; gap: 8px; text-transform: uppercase;
-            border: 1px solid rgba(99,102,241,0.2);
+            display: inline-flex;
+            width: fit-content;
+            padding: 6px 16px;
+            border-radius: var(--radius-pill);
+            background: var(--primary-glow);
+            color: var(--primary);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            border: 1px solid rgba(99, 102, 241, 0.2);
         }
-        
-        .headline h2 { 
-            font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; 
-            font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; color: var(--text); 
+
+        .headline h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            color: var(--text);
         }
-        
-        .headline p { 
-            color: var(--text-soft); line-height: 1.6; font-size: 1.1rem; max-width: 600px;
+
+        .headline p {
+            color: var(--text-soft);
+            line-height: 1.6;
+            font-size: 1.1rem;
+            max-width: 600px;
         }
-        
+
         .drag-drop-zone {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             background: var(--surface-soft);
             border: 2px dashed var(--primary);
             border-radius: var(--radius-2xl);
-            padding: 32px 24px; text-align: center;
+            padding: 32px 24px;
+            text-align: center;
             transition: all var(--t-spring);
             cursor: pointer;
             box-shadow: inset 0 0 20px var(--primary-glow);
         }
         .drag-drop-zone:hover {
-            background: var(--primary-glow); transform: scale(1.02);
-            border-style: solid; box-shadow: 0 10px 30px var(--primary-glow);
+            background: var(--primary-glow);
+            transform: scale(1.02);
+            border-style: solid;
+            box-shadow: 0 10px 30px var(--primary-glow);
         }
-        .drag-drop-zone i { font-size: 2.5rem; color: var(--primary); margin-bottom: 16px; transition: transform var(--t-spring); }
-        .drag-drop-zone:hover i { transform: translateY(-5px); }
-        .drag-drop-zone h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-        .drag-drop-zone p { font-size: 0.8rem; color: var(--muted); }
+        .drag-drop-zone i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 16px;
+            transition: transform var(--t-spring);
+        }
+        .drag-drop-zone:hover i {
+            transform: translateY(-5px);
+        }
+        .drag-drop-zone h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .drag-drop-zone p {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
 
-        .hero-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
-        
-        .meta-card {
-            background: var(--surface-solid); border: 1px solid var(--border);
-            border-radius: var(--radius-xl); padding: 16px 20px;
-            box-shadow: var(--shadow-inner); transition: all var(--t-spring);
+        .hero-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 24px;
         }
-        .meta-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--primary); }
-        
-        .meta-title { color: var(--muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-family: 'Manrope', sans-serif; }
-        .meta-title i { color: var(--primary); font-size: 0.9rem; }
-        .meta-value { font-size: 1.1rem; font-weight: 700; color: var(--text); font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.01em; }
+
+        .meta-card {
+            background: var(--surface-solid);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 16px 20px;
+            box-shadow: var(--shadow-inner);
+            transition: all var(--t-spring);
+        }
+        .meta-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .meta-title {
+            color: var(--muted);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+            font-family: 'Manrope', sans-serif;
+        }
+        .meta-title i {
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+        .meta-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.01em;
+        }
 
         /* ==========================================================
            7. BARS (Quartal & Sheet)
            ========================================================== */
-        .quartal-bar, .sheet-bar {
-            display: flex; align-items: center; gap: 16px; flex-wrap: wrap; 
-            padding: 16px 24px; margin-bottom: 24px;
-            background: var(--surface); backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--border); border-radius: var(--radius-2xl); 
+        .quartal-bar,
+        .sheet-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding: 16px 24px;
+            margin-bottom: 24px;
+            background: var(--surface);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-2xl);
             box-shadow: var(--shadow-float), var(--shadow-inner);
             animation: fadeUp 0.8s var(--t-spring) 0.2s both;
         }
-        
-        .quartal-toggle { 
-            display: flex; gap: 4px; background: var(--surface-soft); 
-            border-radius: var(--radius-pill); padding: 4px; border: 1px solid var(--border-soft); 
-        }
-        .quartal-btn { 
-            padding: 8px 24px; border-radius: var(--radius-pill); border: none; background: transparent; 
-            cursor: pointer; color: var(--muted); font-size: 0.875rem; font-weight: 600; 
-            transition: all var(--t-spring); font-family: 'Manrope', sans-serif;
-        }
-        .quartal-btn:hover { color: var(--text); background: var(--surface); }
-        .quartal-btn.active-quartal { background: var(--primary); color: #fff; box-shadow: 0 4px 12px var(--primary-glow); }
-        .quartal-btn .qdot { width: 8px; height: 8px; border-radius: 50%; background: #10B981; display: inline-block; margin-left: 8px; box-shadow: 0 0 8px #10B981; }
 
-        .sheet-bar { display: none; }
+        .quartal-toggle {
+            display: flex;
+            gap: 4px;
+            background: var(--surface-soft);
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            border: 1px solid var(--border-soft);
+        }
+        .quartal-btn {
+            padding: 8px 24px;
+            border-radius: var(--radius-pill);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all var(--t-spring);
+            font-family: 'Manrope', sans-serif;
+        }
+        .quartal-btn:hover {
+            color: var(--text);
+            background: var(--surface);
+        }
+        .quartal-btn.active-quartal {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+        .quartal-btn .qdot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10B981;
+            display: inline-block;
+            margin-left: 8px;
+            box-shadow: 0 0 8px #10B981;
+        }
+
+        .sheet-bar {
+            display: none;
+        }
 
         /* ==========================================================
            8. STATS GRID (Micro-interactions)
            ========================================================== */
-        .stats { 
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 24px; 
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
             animation: fadeUp 0.8s var(--t-spring) 0.3s both;
         }
-        
+
         .stat {
-            background: var(--surface); backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--border); border-radius: var(--radius-2xl); 
-            padding: 24px; box-shadow: var(--shadow-float), var(--shadow-inner);
-            transition: all var(--t-spring); position: relative; overflow: hidden;
-            display: flex; flex-direction: column; gap: 8px;
+            background: var(--surface);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-2xl);
+            padding: 24px;
+            box-shadow: var(--shadow-float), var(--shadow-inner);
+            transition: all var(--t-spring);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
-        
-        .stat:hover { 
-            transform: translateY(-8px) scale(1.02); 
-            box-shadow: var(--shadow-hover); 
-            border-color: rgba(99,102,241,0.3);
+
+        .stat:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(99, 102, 241, 0.3);
         }
-        
+
         .stat::after {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
             background: linear-gradient(90deg, var(--primary), var(--accent));
-            transform: scaleX(0); transform-origin: left; transition: transform var(--t-smooth);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform var(--t-smooth);
         }
-        .stat:hover::after { transform: scaleX(1); }
-        
-        .stat .label { 
-            font-size: 0.75rem; font-weight: 700; color: var(--muted); letter-spacing: 0.05em; 
-            text-transform: uppercase; display: flex; align-items: center; gap: 8px; font-family: 'Manrope', sans-serif;
+        .stat:hover::after {
+            transform: scaleX(1);
         }
-        .stat .label i { 
-            display: flex; align-items: center; justify-content: center;
-            width: 28px; height: 28px; border-radius: 8px;
-            background: var(--primary-glow); color: var(--primary); font-size: 0.9rem; 
+
+        .stat .label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Manrope', sans-serif;
         }
-        
-        .stat .value { 
-            font-size: 2.5rem; font-weight: 800; font-family: 'Space Grotesk', monospace; 
-            letter-spacing: -0.03em; color: var(--text); line-height: 1; 
+        .stat .label i {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: var(--primary-glow);
+            color: var(--primary);
+            font-size: 0.9rem;
         }
-        .stat .sub { 
-            color: var(--primary-2); font-size: 0.875rem; font-weight: 600; font-family: 'Manrope', sans-serif;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-            background: var(--surface-soft); padding: 4px 8px; border-radius: 6px; width: fit-content;
+
+        .stat .value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            font-family: 'Space Grotesk', monospace;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            line-height: 1;
+        }
+        .stat .sub {
+            color: var(--primary-2);
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: 'Manrope', sans-serif;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: var(--surface-soft);
+            padding: 4px 8px;
+            border-radius: 6px;
+            width: fit-content;
         }
 
         /* ==========================================================
-           9. SECTIONS, TABLES & CHARTS (Glassmorphism)
+           9. SECTIONS, TABLES (Glassmorphism) - TANPA CHART.JS
            ========================================================== */
-        .kelas-section, .jenjang-section, .rekap-section {
-            margin-bottom: 24px; background: var(--surface); backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--border); border-radius: var(--radius-3xl);
-            padding: 32px; box-shadow: var(--shadow-float), var(--shadow-inner);
+        .kelas-section,
+        .jenjang-section,
+        .rekap-section,
+        .statistik-section {
+            margin-bottom: 24px;
+            background: var(--surface);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-3xl);
+            padding: 32px;
+            box-shadow: var(--shadow-float), var(--shadow-inner);
             animation: fadeUp 0.8s var(--t-spring) 0.4s both;
         }
 
-        .kelas-row, .jenjang-row {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: stretch;
+        .kelas-row,
+        .jenjang-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+            align-items: stretch;
         }
 
-        .rank-card { display: flex; flex-direction: column; min-width: 0; height: 100%; gap: 16px; }
-
-        .rank-card h4 {
-            font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 700;
-            color: var(--text); display: flex; align-items: center; gap: 12px; letter-spacing: -0.02em;
-        }
-        .rank-card h4 i { 
-            padding: 8px; border-radius: var(--radius-md); background: var(--surface-soft);
-            color: var(--primary); border: 1px solid var(--border); box-shadow: var(--shadow-inner);
+        .rank-card {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            height: 100%;
+            gap: 16px;
         }
 
-        .kelas-table-wrap, .jenjang-table-wrap {
-            flex: 1; overflow: auto; border-radius: var(--radius-xl);
-            background: var(--surface-solid); border: 1px solid var(--border);
-            box-shadow: var(--shadow-inner); display: flex; flex-direction: column;
+        /* SECTION TITLE - SAMA BESAR SEPERTI STATISTIK */
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .section-title i {
+            padding: 10px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: #fff;
+            box-shadow: 0 4px 15px var(--primary-glow);
         }
 
-        table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 500px; }
+        .kelas-table-wrap,
+        .jenjang-table-wrap {
+            flex: 1;
+            overflow: auto;
+            border-radius: var(--radius-xl);
+            background: var(--surface-solid);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-inner);
+            display: flex;
+            flex-direction: column;
+        }
 
-        thead { position: sticky; top: 0; z-index: 3; }
-        
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            min-width: 500px;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 3;
+        }
+
+        /* ==============================================================
+               PROYEKTOR: UKURAN TABEL DI BESARIN SEMUA
+               ============================================================== */
         th {
-            background: var(--surface-soft); color: var(--muted); font-size: 0.75rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.05em; padding: 16px 20px;
-            border-bottom: 1px solid var(--border); text-align: left; white-space: nowrap;
-            backdrop-filter: blur(10px); font-family: 'Manrope', sans-serif;
+            background: var(--surface-soft);
+            color: var(--muted);
+            font-size: 1rem;
+            /* lebih besar */
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 18px 24px;
+            /* lebih lega */
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            white-space: nowrap;
+            backdrop-filter: blur(10px);
+            font-family: 'Manrope', sans-serif;
         }
-        
-        td { 
-            padding: 16px 20px; border-bottom: 1px solid var(--border-soft); 
-            vertical-align: middle; color: var(--text-soft); font-weight: 500; font-size: 0.9rem;
+
+        td {
+            padding: 18px 24px;
+            /* lebih lega */
+            border-bottom: 1px solid var(--border-soft);
+            vertical-align: middle;
+            color: var(--text-soft);
+            font-weight: 600;
+            font-size: 1.1rem;
+            /* ukuran dasar lebih besar */
             transition: background var(--t-fast);
         }
-        
-        tbody tr { transition: all var(--t-fast); }
-        tbody tr:hover { background: var(--surface-soft); transform: scale(1.002); }
-        tbody tr:last-child td { border-bottom: none; }
-        
-        td:nth-child(1) { font-weight: 700; color: var(--muted-2); font-family: 'Space Grotesk', monospace; }
-        td:nth-child(3) { font-weight: 800; font-family: 'Space Grotesk', monospace; color: var(--text); font-size: 1rem; }
 
-        tbody tr td[colspan="5"] {
-            padding: 60px 20px !important; text-align: center;
+        tbody tr {
+            transition: all var(--t-fast);
         }
-        tbody tr td[colspan="5"] i {
-            font-size: 3rem !important; color: var(--primary) !important;
-            opacity: 0.5; margin-bottom: 16px !important; display: block;
-            animation: pulse 2s infinite;
+        tbody tr:hover {
+            background: var(--surface-soft);
+            transform: scale(1.002);
         }
-        
-        @keyframes pulse { 0% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 0.8; } 100% { transform: scale(1); opacity: 0.5; } }
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
 
-        .progress-cell { display: flex; align-items: center; gap: 12px; }
+        td:nth-child(1) {
+            font-weight: 700;
+            color: var(--muted-2);
+            font-family: 'Space Grotesk', monospace;
+            font-size: 1.05rem;
+        }
+        td:nth-child(3) {
+            font-weight: 800;
+            font-family: 'Space Grotesk', monospace;
+            color: var(--text);
+            font-size: 1.15rem;
+        }
+
+        /* NAMA MAPEL: BESAR BANGET */
+        td .mapel-name {
+            font-family: 'Amiri', 'Traditional Arabic', serif;
+            font-size: 1.5rem;
+            /* lebih besar dari sebelumnya (1.1rem) */
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 0.01em;
+            line-height: 1.3;
+        }
+
+        /* progress bar wrapper & isi jadi lebih tinggi dan besar */
+        .progress-cell {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
         .progress-bar-wrap {
-            flex: 1; height: 8px; background: var(--border-soft);
-            border-radius: var(--radius-pill); overflow: hidden; min-width: 80px;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+            flex: 1;
+            height: 14px;
+            /* lebih tinggi */
+            background: var(--border-soft);
+            border-radius: var(--radius-pill);
+            overflow: hidden;
+            min-width: 100px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
         }
         .progress-bar-fill {
-            height: 100%; border-radius: var(--radius-pill);
+            height: 100%;
+            border-radius: var(--radius-pill);
             transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative; overflow: hidden;
+            position: relative;
+            overflow: hidden;
         }
         .progress-bar-fill::after {
-            content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transform: translateX(-100%); animation: shimmer 2s infinite;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 2s infinite;
         }
-        @keyframes shimmer { 100% { transform: translateX(100%); } }
-        
-        .progress-bar-fill.good { background: linear-gradient(90deg, #10B981, #34D399); box-shadow: 0 0 10px rgba(16,185,129,0.5); }
-        .progress-bar-fill.ok { background: linear-gradient(90deg, #F59E0B, #FBBF24); box-shadow: 0 0 10px rgba(245,158,11,0.5); }
-        .progress-bar-fill.bad { background: linear-gradient(90deg, #EF4444, #F87171); box-shadow: 0 0 10px rgba(239,68,68,0.5); }
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
 
-        .below-kkm { background: var(--danger-soft) !important; }
-        .below-kkm td:nth-child(3) { color: var(--danger) !important; }
+        .progress-bar-fill.good {
+            background: linear-gradient(90deg, #10B981, #34D399);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        .progress-bar-fill.ok {
+            background: linear-gradient(90deg, #F59E0B, #FBBF24);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+        .progress-bar-fill.bad {
+            background: linear-gradient(90deg, #EF4444, #F87171);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+
+        /* angka di sebelah progress bar */
+        .progress-cell strong {
+            font-family: 'Space Grotesk', 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            /* lebih besar */
+            min-width: 50px;
+            text-align: right;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .below-kkm {
+            background: var(--danger-soft) !important;
+        }
+        .below-kkm td:nth-child(3) {
+            color: var(--danger) !important;
+        }
 
         .badge {
-            display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
-            border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 700; 
-            letter-spacing: 0.02em; font-family: 'Manrope', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: var(--radius-pill);
+            font-size: 1rem;
+            /* lebih besar */
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            font-family: 'Manrope', sans-serif;
             box-shadow: var(--shadow-inner);
         }
-        .badge-success { background: var(--success-soft); color: var(--success); border: 1px solid rgba(16,185,129,0.2); }
-        .badge-warning { background: var(--warning-soft); color: var(--warning); border: 1px solid rgba(245,158,11,0.2); }
-        .badge-danger { background: var(--danger-soft); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
-
-        .kelas-chart-wrap, .jenjang-chart-wrap {
-            flex: 1; background: var(--chart-bg); border-radius: var(--radius-xl);
-            border: 1px solid var(--border); padding: 24px;
-            box-shadow: var(--shadow-inner); display: flex; align-items: center; justify-content: center;
-            position: relative; backdrop-filter: blur(20px);
+        .badge-success {
+            background: var(--success-soft);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .badge-warning {
+            background: var(--warning-soft);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+        .badge-danger {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
         }
 
-        .export-row { margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap; }
+        .export-row {
+            margin-top: 24px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
 
         /* ==========================================================
            10. TABS & REKAP
            ========================================================== */
-        .jenjang-tabs { 
-            display: flex; gap: 8px; padding: 4px; background: var(--surface-soft);
-            border-radius: var(--radius-xl); margin-bottom: 24px; flex-wrap: wrap; 
-            border: 1px solid var(--border); box-shadow: var(--shadow-inner); width: fit-content;
-        }
-        
-        .jenjang-tab {
-            padding: 10px 24px; border-radius: var(--radius-lg); background: transparent; 
-            color: var(--muted); font-weight: 600; font-size: 0.875rem; cursor: pointer; 
-            transition: all var(--t-spring); border: none; font-family: 'Manrope', sans-serif;
-        }
-        .jenjang-tab:hover { color: var(--text); }
-        .jenjang-tab.active { 
-            color: var(--primary); background: var(--surface-solid); font-weight: 700;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+        .jenjang-tabs,
+        .statistik-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 4px;
+            background: var(--surface-soft);
+            border-radius: var(--radius-xl);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-inner);
+            width: fit-content;
         }
 
-        .jenjang-pane { display: none; }
-        .jenjang-pane.active { display: block; animation: fadeUp 0.4s var(--t-spring); }
-
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .rekap-title {
-            font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 800;
-            color: var(--text); display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+        .jenjang-tab,
+        .statistik-tab {
+            padding: 10px 24px;
+            border-radius: var(--radius-lg);
+            background: transparent;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all var(--t-spring);
+            border: none;
+            font-family: 'Manrope', sans-serif;
         }
-        .rekap-title i { 
-            padding: 10px; border-radius: var(--radius-lg); background: linear-gradient(135deg, var(--primary), var(--primary-2));
-            color: #fff; box-shadow: 0 4px 15px var(--primary-glow);
+        .jenjang-tab:hover,
+        .statistik-tab:hover {
+            color: var(--text);
+        }
+        .jenjang-tab.active,
+        .statistik-tab.active {
+            color: var(--primary);
+            background: var(--surface-solid);
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-        .rekap-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 24px; }
+        .jenjang-pane,
+        .statistik-pane {
+            display: none;
+        }
+        .jenjang-pane.active,
+        .statistik-pane.active {
+            display: block;
+            animation: fadeUp 0.4s var(--t-spring);
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .rekap-title,
+        .statistik-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .rekap-title i,
+        .statistik-title i {
+            padding: 10px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: #fff;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        .rekap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 24px;
+        }
 
         .rekap-card {
-            background: var(--surface-solid); border: 1px solid var(--border);
-            border-radius: var(--radius-2xl); padding: 24px; box-shadow: var(--shadow-inner);
-            transition: all var(--t-spring); position: relative; overflow: hidden;
+            background: var(--surface-solid);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-2xl);
+            padding: 24px;
+            box-shadow: var(--shadow-inner);
+            transition: all var(--t-spring);
+            position: relative;
+            overflow: hidden;
             cursor: pointer;
         }
-        .rekap-card:hover { 
-            transform: translateY(-5px); 
-            box-shadow: var(--shadow-hover); 
-            border-color: var(--primary); 
+        .rekap-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
             background: var(--surface);
         }
-        .rekap-card:active { transform: scale(0.98); }
-        
+        .rekap-card:active {
+            transform: scale(0.98);
+        }
+
         .rekap-card-title {
-            font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700;
-            color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
-        .rekap-card-title i { color: var(--primary); }
+        .rekap-card-title i {
+            color: var(--primary);
+        }
         .rekap-card-title .chip-sm {
-            font-size: 0.7rem; padding: 4px 10px; border-radius: var(--radius-pill);
-            background: var(--primary-glow); color: var(--primary); font-weight: 700; font-family: 'Manrope', sans-serif;
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+            background: var(--primary-glow);
+            color: var(--primary);
+            font-weight: 700;
+            font-family: 'Manrope', sans-serif;
         }
 
-        .rekap-info-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+        .rekap-info-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
         .rekap-info-chip {
-            display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-soft);
-            background: var(--surface-soft); padding: 6px 12px; border-radius: var(--radius-pill); font-weight: 600; border: 1px solid var(--border-soft);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--text-soft);
+            background: var(--surface-soft);
+            padding: 6px 12px;
+            border-radius: var(--radius-pill);
+            font-weight: 600;
+            border: 1px solid var(--border-soft);
         }
-        .rekap-info-chip i { color: var(--primary); }
+        .rekap-info-chip i {
+            color: var(--primary);
+        }
 
-        .rekap-minmax { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .rekap-minmax {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
         .rekap-mm-card {
-            background: var(--surface-soft); border: 1px solid var(--border);
-            border-radius: var(--radius-xl); padding: 16px; text-align: center;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 16px;
+            text-align: center;
             transition: all var(--t-fast);
         }
-        .rekap-mm-card:hover { border-color: var(--primary); background: var(--surface); }
+        .rekap-mm-card:hover {
+            border-color: var(--primary);
+            background: var(--surface);
+        }
         .mm-label {
-            font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
-            margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: 'Manrope', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: 'Manrope', sans-serif;
         }
-        .mm-label.trend-up { color: var(--success); }
-        .mm-label.trend-down { color: var(--danger); }
-        .mm-value { font-size: 2rem; font-weight: 800; font-family: 'Space Grotesk', monospace; color: var(--text); line-height: 1; }
-        .mm-subject { font-size: 0.85rem; font-weight: 600; color: var(--text-soft); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mm-label.trend-up {
+            color: var(--success);
+        }
+        .mm-label.trend-down {
+            color: var(--danger);
+        }
+        .mm-value {
+            font-size: 2rem;
+            font-weight: 800;
+            font-family: 'Space Grotesk', monospace;
+            color: var(--text);
+            line-height: 1;
+        }
+        .mm-subject {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-soft);
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-        .mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+        .mini-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
         .mini-stat {
-            background: var(--surface-solid); border: 1px solid var(--border);
-            border-radius: var(--radius-xl); padding: 16px; text-align: center;
-            transition: all var(--t-spring); box-shadow: var(--shadow-inner);
+            background: var(--surface-solid);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 16px;
+            text-align: center;
+            transition: all var(--t-spring);
+            box-shadow: var(--shadow-inner);
         }
-        .mini-stat:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); border-color: var(--primary); }
-        .mini-stat .mini-label { font-size: 0.7rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; font-family: 'Manrope', sans-serif; }
-        .mini-stat .mini-value { font-size: 1.5rem; font-weight: 800; font-family: 'Space Grotesk', monospace; color: var(--text); line-height: 1.2; }
-        .mini-stat .mini-sub { font-size: 0.8rem; color: var(--primary); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: var(--primary-glow); padding: 2px 8px; border-radius: 4px; width: fit-content; margin: 0 auto;}
+        .mini-stat:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
+        .mini-stat .mini-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+            font-family: 'Manrope', sans-serif;
+        }
+        .mini-stat .mini-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            font-family: 'Space Grotesk', monospace;
+            color: var(--text);
+            line-height: 1.2;
+        }
+        .mini-stat .mini-sub {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: var(--primary-glow);
+            padding: 2px 8px;
+            border-radius: 4px;
+            width: fit-content;
+            margin: 0 auto;
+        }
 
-        .footer-note { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 24px 0; display: flex; gap: 8px; align-items: center; justify-content: center; font-weight: 500; font-family: 'Manrope', sans-serif;}
-        .footer-note i { color: var(--primary); font-size: 1rem; }
+        /* STATISTIK: SISWA TUNTAS PER JENJANG & PER KELAS */
+        .statistik-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
 
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+        .statistik-card {
+            background: var(--surface-solid);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-2xl);
+            padding: 24px;
+            box-shadow: var(--shadow-inner);
+            transition: all var(--t-spring);
+        }
 
-        #pdf-export-container { position: absolute; left: -9999px; top: 0; width: 800px; background: #ffffff; padding: 20px; font-family: 'Inter', sans-serif; }
+        .statistik-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
 
+        .statistik-card h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .statistik-card h4 i {
+            padding: 8px;
+            border-radius: var(--radius-md);
+            background: var(--primary-glow);
+            color: var(--primary);
+        }
+
+        .statistik-bar-row {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .statistik-bar-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .statistik-bar-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-soft);
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .statistik-bar-label .kategori-name {
+            font-family: 'Space Grotesk', monospace;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .statistik-bar-label .tuntas-count {
+            font-family: 'Space Grotesk', monospace;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .statistik-bar-bg {
+            height: 28px;
+            background: var(--border-soft);
+            border-radius: var(--radius-pill);
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .statistik-bar-fill {
+            height: 100%;
+            border-radius: var(--radius-pill);
+            transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #fff;
+            font-family: 'Space Grotesk', monospace;
+            min-width: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .statistik-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 2s infinite;
+        }
+
+        .statistik-bar-fill.high {
+            background: linear-gradient(90deg, #059669, #10B981);
+        }
+        .statistik-bar-fill.mid {
+            background: linear-gradient(90deg, #D97706, #F59E0B);
+        }
+        .statistik-bar-fill.low {
+            background: linear-gradient(90deg, #DC2626, #EF4444);
+        }
+
+        .footer-note {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.8rem;
+            padding: 24px 0;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            font-family: 'Manrope', sans-serif;
+        }
+        .footer-note i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--muted);
+        }
+
+        #pdf-export-container {
+            position: absolute;
+            left: -9999px;
+            top: 0;
+            width: 800px;
+            background: #ffffff;
+            padding: 20px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* ==========================================================
+           RESPONSIVE
+           ========================================================== */
         @media (max-width: 1400px) {
-            .hero-grid { grid-template-columns: 1fr; }
-            .stats { grid-template-columns: repeat(2, 1fr); }
-            .kelas-row, .jenjang-row { grid-template-columns: 1fr; }
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .statistik-grid {
+                grid-template-columns: 1fr;
+            }
         }
         @media (max-width: 900px) {
-            .saas-main { padding: 16px 16px 60px; }
-            .saas-search { display: none; }
+            .saas-main {
+                padding: 16px 16px 60px;
+            }
+            .saas-search {
+                display: none;
+            }
+            th,
+            td {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+            td .mapel-name {
+                font-size: 1.2rem;
+            }
+            .progress-cell strong {
+                font-size: 1rem;
+                min-width: 40px;
+            }
+            .badge {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+            .progress-bar-wrap {
+                height: 10px;
+                min-width: 60px;
+            }
         }
         @media (max-width: 600px) {
-            .hero { padding: 24px; }
-            .headline h2 { font-size: 1.8rem; }
-            .stats { grid-template-columns: 1fr; }
-            .rekap-grid { grid-template-columns: 1fr; }
-            .mini-stats { grid-template-columns: 1fr; }
-            .top-actions { flex-direction: column; align-items: stretch; width: 100%; }
-            .btn { width: 100%; }
-            .kkm-group { justify-content: center; }
-            .kelas-section, .jenjang-section, .rekap-section { padding: 20px; }
-            .quartal-bar, .sheet-bar { padding: 16px; flex-direction: column; align-items: stretch; }
-            .quartal-toggle { display: flex; flex-direction: column; }
+            .hero {
+                padding: 24px;
+            }
+            .headline h2 {
+                font-size: 1.8rem;
+            }
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            .rekap-grid {
+                grid-template-columns: 1fr;
+            }
+            .mini-stats {
+                grid-template-columns: 1fr;
+            }
+            .top-actions {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+            }
+            .btn {
+                width: 100%;
+            }
+            .kkm-group {
+                justify-content: center;
+            }
+            .kelas-section,
+            .jenjang-section,
+            .rekap-section,
+            .statistik-section {
+                padding: 20px;
+            }
+            .quartal-bar,
+            .sheet-bar {
+                padding: 16px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .quartal-toggle {
+                display: flex;
+                flex-direction: column;
+            }
+            th,
+            td {
+                padding: 10px 12px;
+                font-size: 0.8rem;
+            }
+            td .mapel-name {
+                font-size: 1rem;
+            }
+            .progress-cell strong {
+                font-size: 0.85rem;
+                min-width: 32px;
+            }
+            .badge {
+                font-size: 0.7rem;
+                padding: 4px 10px;
+                gap: 4px;
+            }
+            .progress-bar-wrap {
+                height: 8px;
+                min-width: 40px;
+            }
         }
     </style>
 </head>
@@ -790,14 +1646,14 @@
     <div class="app-layout">
         <main class="saas-main">
             <div class="dashboard">
-                
+
                 <div class="topbar">
                     <div class="topbar-wrap">
                         <div class="brand">
                             <h1><i class="fa-solid fa-graduation-cap"></i> Data Nexus</h1>
                             <p>Akademik MTs & MI Diniyah "Miftahul Ulum"</p>
                         </div>
-                        
+
                         <div class="saas-search">
                             <i class="fa-solid fa-magnifying-glass"></i>
                             <input type="text" placeholder="Search analytics or press CMD+K..." readonly>
@@ -805,21 +1661,21 @@
                         </div>
 
                         <div class="top-actions">
-                            <label for="file-input" class="btn btn-primary" style="display:none;">
+                            <label id="uploadLabel" for="file-input" class="btn btn-primary" style="display:none;">
                                 <i class="fa-solid fa-cloud-arrow-up"></i> Upload Excel
                             </label>
                             <input type="file" id="file-input" accept=".xlsx, .xls, .csv" />
-                            
+
                             <div class="kkm-group">
                                 <label for="kkmInput">KKM</label>
                                 <input type="number" id="kkmInput" value="5.0" min="0" max="10" step="0.1" title="Kriteria Ketuntasan Minimal">
                                 <button id="resetKkmBtn" class="btn-kkm-reset" title="Reset ke 5.0"><i class="fa-solid fa-rotate-left"></i></button>
                             </div>
-                            
+
                             <button id="clearDataBtn" class="btn btn-sm" style="background:var(--danger-soft);color:var(--danger);" title="Hapus data">
                                 <i class="fa-solid fa-trash"></i> Reset
                             </button>
-                            
+
                             <div class="theme-toggle">
                                 <button id="lightModeBtn" class="theme-btn" title="Mode Terang"><i class="fa-regular fa-sun"></i></button>
                                 <button id="darkModeBtn" class="theme-btn active-theme" title="Mode Gelap"><i class="fa-regular fa-moon"></i></button>
@@ -834,7 +1690,7 @@
                             <span class="kicker"><i class="fa-solid fa-sparkles"></i> AI Powered Insight 2026</span>
                             <h2>Analisis Performa<br>Akademik.</h2>
                             <p>Visualisasi canggih dari data Excel Anda. Dapatkan insight nilai rata-rata, tren, dan pencapaian siswa secara real-time.</p>
-                            
+
                             <div class="hero-meta">
                                 <div class="meta-card">
                                     <div class="meta-title"><i class="fa-solid fa-signal"></i> System Status</div>
@@ -846,7 +1702,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <label for="file-input" style="text-decoration: none;">
                             <div class="drag-drop-zone">
                                 <i class="fa-solid fa-cloud-arrow-up"></i>
@@ -883,19 +1739,31 @@
                     <div class="stat"><div class="label"><i class="fa-solid fa-bullseye"></i> Keseluruhan</div><div class="value" id="overall-avg">-</div><div class="sub">Rerata seluruh mapel</div></div>
                 </div>
 
+                <!-- KELAS SECTION (TANPA CHART) -->
                 <div class="kelas-section" id="kelasSection">
+                    <div class="section-title" id="kelasSectionTitle">
+                        <i class="fa-solid fa-table-cells-large"></i> <span id="kelasTableTitle">Tabel Analisis</span>
+                    </div>
                     <div class="kelas-row" id="kelasRow">
                         <div class="rank-card">
-                            <h4><i class="fa-solid fa-table-cells-large"></i> <span id="kelasTableTitle">Tabel Analisis</span></h4>
                             <div class="kelas-table-wrap">
                                 <table id="avg-table">
-                                    <thead><tr><th>#</th><th>Mata Pelajaran</th><th>Skor</th><th>Status Akademik</th></tr></thead>
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Mata Pelajaran</th>
+                                            <th>Skor</th>
+                                            <th>Status Akademik</th>
+                                        </tr>
+                                    </thead>
                                     <tbody id="table-body">
-                                        <tr><td colspan="4">
-                                            <i class="fa-solid fa-inbox"></i>
-                                            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);">Belum ada data</div>
-                                            <div style="font-size:0.85rem;color:var(--muted);margin-top:4px;">Silakan upload file Excel untuk memulai analisis.</div>
-                                        </td></tr>
+                                        <tr>
+                                            <td colspan="4">
+                                                <i class="fa-solid fa-inbox"></i>
+                                                <div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);">Belum ada data</div>
+                                                <div style="font-size:0.85rem;color:var(--muted);margin-top:4px;">Silakan upload file Excel untuk memulai analisis.</div>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -904,13 +1772,10 @@
                                 <button id="exportCSVBtn" class="btn btn-csv"><i class="fa-solid fa-file-csv"></i> Data Mentah (CSV)</button>
                             </div>
                         </div>
-                        <div class="rank-card">
-                            <h4><i class="fa-solid fa-chart-simple"></i> Visualisasi Data</h4>
-                            <div class="kelas-chart-wrap"><canvas id="avgChart"></canvas></div>
-                        </div>
                     </div>
                 </div>
 
+                <!-- JENJANG SECTION (TANPA CHART) -->
                 <div class="jenjang-section" id="jenjangSection">
                     <div class="jenjang-tabs" id="jenjangTabs">
                         <span class="chip" style="background:transparent;border:none;box-shadow:none;">
@@ -920,9 +1785,27 @@
                     <div class="jenjang-content" id="jenjangContent"></div>
                 </div>
 
+                <!-- REKAP SECTION -->
                 <div class="rekap-section" id="rekapSection" style="display:none;">
                     <div class="rekap-title"><i class="fa-solid fa-ranking-star"></i> Executive Summary</div>
                     <div class="rekap-grid" id="rekapGrid"></div>
+                </div>
+
+                <!-- TAB BARU: DATA STATISTIK (Siswa Tuntas Per Jenjang & Per Kelas) -->
+                <div class="statistik-section" id="statistikSection" style="display:none;">
+                    <div class="statistik-title"><i class="fa-solid fa-chart-pie"></i> Data Statistik</div>
+                    <div class="statistik-tabs" id="statistikTabs">
+                        <button class="statistik-tab active" data-tab="per-jenjang"><i class="fa-solid fa-layer-group"></i> Per Jenjang</button>
+                        <button class="statistik-tab" data-tab="per-kelas"><i class="fa-solid fa-school"></i> Per Kelas</button>
+                    </div>
+                    <div class="statistik-content" id="statistikContent">
+                        <div class="statistik-pane active" id="statistikPerJenjang">
+                            <div class="statistik-grid" id="statistikJenjangGrid"></div>
+                        </div>
+                        <div class="statistik-pane" id="statistikPerKelas">
+                            <div class="statistik-grid" id="statistikKelasGrid"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="footer-note">
@@ -944,12 +1827,9 @@
         let currentAverages = [];
         let currentSubjectNames = [];
         let currentStudentCount = 0;
-        let chartInstance = null;
-        let chartConfig = null;
         let KKM = 5.0;
         const DEFAULT_KKM = 5.0;
 
-        let jenjangChartInstances = {};
         let groupedData = {};
         let allSheetsData = {};
         let originalSheetNames = [];
@@ -986,6 +1866,10 @@
         const kkmInput = document.getElementById('kkmInput');
         const resetKkmBtn = document.getElementById('resetKkmBtn');
         const kelasSection = document.getElementById('kelasSection');
+        const statistikSection = document.getElementById('statistikSection');
+        const statistikJenjangGrid = document.getElementById('statistikJenjangGrid');
+        const statistikKelasGrid = document.getElementById('statistikKelasGrid');
+        const kelasSectionTitle = document.getElementById('kelasSectionTitle');
 
         function getUIState() {
             try {
@@ -1005,17 +1889,6 @@
                 kkm: KKM
             };
             localStorage.setItem(STORAGE_PREFIX + 'ui_state', JSON.stringify(state));
-        }
-
-        function getThemeColors() {
-            const dark = document.body.classList.contains('dark');
-            return {
-                textColor: dark ? '#e2e8f0' : '#1e293b',
-                gridColor: dark ? 'rgba(148,163,184,0.12)' : 'rgba(148,163,184,0.18)',
-                bgColor: dark ? '#111827' : '#ffffff',
-                tooltipBg: dark ? '#1e293b' : '#ffffff',
-                legendColor: dark ? '#cbd5e1' : '#334155',
-            };
         }
 
         function saveToLocalStorage() {
@@ -1067,11 +1940,13 @@
                 "الديانة", "هداية الصبيان", "عقيدة العوام", "جواهر الكلامية", "التصريف", "رياض البديعة"
             ];
 
-            let headerRowIndex = -1, dataStartRow = -1;
+            let headerRowIndex = -1,
+                dataStartRow = -1;
             for (let i = 0; i < rows.length && i < 50; i++) {
                 for (let j = 0; j < rows[i].length && j < 15; j++) {
                     const cell = String(rows[i][j]).trim().toUpperCase();
-                    if (cell === 'NAMA' || cell === 'NAMA SISWA') { headerRowIndex = i; dataStartRow = i + 1; break; }
+                    if (cell === 'NAMA' || cell === 'NAMA SISWA') { headerRowIndex = i;
+                        dataStartRow = i + 1; break; }
                 }
                 if (headerRowIndex !== -1) break;
             }
@@ -1083,30 +1958,39 @@
                         const cell = String(rows[i][j]).trim();
                         if (cell.length > 0 && subjectKeywords.some(kw => cell.includes(kw))) matchCount++;
                     }
-                    if (matchCount >= 3) { headerRowIndex = i; dataStartRow = i + 1; break; }
+                    if (matchCount >= 3) { headerRowIndex = i;
+                        dataStartRow = i + 1; break; }
                 }
             }
-            if (headerRowIndex === -1 && rows.length > 6) { headerRowIndex = 5; dataStartRow = 6; }
+            if (headerRowIndex === -1 && rows.length > 6) { headerRowIndex = 5;
+                dataStartRow = 6; }
             if (headerRowIndex === -1 || dataStartRow === -1) return { subjects: [], scores: [] };
 
             const headerRow = rows[headerRowIndex];
-            const subjectIndices = [], subjectNames = [];
-            const ignoreKeywords = ["NO", "NOPES", "NIS", "NAMA", "ASR", "KELAS", "جملة", "ألتسوية", "فائز", "RANK", "SUM", "jml"];
+            const subjectIndices = [],
+                subjectNames = [];
+            const ignoreKeywords = ["NO", "NOPES", "NIS", "NAMA", "ASR", "KELAS", "جملة", "ألتسوية", "فائز", "RANK", "SUM",
+                "jml"
+            ];
             for (let c = 0; c < headerRow.length; c++) {
                 let cellVal = headerRow[c];
                 if (cellVal && typeof cellVal === 'string') {
                     let cleaned = cellVal.trim();
-                    if (!ignoreKeywords.some(ig => cleaned.toUpperCase().includes(ig)) && cleaned.length > 1 && !/^\d+(\.\d+)?$/.test(cleaned)) {
-                        subjectIndices.push(c); subjectNames.push(cleaned);
+                    if (!ignoreKeywords.some(ig => cleaned.toUpperCase().includes(ig)) && cleaned.length > 1 && !/^\d+(\.\d+)?$/
+                        .test(cleaned)) {
+                        subjectIndices.push(c);
+                        subjectNames.push(cleaned);
                     }
                 }
             }
             if (subjectNames.length < 3 && headerRow.length > 6) {
-                subjectIndices.length = 0; subjectNames.length = 0;
+                subjectIndices.length = 0;
+                subjectNames.length = 0;
                 for (let c = 6; c < Math.min(headerRow.length, 30); c++) {
                     let name = headerRow[c];
                     if (name && typeof name === 'string' && name.trim().length > 0) {
-                        subjectIndices.push(c); subjectNames.push(name.trim());
+                        subjectIndices.push(c);
+                        subjectNames.push(name.trim());
                     }
                 }
             }
@@ -1118,11 +2002,14 @@
                 let hasNumeric = false;
                 const scoreRow = [];
                 for (let idx of subjectIndices) {
-                    let val = row[idx]; let num = null;
+                    let val = row[idx];
+                    let num = null;
                     if (val !== undefined && val !== "") {
-                        if (typeof val === 'number') { num = val; hasNumeric = true; }
-                        else if (typeof val === 'string') { let p = parseFloat(val); if (!isNaN(p)) { num = p; hasNumeric = true; } }
-                        else if (typeof val === 'boolean') { num = val ? 1 : 0; hasNumeric = true; }
+                        if (typeof val === 'number') { num = val;
+                            hasNumeric = true; } else if (typeof val === 'string') { let p = parseFloat(val); if (!isNaN(
+                                p)) { num = p;
+                                hasNumeric = true; } } else if (typeof val === 'boolean') { num = val ? 1 : 0;
+                            hasNumeric = true; }
                     }
                     scoreRow.push(num);
                 }
@@ -1138,7 +2025,8 @@
             for (const student of scores) {
                 for (let i = 0; i < subjects.length; i++) {
                     const val = student[i];
-                    if (val !== null && typeof val === 'number' && !isNaN(val)) { sums[i] += val; counts[i]++; }
+                    if (val !== null && typeof val === 'number' && !isNaN(val)) { sums[i] += val;
+                        counts[i]++; }
                 }
             }
             return sums.map((sum, idx) => counts[idx] ? parseFloat((sum / counts[idx]).toFixed(2)) : 0);
@@ -1151,7 +2039,9 @@
         }
 
         function mergeSheetData(sheetList) {
-            let allSubjects = [], allScores = [], totalStudents = 0;
+            let allSubjects = [],
+                allScores = [],
+                totalStudents = 0;
             for (const sheetName of sheetList) {
                 const ws = workbookData.Sheets[sheetName];
                 if (!ws) continue;
@@ -1177,7 +2067,7 @@
             const cls = getProgressBarClass(avg);
             return `<div class="progress-cell">
                 <div class="progress-bar-wrap"><div class="progress-bar-fill ${cls}" style="width:${pct}%"></div></div>
-                <strong style="font-family:'Space Grotesk','JetBrains Mono',monospace;min-width:42px;text-align:right;">${avg.toFixed(2)}</strong>
+                <strong>${avg.toFixed(2)}</strong>
             </div>`;
         }
 
@@ -1201,73 +2091,131 @@
 
         function isBelowKKM(avg) { return avg < KKM && avg > 0; }
 
-        function buildChartConfig(subjects, averages, themeColors, extraOpts = {}) {
-            const isExport = extraOpts.isExport || false;
-            return {
-                type: 'bar',
-                data: {
-                    labels: subjects,
-                    datasets: [{
-                        label: 'Rata-rata Nilai',
-                        data: averages,
-                        backgroundColor: averages.map(a => a >= 7.5 ? '#10b981' : (a >= KKM ? '#f59e0b' : '#ef4444')),
-                        borderColor: averages.map(a => a >= 7.5 ? '#059669' : (a >= KKM ? '#d97706' : '#dc2626')),
-                        borderWidth: isExport ? 2 : 1.5,
-                        borderRadius: isExport ? 10 : 6,
-                        borderSkipped: false,
-                        maxBarThickness: isExport ? 65 : 45,
-                    }, {
-                        label: `Batas KKM (${KKM.toFixed(1)})`,
-                        data: new Array(averages.length).fill(KKM),
-                        type: 'line',
-                        borderColor: '#ef4444',
-                        borderWidth: 2,
-                        borderDash: [6, 4],
-                        pointRadius: 0,
-                        fill: false,
-                        order: 1,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: isExport ? false : { duration: 800, easing: 'easeOutQuart' },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                font: { size: isExport ? 20 : 12, family: "'Inter','Arial',sans-serif", weight: 'bold' },
-                                color: themeColors.legendColor,
-                                padding: isExport ? 18 : 12,
-                                usePointStyle: true,
-                                pointStyleWidth: isExport ? 10 : 7,
-                            }
-                        },
-                        tooltip: { enabled: !isExport }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: Math.max(10, Math.max(...averages) + 1),
-                            ticks: { color: themeColors.textColor, font: { size: isExport ? 18 : 11, family: "'Inter','Arial',sans-serif" }, callback: v => v.toFixed(1), padding: isExport ? 10 : 5 },
-                            title: { display: true, text: 'Nilai Rata-rata', color: themeColors.textColor, font: { size: isExport ? 22 : 11, family: "'Inter','Arial',sans-serif", weight: '600' } },
-                            grid: { color: themeColors.gridColor, drawBorder: false }
-                        },
-                        x: {
-                            ticks: { autoSkip: false, maxRotation: isExport ? 45 : 40, minRotation: isExport ? 30 : 30, color: themeColors.textColor, font: { size: isExport ? 14 : 10, family: "'Amiri','Inter','Arial',sans-serif", weight: isExport ? 'bold' : 'normal' }, padding: isExport ? 14 : 6 },
-                            grid: { display: false }
-                        }
-                    },
-                    layout: { padding: { top: 8, bottom: isExport ? 25 : 8, left: 4, right: 12 } }
+        function computeStudentAverages(scores) {
+            if (!scores || !scores.length) return [];
+            return scores.map(student => {
+                let sum = 0,
+                    count = 0;
+                for (let val of student) {
+                    if (typeof val === 'number' && !isNaN(val)) { sum += val;
+                        count++; }
                 }
-            };
+                return count > 0 ? sum / count : 0;
+            });
+        }
+
+        function getTuntasCount(studentAverages) {
+            return studentAverages.filter(avg => avg >= KKM).length;
+        }
+
+        function getStatistikBarClass(pct) {
+            if (pct >= 75) return 'high';
+            if (pct >= 50) return 'mid';
+            return 'low';
+        }
+
+        function renderStatistik() {
+            const sheetKeys = Object.keys(allSheetsData);
+            if (!sheetKeys.length) {
+                statistikSection.style.display = 'none';
+                return;
+            }
+
+            statistikSection.style.display = 'block';
+
+            // --- PER JENJANG ---
+            const jenjangMap = {};
+            for (const name of sheetKeys) {
+                const data = allSheetsData[name];
+                if (!data || !data.scores || !data.scores.length) continue;
+
+                let jenjang = 'Lainnya';
+                if (/MI/i.test(name)) jenjang = 'MI';
+                else if (/MTs/i.test(name) || /MTSD/i.test(name)) jenjang = 'MTs';
+
+                if (!jenjangMap[jenjang]) {
+                    jenjangMap[jenjang] = { totalStudents: 0, tuntas: 0, allAverages: [] };
+                }
+                const avgs = computeStudentAverages(data.scores);
+                jenjangMap[jenjang].totalStudents += avgs.length;
+                jenjangMap[jenjang].tuntas += getTuntasCount(avgs);
+                jenjangMap[jenjang].allAverages = jenjangMap[jenjang].allAverages.concat(avgs);
+            }
+
+            let jenjangHTML = '';
+            for (const [jenjang, info] of Object.entries(jenjangMap)) {
+                const pct = info.totalStudents > 0 ? (info.tuntas / info.totalStudents) * 100 : 0;
+                const barClass = getStatistikBarClass(pct);
+                const overallAvg = info.allAverages.length > 0 ?
+                    (info.allAverages.reduce((a, b) => a + b, 0) / info.allAverages.length).toFixed(2) :
+                    '-';
+                jenjangHTML += `
+                    <div class="statistik-card">
+                        <h4><i class="fa-solid fa-layer-group"></i> ${jenjang}</h4>
+                        <div class="statistik-bar-item">
+                            <div class="statistik-bar-label">
+                                <span class="kategori-name">Siswa Tuntas (≥ KKM)</span>
+                                <span class="tuntas-count">${info.tuntas} / ${info.totalStudents} siswa</span>
+                            </div>
+                            <div class="statistik-bar-bg">
+                                <div class="statistik-bar-fill ${barClass}" style="width: ${pct}%;">${pct.toFixed(1)}%</div>
+                            </div>
+                        </div>
+                        <div style="margin-top:12px; font-size:0.8rem; color:var(--muted);">
+                            Rerata Nilai: <strong style="color:var(--text);">${overallAvg}</strong> | KKM: ${KKM.toFixed(1)}
+                        </div>
+                    </div>`;
+            }
+            statistikJenjangGrid.innerHTML = jenjangHTML || '<p style="color:var(--muted);">Tidak ada data jenjang.</p>';
+
+            // --- PER KELAS ---
+            let kelasHTML = '';
+            const sortedKeys = sheetKeys.sort((a, b) => {
+                const numA = parseInt(a.match(/\d+/)?.[0] || 0);
+                const numB = parseInt(b.match(/\d+/)?.[0] || 0);
+                if (numA !== numB) return numA - numB;
+                return a.localeCompare(b);
+            });
+
+            for (const name of sortedKeys) {
+                const data = allSheetsData[name];
+                if (!data || !data.scores || !data.scores.length) continue;
+
+                const avgs = computeStudentAverages(data.scores);
+                const total = avgs.length;
+                const tuntas = getTuntasCount(avgs);
+                const pct = total > 0 ? (tuntas / total) * 100 : 0;
+                const barClass = getStatistikBarClass(pct);
+                const overallAvg = avgs.length > 0 ?
+                    (avgs.reduce((a, b) => a + b, 0) / avgs.length).toFixed(2) :
+                    '-';
+
+                kelasHTML += `
+                    <div class="statistik-card">
+                        <h4><i class="fa-solid fa-school"></i> ${name}</h4>
+                        <div class="statistik-bar-item">
+                            <div class="statistik-bar-label">
+                                <span class="kategori-name">Siswa Tuntas (≥ KKM)</span>
+                                <span class="tuntas-count">${tuntas} / ${total} siswa</span>
+                            </div>
+                            <div class="statistik-bar-bg">
+                                <div class="statistik-bar-fill ${barClass}" style="width: ${pct}%;">${pct.toFixed(1)}%</div>
+                            </div>
+                        </div>
+                        <div style="margin-top:12px; font-size:0.8rem; color:var(--muted);">
+                            Rerata Nilai: <strong style="color:var(--text);">${overallAvg}</strong> | KKM: ${KKM.toFixed(1)}
+                        </div>
+                    </div>`;
+            }
+            statistikKelasGrid.innerHTML = kelasHTML || '<p style="color:var(--muted);">Tidak ada data kelas.</p>';
         }
 
         async function exportPDF(subjects, averages, title) {
             if (!subjects.length) { alert("Tidak ada data untuk diekspor."); return; }
 
             const sorted = sortSubjectsByAverageDesc(subjects, averages);
-            const maxVal = Math.max(...averages), minVal = Math.min(...averages);
+            const maxVal = Math.max(...averages),
+                minVal = Math.min(...averages);
             const overall = (averages.reduce((a, b) => a + b, 0) / averages.length).toFixed(2);
 
             let tableRows = '';
@@ -1300,30 +2248,11 @@
                 allowTaint: true,
             });
 
-            const offChartCanvas = document.createElement('canvas');
-            offChartCanvas.width = 1200; offChartCanvas.height = 700;
-            const offCtx = offChartCanvas.getContext('2d');
-            const exportColors = {
-                textColor: '#1e293b', gridColor: 'rgba(148,163,184,0.18)',
-                bgColor: '#ffffff', tooltipBg: '#ffffff', legendColor: '#334155',
-            };
-            const chartCfg = buildChartConfig(sorted.subjects, sorted.averages, exportColors, { isExport: true });
-            chartCfg.options.responsive = false;
-            chartCfg.options.maintainAspectRatio = true;
-            chartCfg.options.plugins.tooltip = { enabled: false };
-            chartCfg.data.datasets[0].maxBarThickness = 60;
-            chartCfg.data.datasets[1].borderWidth = 3;
-
-            offCtx.fillStyle = '#ffffff';
-            offCtx.fillRect(0, 0, offChartCanvas.width, offChartCanvas.height);
-            const tempChart = new Chart(offCtx, chartCfg);
-            await new Promise(r => setTimeout(r, 600));
-            const chartImg = offChartCanvas.toDataURL('image/png');
-            tempChart.destroy();
-
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-            const pageW = 210, margin = 10, contentW = pageW - margin * 2;
+            const pageW = 210,
+                margin = 10,
+                contentW = pageW - margin * 2;
 
             const tableImgH = (canvas.height / canvas.width) * contentW;
             let y = margin;
@@ -1331,15 +2260,9 @@
                 const scale = 250 / tableImgH;
                 const scaledW = contentW * scale;
                 doc.addImage(canvas.toDataURL('image/png'), 'PNG', (pageW - scaledW) / 2, y, scaledW, 250);
-                y += 255;
             } else {
                 doc.addImage(canvas.toDataURL('image/png'), 'PNG', margin, y, contentW, tableImgH);
-                y += tableImgH + 8;
             }
-
-            if (y > 160) { doc.addPage(); y = margin; }
-            const chartImgH = (700 / 1200) * contentW;
-            doc.addImage(chartImg, 'PNG', margin, y, contentW, chartImgH);
 
             const safe = title.replace(/[^a-zA-Z0-9]/g, '_');
             doc.save(`Laporan_${safe}.pdf`);
@@ -1356,24 +2279,17 @@
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url; a.download = `${title.replace(/[^a-zA-Z0-9]/g,'_')}.csv`;
-            a.click(); URL.revokeObjectURL(url);
-        }
-
-        function renderJenjangChart(canvasId, subjects, averages, key) {
-            const canvas = document.getElementById(canvasId);
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            if (jenjangChartInstances[key]) { jenjangChartInstances[key].destroy(); jenjangChartInstances[key] = null; }
-            const themeColors = getThemeColors();
-            const config = buildChartConfig(subjects, averages, themeColors);
-            config.options.maintainAspectRatio = false;
-            jenjangChartInstances[key] = new Chart(ctx, config);
+            a.href = url;
+            a.download = `${title.replace(/[^a-zA-Z0-9]/g,'_')}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         function buildMiniStatsHTML(subjects, averages) {
-            const maxVal = Math.max(...averages), minVal = Math.min(...averages);
-            const maxIdx = averages.indexOf(maxVal), minIdx = averages.indexOf(minVal);
+            const maxVal = Math.max(...averages),
+                minVal = Math.min(...averages);
+            const maxIdx = averages.indexOf(maxVal),
+                minIdx = averages.indexOf(minVal);
             const overall = (averages.reduce((a, b) => a + b, 0) / averages.length).toFixed(2);
             return `
                 <div class="mini-stats">
@@ -1397,7 +2313,7 @@
 
         function filterBySheet(sheetName) {
             sheetSelect.value = sheetName;
-            
+
             if (allSheetsData[sheetName]?.subjects?.length) {
                 const d = allSheetsData[sheetName];
                 currentSubjectNames = d.subjects;
@@ -1421,9 +2337,8 @@
                     }
                 }
             }
-            
+
             saveUIState();
-            
             kelasSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
@@ -1442,25 +2357,20 @@
 
                 const scores = data.scores;
                 let totalStudents = data.studentCount || 0;
-                let tuntas = 0, tidakTuntas = 0;
+                let tuntas = 0,
+                    tidakTuntas = 0;
                 let persentaseTuntas = 0;
 
                 if (scores && scores.length) {
-                    const studentAverages = scores.map(student => {
-                        let sum = 0, count = 0;
-                        for (let val of student) {
-                            if (typeof val === 'number' && !isNaN(val)) { sum += val; count++; }
-                        }
-                        return count > 0 ? sum / count : 0;
-                    });
+                    const studentAverages = computeStudentAverages(scores);
                     totalStudents = studentAverages.length;
-                    tuntas = studentAverages.filter(avg => avg >= KKM).length;
+                    tuntas = getTuntasCount(studentAverages);
                     tidakTuntas = totalStudents - tuntas;
                     persentaseTuntas = totalStudents > 0 ? (tuntas / totalStudents) * 100 : 0;
                 }
 
                 const avgs = data.averages;
-                const overall = avgs.length ? (avgs.reduce((a,b) => a+b,0) / avgs.length).toFixed(2) : '-';
+                const overall = avgs.length ? (avgs.reduce((a, b) => a + b, 0) / avgs.length).toFixed(2) : '-';
 
                 rekapEntries.push({
                     label: name,
@@ -1523,9 +2433,6 @@
         }
 
         function renderJenjangTabs() {
-            Object.values(jenjangChartInstances).forEach(ch => ch.destroy());
-            jenjangChartInstances = {};
-
             const uiState = getUIState();
             const targetTab = uiState.jenjangTab;
 
@@ -1546,11 +2453,10 @@
                     sheetKeys.forEach((name) => {
                         const active = (name === activeSheetKey) ? 'active' : '';
                         const data = allSheetsData[name];
-                        const safeName = name.replace(/[^a-zA-Z0-9]/g, '_');
-                        const canvasId = `jenjangChart_${safeName}`;
-                        
+
                         if (!data || !data.subjects.length) {
-                            panesHtml += `<div class="jenjang-pane ${active}" data-sheet="${name}"><div class="jenjang-row"><div class="rank-card"><h4><i class="fa-solid fa-table-list"></i> Semua Mapel</h4><p style="color:var(--muted);">Tidak ada data</p></div></div></div>`;
+                            panesHtml +=
+                                `<div class="jenjang-pane ${active}" data-sheet="${name}"><div class="jenjang-row"><div class="rank-card"><p style="color:var(--muted);">Tidak ada data</p></div></div></div>`;
                             return;
                         }
                         const sorted = sortSubjectsByAverageDesc(data.subjects, data.averages);
@@ -1558,19 +2464,20 @@
                         sorted.subjects.forEach((sub, i) => {
                             const avg = sorted.averages[i];
                             const kkmClass = isBelowKKM(avg) ? 'below-kkm' : '';
-                            tableRows += `<tr class="${kkmClass}"><td>${i+1}</td><td><span style="font-family:'Amiri','Traditional Arabic',serif;">${sub}</span></td><td>${getProgressBarHTML(avg)}</td><td>${getStatusBadge(avg)}</td></tr>`;
+                            tableRows +=
+                                `<tr class="${kkmClass}"><td>${i+1}</td><td><span class="mapel-name">${sub}</span></td><td>${getProgressBarHTML(avg)}</td><td>${getStatusBadge(avg)}</td></tr>`;
                         });
+                        const sTitle = `Tabel Rata-rata — ${name}` + (data.studentCount ? ` (${data.studentCount} siswa)` :
+                            '');
                         panesHtml += `
                             <div class="jenjang-pane ${active}" data-sheet="${name}">
                                 <div class="jenjang-row">
                                     <div class="rank-card">
-                                        <h4><i class="fa-solid fa-table-list"></i> Tabel Rata-rata — ${name}</h4>
+                                        <div class="section-title">
+                                            <i class="fa-solid fa-table-list"></i> ${sTitle}
+                                        </div>
                                         ${buildMiniStatsHTML(sorted.subjects, sorted.averages)}
                                         <div class="jenjang-table-wrap"><table><thead><tr><th>#</th><th>Mapel</th><th>Rata2</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table></div>
-                                    </div>
-                                    <div class="rank-card">
-                                        <h4><i class="fa-solid fa-chart-bar"></i> Diagram Batang</h4>
-                                        <div class="jenjang-chart-wrap"><canvas id="${canvasId}"></canvas></div>
                                     </div>
                                 </div>
                                 <div class="export-row">
@@ -1578,10 +2485,6 @@
                                     <button class="btn btn-csv btn-sm export-csv-jenjang" data-sheet="${name}"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
                                 </div>
                             </div>`;
-                        
-                        if (name === activeSheetKey) {
-                            setTimeout(() => renderJenjangChart(canvasId, sorted.subjects, sorted.averages, name), 150);
-                        }
                     });
                     jenjangContent.innerHTML = panesHtml;
 
@@ -1589,41 +2492,43 @@
                         btn.addEventListener('click', function() {
                             const sheet = this.dataset.sheet;
                             const d = allSheetsData[sheet];
-                            if (d?.subjects.length) { const s = sortSubjectsByAverageDesc(d.subjects, d.averages); exportPDF(s.subjects, s.averages, sheet); }
+                            if (d?.subjects.length) { const s = sortSubjectsByAverageDesc(d.subjects, d
+                                .averages);
+                                exportPDF(s.subjects, s.averages, sheet); }
                         });
                     });
                     document.querySelectorAll('.export-csv-jenjang').forEach(btn => {
                         btn.addEventListener('click', function() {
                             const sheet = this.dataset.sheet;
                             const d = allSheetsData[sheet];
-                            if (d?.subjects.length) { const s = sortSubjectsByAverageDesc(d.subjects, d.averages); exportCSV(s.subjects, s.averages, sheet); }
+                            if (d?.subjects.length) { const s = sortSubjectsByAverageDesc(d.subjects, d
+                                .averages);
+                                exportCSV(s.subjects, s.averages, sheet); }
                         });
                     });
 
                     document.querySelectorAll('.jenjang-tab').forEach(tab => {
                         tab.addEventListener('click', function() {
                             const sheet = this.dataset.sheet;
-                            document.querySelectorAll('.jenjang-tab').forEach(t => t.classList.remove('active'));
+                            document.querySelectorAll('.jenjang-tab').forEach(t => t.classList.remove(
+                            'active'));
                             this.classList.add('active');
-                            document.querySelectorAll('.jenjang-pane').forEach(p => p.classList.remove('active'));
+                            document.querySelectorAll('.jenjang-pane').forEach(p => p.classList.remove(
+                                'active'));
                             const pane = document.querySelector(`.jenjang-pane[data-sheet="${sheet}"]`);
                             if (pane) pane.classList.add('active');
-                            const safeName = sheet.replace(/[^a-zA-Z0-9]/g, '_');
-                            const canvasId = `jenjangChart_${safeName}`;
-                            const canvas = document.getElementById(canvasId);
-                            if (canvas && !jenjangChartInstances[sheet] && allSheetsData[sheet]?.subjects.length) {
-                                const s = sortSubjectsByAverageDesc(allSheetsData[sheet].subjects, allSheetsData[sheet].averages);
-                                renderJenjangChart(canvasId, s.subjects, s.averages, sheet);
-                            }
-                            saveUIState(); 
+                            saveUIState();
                         });
                     });
                     renderRekapSection();
+                    renderStatistik();
                     return;
                 }
-                jenjangTabs.innerHTML = '<span class="chip"><i class="fa-regular fa-folder-open"></i> Belum ada data</span>';
+                jenjangTabs.innerHTML =
+                    '<span class="chip"><i class="fa-regular fa-folder-open"></i> Belum ada data</span>';
                 jenjangContent.innerHTML = '';
                 rekapSection.style.display = 'none';
+                statistikSection.style.display = 'none';
                 return;
             }
 
@@ -1647,10 +2552,9 @@
             sortedKeys.forEach((key) => {
                 const active = (key === activeGroupKey) ? 'active' : '';
                 const data = groupedData[key];
-                const safeKey = key.replace(/[^a-zA-Z0-9]/g, '_');
-                const canvasId = `jenjangChart_${safeKey}`;
                 if (!data || !data.subjects.length) {
-                    panesHtml += `<div class="jenjang-pane ${active}" data-key="${key}"><div class="jenjang-row"><div class="rank-card"><h4><i class="fa-solid fa-table-list"></i> Semua Mapel</h4><p style="color:var(--muted);">Tidak ada data</p></div></div></div>`;
+                    panesHtml +=
+                        `<div class="jenjang-pane ${active}" data-key="${key}"><div class="jenjang-row"><div class="rank-card"><p style="color:var(--muted);">Tidak ada data</p></div></div></div>`;
                     return;
                 }
                 const sorted = sortSubjectsByAverageDesc(data.subjects, data.averages);
@@ -1658,19 +2562,20 @@
                 sorted.subjects.forEach((sub, i) => {
                     const avg = sorted.averages[i];
                     const kkmClass = isBelowKKM(avg) ? 'below-kkm' : '';
-                    tableRows += `<tr class="${kkmClass}"><td>${i+1}</td><td><span style="font-family:'Amiri','Traditional Arabic',serif;">${sub}</span></td><td>${getProgressBarHTML(avg)}</td><td>${getStatusBadge(avg)}</td></tr>`;
+                    tableRows +=
+                        `<tr class="${kkmClass}"><td>${i+1}</td><td><span class="mapel-name">${sub}</span></td><td>${getProgressBarHTML(avg)}</td><td>${getStatusBadge(avg)}</td></tr>`;
                 });
+                const sTitle = `Tabel Rata-rata — ${key.replace('_', ' ')}` + (data.studentCount ?
+                    ` (${data.studentCount} siswa)` : '');
                 panesHtml += `
                     <div class="jenjang-pane ${active}" data-key="${key}">
                         <div class="jenjang-row">
                             <div class="rank-card">
-                                <h4><i class="fa-solid fa-table-list"></i> Tabel Rata-rata — ${key.replace('_', ' ')}</h4>
+                                <div class="section-title">
+                                    <i class="fa-solid fa-table-list"></i> ${sTitle}
+                                </div>
                                 ${buildMiniStatsHTML(sorted.subjects, sorted.averages)}
                                 <div class="jenjang-table-wrap"><table><thead><tr><th>#</th><th>Mapel</th><th>Rata2</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table></div>
-                            </div>
-                            <div class="rank-card">
-                                <h4><i class="fa-solid fa-chart-bar"></i> Diagram Batang</h4>
-                                <div class="jenjang-chart-wrap"><canvas id="${canvasId}"></canvas></div>
                             </div>
                         </div>
                         <div class="export-row">
@@ -1678,10 +2583,6 @@
                             <button class="btn btn-csv btn-sm export-csv-group" data-key="${key}"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
                         </div>
                     </div>`;
-                
-                if (key === activeGroupKey) {
-                    setTimeout(() => renderJenjangChart(canvasId, sorted.subjects, sorted.averages, key), 150);
-                }
             });
             jenjangContent.innerHTML = panesHtml;
 
@@ -1689,14 +2590,16 @@
                 btn.addEventListener('click', function() {
                     const key = this.dataset.key;
                     const d = groupedData[key];
-                    if (d?.subjects.length) { const s = sortSubjectsByAverageDesc(d.subjects, d.averages); exportPDF(s.subjects, s.averages, key.replace('_', ' ')); }
+                    if (d?.subjects.length) { const s = sortSubjectsByAverageDesc(d.subjects, d.averages);
+                        exportPDF(s.subjects, s.averages, key.replace('_', ' ')); }
                 });
             });
             document.querySelectorAll('.export-csv-group').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const key = this.dataset.key;
                     const d = groupedData[key];
-                    if (d?.subjects.length) { const s = sortSubjectsByAverageDesc(d.subjects, d.averages); exportCSV(s.subjects, s.averages, key.replace('_', ' ')); }
+                    if (d?.subjects.length) { const s = sortSubjectsByAverageDesc(d.subjects, d.averages);
+                        exportCSV(s.subjects, s.averages, key.replace('_', ' ')); }
                 });
             });
 
@@ -1708,18 +2611,12 @@
                     document.querySelectorAll('.jenjang-pane').forEach(p => p.classList.remove('active'));
                     const pane = document.querySelector(`.jenjang-pane[data-key="${key}"]`);
                     if (pane) pane.classList.add('active');
-                    const safeKey = key.replace(/[^a-zA-Z0-9]/g, '_');
-                    const canvasId = `jenjangChart_${safeKey}`;
-                    const canvas = document.getElementById(canvasId);
-                    if (canvas && !jenjangChartInstances[key] && groupedData[key]?.subjects.length) {
-                        const s = sortSubjectsByAverageDesc(groupedData[key].subjects, groupedData[key].averages);
-                        renderJenjangChart(canvasId, s.subjects, s.averages, key);
-                    }
-                    saveUIState(); 
+                    saveUIState();
                 });
             });
 
             renderRekapSection();
+            renderStatistik();
         }
 
         function refreshAllViews() {
@@ -1727,32 +2624,47 @@
             renderDashboard(currentSubjectNames, currentAverages, currentSheetName, currentStudentCount);
             renderJenjangTabs();
             renderRekapSection();
+            renderStatistik();
         }
 
         function renderDashboard(subjects, averages, sheetName, studentCount = 0) {
             const title = sheetName || currentSheetName || 'Kelas';
             kelasTableTitle.textContent = `Tabel Analisis — ${title}` + (studentCount ? ` (${studentCount} siswa)` : '');
+            kelasSectionTitle.innerHTML = `<i class="fa-solid fa-table-cells-large"></i> <span>${title}</span>` + (
+                studentCount ? ` <span style="font-size:0.9rem;color:var(--muted);">· ${studentCount} siswa</span>` : '');
 
             if (!subjects.length || !averages.length) {
-                tableBody.innerHTML = `<tr><td colspan="4"><i class="fa-solid fa-inbox"></i><div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);">Belum ada data</div><div style="font-size:0.85rem;color:var(--muted);margin-top:4px;">Silakan upload file Excel untuk memulai analisis.</div></td></tr>`;
-                if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
-                totalMapelSpan.innerText = "0"; maxAvgSpan.innerText = "-"; minAvgSpan.innerText = "-"; overallAvgSpan.innerText = "-";
-                maxMapelSpan.innerText = "-"; minMapelSpan.innerText = "-"; metaDataStatus.innerText = "Tidak ditemukan";
+                tableBody.innerHTML =
+                    `<tr><td colspan="4"><i class="fa-solid fa-inbox"></i><div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);">Belum ada data</div><div style="font-size:0.85rem;color:var(--muted);margin-top:4px;">Silakan upload file Excel untuk memulai analisis.</div></td></tr>`;
+                totalMapelSpan.innerText = "0";
+                maxAvgSpan.innerText = "-";
+                minAvgSpan.innerText = "-";
+                overallAvgSpan.innerText = "-";
+                maxMapelSpan.innerText = "-";
+                minMapelSpan.innerText = "-";
+                metaDataStatus.innerText = "Tidak ditemukan";
                 return;
             }
 
             const sorted = sortSubjectsByAverageDesc(subjects, averages);
-            currentSubjectNames = sorted.subjects; currentAverages = sorted.averages; currentStudentCount = studentCount;
+            currentSubjectNames = sorted.subjects;
+            currentAverages = sorted.averages;
+            currentStudentCount = studentCount;
 
-            const maxVal = Math.max(...currentAverages), minVal = Math.min(...currentAverages);
-            const maxIdx = currentAverages.indexOf(maxVal), minIdx = currentAverages.indexOf(minVal);
+            const maxVal = Math.max(...currentAverages),
+                minVal = Math.min(...currentAverages);
+            const maxIdx = currentAverages.indexOf(maxVal),
+                minIdx = currentAverages.indexOf(minVal);
             const overall = (currentAverages.reduce((a, b) => a + b, 0) / currentAverages.length).toFixed(2);
 
             totalMapelSpan.innerText = currentSubjectNames.length;
-            maxAvgSpan.innerText = maxVal.toFixed(2); maxMapelSpan.innerText = currentSubjectNames[maxIdx];
-            minAvgSpan.innerText = minVal.toFixed(2); minMapelSpan.innerText = currentSubjectNames[minIdx];
+            maxAvgSpan.innerText = maxVal.toFixed(2);
+            maxMapelSpan.innerText = currentSubjectNames[maxIdx];
+            minAvgSpan.innerText = minVal.toFixed(2);
+            minMapelSpan.innerText = currentSubjectNames[minIdx];
             overallAvgSpan.innerText = overall;
-            metaDataStatus.innerText = "Sistem Aktif"; metaSheet.innerText = currentSheetName || "-";
+            metaDataStatus.innerText = "Sistem Aktif";
+            metaSheet.innerText = currentSheetName || "-";
 
             tableBody.innerHTML = '';
             currentSubjectNames.forEach((sub, idx) => {
@@ -1761,28 +2673,20 @@
                 const row = tableBody.insertRow();
                 row.className = kkmClass;
                 row.insertCell(0).innerText = idx + 1;
-                row.insertCell(1).innerHTML = `<span style="font-family:'Amiri','Traditional Arabic',serif;">${sub}</span>`;
+                row.insertCell(1).innerHTML = `<span class="mapel-name">${sub}</span>`;
                 row.insertCell(2).innerHTML = getProgressBarHTML(avg);
                 row.insertCell(3).innerHTML = getStatusBadge(avg);
             });
-
-            const themeColors = getThemeColors();
-            chartConfig = buildChartConfig(currentSubjectNames, currentAverages, themeColors);
-            chartConfig.options.maintainAspectRatio = false;
-
-            const canvas = document.getElementById('avgChart');
-            const ctx = canvas.getContext('2d');
-            if (chartInstance) chartInstance.destroy();
-            chartInstance = new Chart(ctx, chartConfig);
         }
 
         function processAllSheets() {
             if (!workbookData) return;
             const sheetNames = workbookData.SheetNames;
             if (!sheetNames.length) return;
-            
+
             originalSheetNames = [...sheetNames];
-            groupedData = {}; allSheetsData = {};
+            groupedData = {};
+            allSheetsData = {};
 
             let hasMidMtsd = false;
             for (const name of sheetNames) { if (/MID|MTSD/i.test(name)) { hasMidMtsd = true; break; } }
@@ -1801,17 +2705,22 @@
             if (hasMidMtsd) {
                 const groupMap = {};
                 for (const name of sheetNames) {
-                    let kelas = '0', jenis = 'MID';
+                    let kelas = '0',
+                        jenis = 'MID';
                     if (/MTSD/i.test(name)) jenis = 'MTSD';
-                    const numMatch = name.match(/\d+/); if (numMatch) kelas = numMatch[0];
-                    const key = `${kelas}_${jenis}`; if (!groupMap[key]) groupMap[key] = []; groupMap[key].push(name);
+                    const numMatch = name.match(/\d+/);
+                    if (numMatch) kelas = numMatch[0];
+                    const key = `${kelas}_${jenis}`;
+                    if (!groupMap[key]) groupMap[key] = [];
+                    groupMap[key].push(name);
                 }
                 for (const [key, sheetList] of Object.entries(groupMap)) { groupedData[key] = mergeSheetData(sheetList); }
             }
 
             renderJenjangTabs();
             renderRekapSection();
-            
+            renderStatistik();
+
             const uiState = getUIState();
             let targetSheet = uiState.sheet;
 
@@ -1829,35 +2738,47 @@
             let found = false;
 
             if (targetSheet) {
-                if (groupedData[targetSheet] && groupedData[targetSheet].subjects && groupedData[targetSheet].subjects.length) {
+                if (groupedData[targetSheet] && groupedData[targetSheet].subjects && groupedData[targetSheet].subjects
+                    .length) {
                     currentSubjectNames = groupedData[targetSheet].subjects;
                     currentAverages = groupedData[targetSheet].averages;
                     currentStudentCount = groupedData[targetSheet].studentCount || 0;
-                    renderDashboard(currentSubjectNames, currentAverages, targetSheet.replace('_', ' '), currentStudentCount);
-                    metaSheet.innerText = targetSheet.replace('_', ' '); found = true; 
-                } else if (allSheetsData[targetSheet] && allSheetsData[targetSheet].subjects && allSheetsData[targetSheet].subjects.length) {
+                    renderDashboard(currentSubjectNames, currentAverages, targetSheet.replace('_', ' '),
+                    currentStudentCount);
+                    metaSheet.innerText = targetSheet.replace('_', ' ');
+                    found = true;
+                } else if (allSheetsData[targetSheet] && allSheetsData[targetSheet].subjects && allSheetsData[
+                        targetSheet].subjects.length) {
                     currentSubjectNames = allSheetsData[targetSheet].subjects;
                     currentAverages = allSheetsData[targetSheet].averages;
                     currentStudentCount = allSheetsData[targetSheet].studentCount || 0;
                     renderDashboard(currentSubjectNames, currentAverages, targetSheet, currentStudentCount);
-                    metaSheet.innerText = targetSheet; found = true;
+                    metaSheet.innerText = targetSheet;
+                    found = true;
                 }
             }
 
             if (!found) {
                 for (const [key, data] of Object.entries(groupedData)) {
                     if (data.subjects.length) {
-                        currentSubjectNames = data.subjects; currentAverages = data.averages; currentStudentCount = data.studentCount || 0;
+                        currentSubjectNames = data.subjects;
+                        currentAverages = data.averages;
+                        currentStudentCount = data.studentCount || 0;
                         renderDashboard(currentSubjectNames, currentAverages, key.replace('_', ' '), currentStudentCount);
-                        metaSheet.innerText = key.replace('_', ' '); found = true; break;
+                        metaSheet.innerText = key.replace('_', ' ');
+                        found = true;
+                        break;
                     }
                 }
                 if (!found) {
                     const first = originalSheetNames[0];
                     const fd = allSheetsData[first];
                     if (fd?.subjects.length) {
-                        currentSubjectNames = fd.subjects; currentAverages = fd.averages; currentStudentCount = fd.studentCount || 0;
-                        renderDashboard(currentSubjectNames, currentAverages, first, currentStudentCount); metaSheet.innerText = first;
+                        currentSubjectNames = fd.subjects;
+                        currentAverages = fd.averages;
+                        currentStudentCount = fd.studentCount || 0;
+                        renderDashboard(currentSubjectNames, currentAverages, first, currentStudentCount);
+                        metaSheet.innerText = first;
                     } else { renderDashboard([], [], ''); }
                 }
             }
@@ -1877,7 +2798,8 @@
                     fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i> ${file.name}`;
                     metaDataStatus.innerText = "Data Dimuat";
                 } catch (err) {
-                    fileStatusSpan.innerHTML = `<i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Gagal membaca file: ${file.name}`;
+                    fileStatusSpan.innerHTML =
+                        `<i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Gagal membaca file: ${file.name}`;
                     metaDataStatus.innerText = "Gagal";
                 }
             };
@@ -1889,13 +2811,19 @@
             if (!cache || (!Object.keys(cache.groupedData).length && !Object.keys(cache.allSheetsData || {}).length)) {
                 sheetSelectorDiv.style.display = 'none';
                 sheetSelect.innerHTML = '';
-                fileStatusSpan.innerHTML = `<i class="fa-regular fa-file-lines"></i> Area kosong. Upload data untuk ${QUARTAL_LABELS[quartal]}`;
-                metaDataStatus.innerText = "Menunggu"; metaSheet.innerText = "-";
-                groupedData = {}; allSheetsData = {}; originalSheetNames = [];
+                fileStatusSpan.innerHTML =
+                    `<i class="fa-regular fa-file-lines"></i> Area kosong. Upload data untuk ${QUARTAL_LABELS[quartal]}`;
+                metaDataStatus.innerText = "Menunggu";
+                metaSheet.innerText = "-";
+                groupedData = {};
+                allSheetsData = {};
+                originalSheetNames = [];
                 renderDashboard([], [], '');
-                jenjangTabs.innerHTML = '<span class="chip" style="background:transparent;border:none;box-shadow:none;"><i class="fa-regular fa-folder-open"></i> Menunggu data komparatif...</span>';
+                jenjangTabs.innerHTML =
+                    '<span class="chip" style="background:transparent;border:none;box-shadow:none;"><i class="fa-regular fa-folder-open"></i> Menunggu data komparatif...</span>';
                 jenjangContent.innerHTML = '';
                 rekapSection.style.display = 'none';
+                statistikSection.style.display = 'none';
                 saveUIState();
                 return;
             }
@@ -1910,6 +2838,7 @@
 
             renderJenjangTabs();
             renderRekapSection();
+            renderStatistik();
 
             const uiState = getUIState();
             let targetSheet = uiState.sheet;
@@ -1939,16 +2868,19 @@
             }
 
             let found = false;
-            
+
             if (targetSheet) {
-                if (groupedData[targetSheet] && groupedData[targetSheet].subjects && groupedData[targetSheet].subjects.length) {
+                if (groupedData[targetSheet] && groupedData[targetSheet].subjects && groupedData[targetSheet].subjects
+                    .length) {
                     currentSubjectNames = groupedData[targetSheet].subjects;
                     currentAverages = groupedData[targetSheet].averages;
                     currentStudentCount = groupedData[targetSheet].studentCount || 0;
-                    renderDashboard(currentSubjectNames, currentAverages, targetSheet.replace('_', ' '), currentStudentCount);
+                    renderDashboard(currentSubjectNames, currentAverages, targetSheet.replace('_', ' '),
+                    currentStudentCount);
                     metaSheet.innerText = targetSheet.replace('_', ' ');
                     found = true;
-                } else if (allSheetsData[targetSheet] && allSheetsData[targetSheet].subjects && allSheetsData[targetSheet].subjects.length) {
+                } else if (allSheetsData[targetSheet] && allSheetsData[targetSheet].subjects && allSheetsData[
+                        targetSheet].subjects.length) {
                     currentSubjectNames = allSheetsData[targetSheet].subjects;
                     currentAverages = allSheetsData[targetSheet].averages;
                     currentStudentCount = allSheetsData[targetSheet].studentCount || 0;
@@ -1988,9 +2920,10 @@
                 renderDashboard([], [], '');
             }
 
-            fileStatusSpan.innerHTML = `<i class="fa-solid fa-floppy-disk" style="color:var(--info);"></i> Memuat ${QUARTAL_LABELS[quartal]} dari LocalStorage`;
+            fileStatusSpan.innerHTML =
+                `<i class="fa-solid fa-floppy-disk" style="color:var(--info);"></i> Memuat ${QUARTAL_LABELS[quartal]} dari LocalStorage`;
             metaDataStatus.innerText = "Tersinkronisasi";
-            
+
             saveUIState();
         }
 
@@ -2005,7 +2938,8 @@
                 btn.innerHTML = QUARTAL_LABELS[q] + (hasData ? ' <span class="qdot"></span>' : '');
                 btn.classList.toggle('active-quartal', q === currentQuartal);
             });
-            quartalStatus.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Drop file untuk menyimpan data di ${QUARTAL_LABELS[currentQuartal]}`;
+            quartalStatus.innerHTML =
+                `<i class="fa-solid fa-cloud-arrow-up"></i> Drop file untuk menyimpan data di ${QUARTAL_LABELS[currentQuartal]}`;
         }
 
         quartalTabs.querySelectorAll('.quartal-btn').forEach(btn => {
@@ -2014,6 +2948,17 @@
                 saveUIState();
                 updateQuartalTabsUI();
                 renderQuartalView(currentQuartal);
+            });
+        });
+
+        // Statistik tab switching
+        document.querySelectorAll('.statistik-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.statistik-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                const target = this.dataset.tab;
+                document.getElementById('statistikPerJenjang').classList.toggle('active', target === 'per-jenjang');
+                document.getElementById('statistikPerKelas').classList.toggle('active', target === 'per-kelas');
             });
         });
 
@@ -2034,16 +2979,17 @@
             } else {
                 const firstWithData = ['Kuartal_I', 'Kuartal_II', 'Kuartal_III'].find(q => {
                     const c = quartalCache[q];
-                    return c && (Object.keys(c.groupedData).length || Object.keys(c.allSheetsData || {}).length);
+                    return c && (Object.keys(c.groupedData).length || Object.keys(c.allSheetsData || {})
+                    .length);
                 });
                 currentQuartal = firstWithData || 'Kuartal_I';
             }
-            
+
             if (uiState.kkm !== undefined && !isNaN(uiState.kkm) && uiState.kkm >= 0 && uiState.kkm <= 10) {
                 KKM = parseFloat(uiState.kkm);
                 kkmInput.value = KKM.toFixed(1);
             }
-            
+
             updateQuartalTabsUI();
             renderQuartalView(currentQuartal);
         }
@@ -2053,10 +2999,12 @@
             clearLocalStorage(currentQuartal);
             quartalCache[currentQuartal] = { groupedData: {}, allSheetsData: {}, originalSheetNames: [] };
             workbookData = null;
-            currentSubjectNames = []; currentAverages = []; currentStudentCount = 0; currentSheetName = '';
+            currentSubjectNames = [];
+            currentAverages = [];
+            currentStudentCount = 0;
+            currentSheetName = '';
             originalSheetNames = [];
-            jenjangChartInstances = {};
-            
+
             saveUIState();
             updateQuartalTabsUI();
             renderQuartalView(currentQuartal);
@@ -2096,7 +3044,8 @@
             refreshAllViews();
         });
 
-        fileInput.addEventListener('change', (e) => { if (e.target.files.length) loadExcel(e.target.files[0]); fileInput.value = ''; });
+        fileInput.addEventListener('change', (e) => { if (e.target.files.length) loadExcel(e.target.files[0]);
+            fileInput.value = ''; });
         sheetSelect.addEventListener('change', (e) => {
             if (!e.target.value) return;
             filterBySheet(e.target.value);
@@ -2113,31 +3062,25 @@
 
         function updateThemeUI() {
             const isDark = document.body.classList.contains('dark');
-            lightBtn.classList.toggle('active-theme', !isDark); darkBtn.classList.toggle('active-theme', isDark);
+            lightBtn.classList.toggle('active-theme', !isDark);
+            darkBtn.classList.toggle('active-theme', isDark);
         }
-        function refreshAllCharts() {
-            if (currentSubjectNames.length) renderDashboard(currentSubjectNames, currentAverages, currentSheetName, currentStudentCount);
-            renderJenjangTabs();
-        }
-        lightBtn.addEventListener('click', () => { document.body.classList.remove('dark'); localStorage.setItem('theme', 'light'); updateThemeUI(); refreshAllCharts(); });
-        darkBtn.addEventListener('click', () => { document.body.classList.add('dark'); localStorage.setItem('theme', 'dark'); updateThemeUI(); refreshAllCharts(); });
+        lightBtn.addEventListener('click', () => { document.body.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+            updateThemeUI(); });
+        darkBtn.addEventListener('click', () => { document.body.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+            updateThemeUI(); });
         if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
         updateThemeUI();
         updateQuartalTabsUI();
         loadAllFromLocalStorage();
 
         const dashboardEl = document.querySelector('.dashboard');
-        dashboardEl.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); });
-        dashboardEl.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); if (e.dataTransfer.files.length) loadExcel(e.dataTransfer.files[0]); });
-
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                if (chartInstance) chartInstance.resize();
-                Object.values(jenjangChartInstances).forEach(ch => ch.resize());
-            }, 250);
-        });
+        dashboardEl.addEventListener('dragover', (e) => { e.preventDefault();
+            e.stopPropagation(); });
+        dashboardEl.addEventListener('drop', (e) => { e.preventDefault();
+            e.stopPropagation(); if (e.dataTransfer.files.length) loadExcel(e.dataTransfer.files[0]); });
     </script>
 </body>
 </html>
