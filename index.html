@@ -84,6 +84,58 @@
             --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.04);
         }
 
+        /* "Ungu Elegan" palette: 7C3AED / 885CF6 / A78BFA / EDE9FE / F5F3FF / 0F172A — light background */
+        body.theme-purple {
+            --bg: #F5F3FF;
+            --bg-2: #EDE9FE;
+            --surface: rgba(255, 255, 255, 0.65);
+            --surface-solid: #FFFFFF;
+            --surface-soft: rgba(124, 58, 237, 0.08);
+            --border: rgba(15, 23, 42, 0.12);
+            --border-soft: rgba(15, 23, 42, 0.06);
+            --text: #0F172A;
+            --text-soft: #4C4372;
+            --muted: #8A82A8;
+            --primary: #7C3AED;
+            --primary-2: #885CF6;
+            --primary-glow: rgba(124, 58, 237, 0.18);
+            --accent: #7C3AED;
+            --success: #2F9E5B;
+            --success-soft: rgba(47, 158, 91, 0.15);
+            --warning: #C77D24;
+            --warning-soft: rgba(199, 125, 36, 0.15);
+            --danger: #C1443B;
+            --danger-soft: rgba(193, 68, 59, 0.15);
+            --shadow-float: 0 12px 28px -12px rgba(15, 23, 42, 0.14);
+            --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        /* "Oranye Energetik" palette: F97316 / FB923C / FBBF24 / FDE68A / FEFBE8 / 111827 — light background */
+        body.theme-orange {
+            --bg: #FFFBEB;
+            --bg-2: #FDE68A;
+            --surface: rgba(255, 255, 255, 0.65);
+            --surface-solid: #FFFFFF;
+            --surface-soft: rgba(249, 115, 22, 0.08);
+            --border: rgba(17, 24, 39, 0.12);
+            --border-soft: rgba(17, 24, 39, 0.06);
+            --text: #111827;
+            --text-soft: #6B5B3A;
+            --muted: #A08B5C;
+            --primary: #F97316;
+            --primary-2: #FB923C;
+            --primary-glow: rgba(249, 115, 22, 0.18);
+            --accent: #F97316;
+            --success: #2F9E5B;
+            --success-soft: rgba(47, 158, 91, 0.15);
+            --warning: #C77D24;
+            --warning-soft: rgba(199, 125, 36, 0.15);
+            --danger: #C1443B;
+            --danger-soft: rgba(193, 68, 59, 0.15);
+            --shadow-float: 0 12px 28px -12px rgba(17, 24, 39, 0.14);
+            --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
         body {
             background-color: var(--bg);
             color: var(--text);
@@ -352,9 +404,17 @@
 
         .theme-btn.active-theme {
             background: var(--surface-solid);
-            color: var(--primary);
             box-shadow: 0 4px 12px var(--primary-glow);
         }
+
+        .theme-btn[data-theme="light"] { color: #B8842C; }
+        .theme-btn[data-theme="dark"] { color: #C9C0AC; }
+        .theme-btn[data-theme="purple"] { color: #A78BFA; }
+        .theme-btn[data-theme="orange"] { color: #FBBF24; }
+        .theme-btn[data-theme="light"].active-theme { color: #B8842C; }
+        .theme-btn[data-theme="dark"].active-theme { color: #EBC876; }
+        .theme-btn[data-theme="purple"].active-theme { color: #A78BFA; }
+        .theme-btn[data-theme="orange"].active-theme { color: #FBBF24; }
 
         /* ========== HERO ========== */
         .hero {
@@ -1028,21 +1088,10 @@
             position: absolute;
             left: -9999px;
             top: 0;
-            width: 800px;
-            background: #ffffff;
-            padding: 20px;
-            font-family: 'Manrope', sans-serif;
         }
 
-        #pdf-export-container,
-        #pdf-export-container * {
-            color: #1C1914 !important;
-        }
         #pdf-export-container thead {
             position: static !important;
-        }
-        #pdf-export-container thead tr {
-            background: #F1ECE0 !important;
         }
 
         ::-webkit-scrollbar {
@@ -1229,11 +1278,17 @@
                             </button>
 
                             <div class="theme-toggle">
-                                <button id="lightModeBtn" class="theme-btn" title="Mode Terang">
+                                <button id="lightModeBtn" class="theme-btn" data-theme="light" title="Mode Terang">
                                     <i class="fa-regular fa-sun"></i>
                                 </button>
-                                <button id="darkModeBtn" class="theme-btn active-theme" title="Mode Gelap">
+                                <button id="darkModeBtn" class="theme-btn" data-theme="dark" title="Mode Gelap">
                                     <i class="fa-regular fa-moon"></i>
+                                </button>
+                                <button id="purpleModeBtn" class="theme-btn" data-theme="purple" title="Ungu Elegan">
+                                    <i class="fa-solid fa-droplet"></i>
+                                </button>
+                                <button id="orangeModeBtn" class="theme-btn" data-theme="orange" title="Oranye Energetik">
+                                    <i class="fa-solid fa-fire"></i>
                                 </button>
                             </div>
                         </div>
@@ -1262,35 +1317,10 @@
                     </div>
                 </div>
 
-                <!-- STATS CARDS -->
-                <div class="stats">
-                    <div class="stat">
-                        <div class="label"><i class="fa-solid fa-book-open"></i> Total Mapel</div>
-                        <div class="value" id="total-mapel">0</div>
-                        <div class="sub">Terdeteksi di sistem</div>
-                    </div>
-                    <div class="stat">
-                        <div class="label"><i class="fa-solid fa-trophy"></i> Tertinggi</div>
-                        <div class="value" id="max-avg">-</div>
-                        <div class="sub" id="max-mapel">-</div>
-                    </div>
-                    <div class="stat">
-                        <div class="label"><i class="fa-solid fa-arrow-trend-down"></i> Terendah</div>
-                        <div class="value" id="min-avg">-</div>
-                        <div class="sub" id="min-mapel">-</div>
-                    </div>
-                    <div class="stat">
-                        <div class="label"><i class="fa-solid fa-bullseye"></i> Keseluruhan</div>
-                        <div class="value" id="overall-avg">-</div>
-                        <div class="sub">Rerata seluruh mapel</div>
-                    </div>
-                </div>
-
                 <!-- MAIN TABS -->
                 <div class="main-tabs" id="mainTabs">
                     <button class="main-tab active" data-pane="kelas">📋 Per Kelas</button>
                     <button class="main-tab" data-pane="jenjang">📊 Per Jenjang</button>
-                    <button class="main-tab" data-pane="rekap">🏆 Ketuntasan</button>
                 </div>
 
                 <!-- FILTER BAR (Kelas) -->
@@ -1326,6 +1356,7 @@
                             <i class="fa-solid fa-table-cells-large"></i>
                             <span id="kelasTableTitle">Tabel Analisis Per Kelas</span>
                         </div>
+                        <div id="kelasMiniStats"></div>
                         <div class="table-wrap">
                             <table id="avg-table">
                                 <thead>
@@ -1347,6 +1378,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div id="kelasKetuntasanBox"></div>
                         <div class="export-row">
                             <button id="exportPDFKelas" class="btn btn-pdf">
                                 <i class="fa-solid fa-file-pdf"></i> Export PDF
@@ -1361,20 +1393,6 @@
                 <!-- PER JENJANG PANE -->
                 <div class="main-pane" id="pane-jenjang">
                     <div class="section-container" id="jenjangContainer"></div>
-                </div>
-
-                <!-- KETUNTASAN PANE (sebelumnya Executive Summary) -->
-                <div class="main-pane" id="pane-rekap">
-                    <div class="section-container" id="rekapSectionInner">
-                        <div class="section-title">
-                            <i class="fa-solid fa-ranking-star"></i> Ketuntasan
-                        </div>
-                        <div id="rekapJenjangContainer" style="margin-bottom: 24px;"></div>
-                        <div class="section-title" style="font-size:1.2rem; margin-top:0;">
-                            <i class="fa-solid fa-layer-group"></i> Per Kelas
-                        </div>
-                        <div class="rekap-grid" id="rekapGrid"></div>
-                    </div>
                 </div>
 
                 <!-- FOOTER -->
@@ -1452,22 +1470,14 @@
         const mapelSelect = document.getElementById('mapelSelect');
         const selectAllMapelBtn = document.getElementById('selectAllMapel');
         const deselectAllMapelBtn = document.getElementById('deselectAllMapel');
-        const totalMapelSpan = document.getElementById('total-mapel');
-        const maxAvgSpan = document.getElementById('max-avg');
-        const maxMapelSpan = document.getElementById('max-mapel');
-        const minAvgSpan = document.getElementById('min-avg');
-        const minMapelSpan = document.getElementById('min-mapel');
-        const overallAvgSpan = document.getElementById('overall-avg');
         const tableBodyKelas = document.getElementById('table-body-kelas');
+        const kelasKetuntasanBox = document.getElementById('kelasKetuntasanBox');
+        const kelasMiniStats = document.getElementById('kelasMiniStats');
         const metaDataStatus = document.getElementById('meta-data-status');
         const metaSheet = document.getElementById('meta-sheet');
         const kelasTableTitle = document.getElementById('kelasTableTitle');
-        const lightBtn = document.getElementById('lightModeBtn');
-        const darkBtn = document.getElementById('darkModeBtn');
+        const themeBtns = document.querySelectorAll('.theme-btn');
         const pdfContainer = document.getElementById('pdf-export-container');
-        const rekapSectionInner = document.getElementById('rekapSectionInner');
-        const rekapGrid = document.getElementById('rekapGrid');
-        const rekapJenjangContainer = document.getElementById('rekapJenjangContainer');
         const kkmInput = document.getElementById('kkmInput');
         const resetKkmBtn = document.getElementById('resetKkmBtn');
         const jenjangContainer = document.getElementById('jenjangContainer');
@@ -1699,7 +1709,53 @@
         function getProgressBarHTML(avg) {
             const pct = Math.min(100, (avg / 10) * 100);
             const cls = getProgressBarClass(avg);
-            return `<div class="progress-cell"><div class="progress-bar-wrap"><div class="progress-bar-fill ${cls}" style="width:${pct}%"></div></div><strong>${avg.toFixed(2)}</strong></div>`;
+            return `<div class="progress-cell"><div class="progress-bar-wrap"><div class="progress-bar-fill ${cls}" style="width:0%" data-target-width="${pct}%"></div></div><strong class="count-value" data-count-to="${avg}" data-decimals="2">0.00</strong></div>`;
+        }
+
+        // Animate a numeric text node counting up from 0 to its target value
+        let countAnimSeq = 0;
+        function animateCountValue(el, target, decimals, suffix, duration = 1000) {
+            const seq = ++countAnimSeq;
+            el.dataset.animSeq = seq;
+            const startTime = performance.now();
+            function step(now) {
+                if (parseInt(el.dataset.animSeq, 10) !== seq) return; // a newer animation took over
+                const t = Math.min((now - startTime) / duration, 1);
+                const eased = 1 - Math.pow(1 - t, 4);
+                el.textContent = (target * eased).toFixed(decimals) + suffix;
+                if (t < 1) requestAnimationFrame(step);
+                else el.textContent = target.toFixed(decimals) + suffix;
+            }
+            requestAnimationFrame(step);
+        }
+
+        // Find every [data-count-to] / progress bar inside `scope` and (re)animate them from 0.
+        // Safe to call repeatedly — e.g. every time a tab/pane is switched into view.
+        function runCountUps(scope) {
+            const root = scope || document;
+
+            // Snap progress bars back to 0 instantly so the fill can replay every single time
+            const bars = root.querySelectorAll('.progress-bar-fill[data-target-width]');
+            bars.forEach(bar => {
+                bar.style.transition = 'none';
+                bar.style.width = '0%';
+            });
+            void root.offsetHeight; // force reflow before re-enabling the transition
+            bars.forEach(bar => { bar.style.transition = ''; });
+
+            root.querySelectorAll('.count-value[data-count-to]').forEach(el => {
+                const target = parseFloat(el.dataset.countTo);
+                if (isNaN(target)) return;
+                const decimals = el.dataset.decimals !== undefined ? parseInt(el.dataset.decimals, 10) : 2;
+                const suffix = el.dataset.suffix || '';
+                animateCountValue(el, target, decimals, suffix);
+            });
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    bars.forEach(bar => { bar.style.width = bar.dataset.targetWidth; });
+                });
+            });
         }
 
         function getStatusBadge(avg) {
@@ -1725,26 +1781,22 @@
             const overall = (averages.reduce((a, b) => a + b, 0) / averages.length).toFixed(2);
             return `
                     <div class="mini-stats">
-                        <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-trophy"></i> Tertinggi</div><div class="mini-value">${maxVal.toFixed(2)}</div><div class="mini-sub" style="font-family:'Amiri','Traditional Arabic',serif;">${subjects[maxIdx]}</div></div>
-                        <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-arrow-trend-down"></i> Terendah</div><div class="mini-value">${minVal.toFixed(2)}</div><div class="mini-sub" style="font-family:'Amiri','Traditional Arabic',serif;">${subjects[minIdx]}</div></div>
-                        <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-bullseye"></i> Rata-rata</div><div class="mini-value">${overall}</div><div class="mini-sub">Keseluruhan</div></div>
+                        <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-trophy"></i> Tertinggi</div><div class="mini-value count-value" data-count-to="${maxVal}" data-decimals="2">0.00</div><div class="mini-sub" style="font-family:'Amiri','Traditional Arabic',serif;">${subjects[maxIdx]}</div></div>
+                        <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-arrow-trend-down"></i> Terendah</div><div class="mini-value count-value" data-count-to="${minVal}" data-decimals="2">0.00</div><div class="mini-sub" style="font-family:'Amiri','Traditional Arabic',serif;">${subjects[minIdx]}</div></div>
+                        <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-bullseye"></i> Rata-rata</div><div class="mini-value count-value" data-count-to="${overall}" data-decimals="2">0.00</div><div class="mini-sub">Keseluruhan</div></div>
                     </div>`;
         }
 
         // Render Per Kelas
-        function renderKelasTable(subjects, averages, sheetName, studentCount = 0) {
+        function renderKelasTable(subjects, averages, sheetName, studentCount = 0, sourceData = null) {
             const title = sheetName || currentSheetName || 'Kelas';
             kelasTableTitle.textContent = `Tabel Analisis — ${title}` + (studentCount ? ` (${studentCount} siswa)` : '');
 
             if (!subjects.length || !averages.length) {
                 tableBodyKelas.innerHTML =
                     `<tr><td colspan="4" style="text-align:center; padding:40px;"><i class="fa-solid fa-inbox" style="font-size:2.5rem; color:var(--muted);"></i><div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-top:12px;">Belum ada data</div><div style="font-size:0.85rem;color:var(--muted);margin-top:4px;">Silakan upload file Excel untuk memulai.</div></td></tr>`;
-                totalMapelSpan.innerText = "0";
-                maxAvgSpan.innerText = "-";
-                minAvgSpan.innerText = "-";
-                overallAvgSpan.innerText = "-";
-                maxMapelSpan.innerText = "-";
-                minMapelSpan.innerText = "-";
+                kelasKetuntasanBox.innerHTML = '';
+                kelasMiniStats.innerHTML = '';
                 return;
             }
 
@@ -1752,19 +1804,9 @@
             currentSubjectNames = sorted.subjects;
             currentAverages = sorted.averages;
             currentStudentCount = studentCount;
-            const maxVal = Math.max(...currentAverages),
-                minVal = Math.min(...currentAverages);
-            const maxIdx = currentAverages.indexOf(maxVal),
-                minIdx = currentAverages.indexOf(minVal);
-            const overall = (currentAverages.reduce((a, b) => a + b, 0) / currentAverages.length).toFixed(2);
-
-            totalMapelSpan.innerText = currentSubjectNames.length;
-            maxAvgSpan.innerText = maxVal.toFixed(2);
-            maxMapelSpan.innerText = currentSubjectNames[maxIdx];
-            minAvgSpan.innerText = minVal.toFixed(2);
-            minMapelSpan.innerText = currentSubjectNames[minIdx];
-            overallAvgSpan.innerText = overall;
             // Status & dataset di hero sudah dihapus, jadi tidak perlu update elemen itu lagi
+
+            kelasMiniStats.innerHTML = buildMiniStatsHTML(currentSubjectNames, currentAverages);
 
             tableBodyKelas.innerHTML = '';
             currentSubjectNames.forEach((sub, idx) => {
@@ -1777,6 +1819,10 @@
                 row.insertCell(2).innerHTML = getProgressBarHTML(avg);
                 row.insertCell(3).innerHTML = getStatusBadge(avg);
             });
+
+            kelasKetuntasanBox.innerHTML = sourceData ? buildKetuntasanHTML(sourceData) : '';
+
+            runCountUps(document.getElementById('pane-kelas'));
         }
 
         // Render Single Jenjang (dengan filter mapel)
@@ -1827,6 +1873,7 @@
 
             const sTitle = title + (data.studentCount ? ` (${data.studentCount} siswa)` : '');
             const miniStatsHTML = buildMiniStatsHTML(sorted.subjects, sorted.averages);
+            const ketuntasanHTML = buildKetuntasanHTML(data);
 
             jenjangContainer.innerHTML = `
                     <div class="section-title" style="font-size:1.2rem;"><i class="fa-solid fa-table-list"></i> ${sTitle}</div>
@@ -1834,15 +1881,18 @@
                     <div class="table-wrap">
                         <table><thead><tr><th>#</th><th>Mapel</th><th>Rata2</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table>
                     </div>
+                    ${ketuntasanHTML}
                     <div class="export-row">
                         <button id="exportPDFJenjang" class="btn btn-pdf"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
                         <button id="exportCSVJenjang" class="btn btn-csv"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
                     </div>`;
 
             document.getElementById('exportPDFJenjang').addEventListener('click', () => exportPDF(sorted.subjects, sorted
-                .averages, title));
+                .averages, title, jenjangContainer));
             document.getElementById('exportCSVJenjang').addEventListener('click', () => exportCSV(sorted.subjects, sorted
                 .averages, title));
+
+            runCountUps(jenjangContainer);
         }
 
         // Build jenjang dropdown options and populate mapel select
@@ -1911,140 +1961,41 @@
             return selected;
         }
 
-        // Render Rekap (Ketuntasan)
-        function renderRekapSection() {
-            renderRekapJenjang();
+        // Bangun blok Ketuntasan untuk satu jenjang (ditempel langsung di layout Per Jenjang)
+        function buildKetuntasanHTML(data) {
+            const scores = data.scores || [];
+            let totalStudents = data.studentCount || 0;
+            let tuntas = 0,
+                tidakTuntas = 0,
+                persentaseTuntas = 0;
 
-            const sheetKeys = Object.keys(allSheetsData);
-            if (!sheetKeys.length) {
-                rekapGrid.innerHTML =
-                    '<p style="color:var(--muted); text-align:center; padding:40px; font-size:1rem;">Tidak ada data</p>';
-                return;
+            if (scores.length) {
+                const studentAverages = computeStudentAverages(scores);
+                totalStudents = studentAverages.length;
+                tuntas = getTuntasCount(studentAverages);
+                tidakTuntas = totalStudents - tuntas;
+                persentaseTuntas = totalStudents > 0 ? (tuntas / totalStudents) * 100 : 0;
             }
 
-            const rekapEntries = [];
-            for (const name of sheetKeys) {
-                const data = allSheetsData[name];
-                if (!data || !data.subjects || !data.subjects.length) continue;
+            if (!totalStudents) return '';
 
-                const scores = data.scores;
-                let totalStudents = data.studentCount || 0;
-                let tuntas = 0,
-                    tidakTuntas = 0,
-                    persentaseTuntas = 0;
+            const avgs = data.averages || [];
+            const overall = avgs.length ? (avgs.reduce((a, b) => a + b, 0) / avgs.length).toFixed(2) : '-';
+            const tuntasPct = persentaseTuntas.toFixed(1);
+            const tidakTuntasPct = (100 - persentaseTuntas).toFixed(1);
 
-                if (scores && scores.length) {
-                    const studentAverages = computeStudentAverages(scores);
-                    totalStudents = studentAverages.length;
-                    tuntas = getTuntasCount(studentAverages);
-                    tidakTuntas = totalStudents - tuntas;
-                    persentaseTuntas = totalStudents > 0 ? (tuntas / totalStudents) * 100 : 0;
-                }
-
-                const avgs = data.averages;
-                const overall = avgs.length ? (avgs.reduce((a, b) => a + b, 0) / avgs.length).toFixed(2) : '-';
-                rekapEntries.push({ label: name, totalStudents, tuntas, tidakTuntas, persentaseTuntas, overall,
-                    totalMapel: data.subjects.length });
-            }
-
-            if (!rekapEntries.length) {
-                rekapGrid.innerHTML =
-                    '<p style="color:var(--muted); text-align:center; padding:40px; font-size:1rem;">Tidak ada data</p>';
-                return;
-            }
-
-            rekapEntries.sort((a, b) => {
-                const numA = parseInt(a.label.match(/\d+/)?.[0] || 0);
-                const numB = parseInt(b.label.match(/\d+/)?.[0] || 0);
-                if (numA !== numB) return numA - numB;
-                return a.label.localeCompare(b.label);
-            });
-
-            let html = '';
-            rekapEntries.forEach(entry => {
-                const tuntasPct = entry.persentaseTuntas.toFixed(1);
-                const tidakTuntasPct = (100 - entry.persentaseTuntas).toFixed(1);
-                const noData = (entry.totalStudents === 0 && entry.tuntas === 0 && entry.tidakTuntas === 0);
-
-                html += `
-                        <div class="rekap-card" data-sheet="${entry.label}" onclick="filterBySheet('${entry.label}')" title="Klik untuk melihat detail">
-                            <div class="rekap-card-title"><i class="fa-solid fa-layer-group"></i> ${entry.label}<span class="chip-sm">${entry.totalMapel} mapel</span></div>
-                            <div class="rekap-info-row">
-                                <span class="rekap-info-chip"><i class="fa-solid fa-users"></i> Siswa: ${noData ? '-' : entry.totalStudents}</span>
-                                <span class="rekap-info-chip"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i> Tuntas: ${noData ? '-' : entry.tuntas}</span>
-                                <span class="rekap-info-chip"><i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Tidak Tuntas: ${noData ? '-' : entry.tidakTuntas}</span>
-                            </div>
-                            <div class="rekap-minmax">
-                                <div class="rekap-mm-card"><div class="mm-label" style="color:var(--success);"><i class="fa-solid fa-check-circle"></i> Tuntas</div><div class="mm-value">${noData ? '?' : tuntasPct + '%'}</div><div class="mm-subject">${noData ? '-' : entry.tuntas + ' siswa'}</div></div>
-                                <div class="rekap-mm-card"><div class="mm-label" style="color:var(--danger);"><i class="fa-solid fa-times-circle"></i> Tidak Tuntas</div><div class="mm-value">${noData ? '?' : tidakTuntasPct + '%'}</div><div class="mm-subject">${noData ? '-' : entry.tidakTuntas + ' siswa'}</div></div>
-                            </div>
-                            <div style="margin-top: 12px; background: var(--surface-soft); border-radius: var(--radius-lg); padding: 8px 12px; display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted);"><span>Rerata: ${entry.overall}</span><span>KKM: ${KKM.toFixed(1)}</span></div>
-                        </div>`;
-            });
-
-            rekapGrid.innerHTML = html;
-        }
-
-        // Render Rekap Per Jenjang (MID/MTSD)
-        function renderRekapJenjang() {
-            const jenjangKeys = sortJenjangKeys(Object.keys(groupedData));
-            if (!jenjangKeys.length) {
-                rekapJenjangContainer.innerHTML = '';
-                return;
-            }
-
-            let html =
-                `<div class="section-title" style="font-size:1.2rem; margin-bottom:16px;"><i class="fa-solid fa-layer-group"></i> Per Jenjang</div>
-                            <div class="rekap-grid">`;
-
-            jenjangKeys.forEach(key => {
-                const data = groupedData[key];
-                if (!data || !data.subjects || !data.subjects.length) return;
-
-                const scores = data.scores || [];
-                let totalStudents = data.studentCount || 0;
-                let tuntas = 0,
-                    tidakTuntas = 0,
-                    persentaseTuntas = 0;
-
-                if (scores.length) {
-                    const studentAverages = computeStudentAverages(scores);
-                    totalStudents = studentAverages.length;
-                    tuntas = getTuntasCount(studentAverages);
-                    tidakTuntas = totalStudents - tuntas;
-                    persentaseTuntas = totalStudents > 0 ? (tuntas / totalStudents) * 100 : 0;
-                }
-
-                const avgs = data.averages;
-                const overall = avgs.length ? (avgs.reduce((a, b) => a + b, 0) / avgs.length).toFixed(2) : '-';
-                const label = key.replace('_', ' ');
-
-                html += `
-                            <div class="rekap-card" onclick="filterByJenjang('${key}')" title="Klik untuk melihat detail di tab Per Jenjang">
-                                <div class="rekap-card-title"><i class="fa-solid fa-building-columns"></i> ${label}<span class="chip-sm">${data.subjects.length} mapel</span></div>
-                                <div class="rekap-info-row">
-                                    <span class="rekap-info-chip"><i class="fa-solid fa-users"></i> Siswa: ${totalStudents}</span>
-                                    <span class="rekap-info-chip"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i> Tuntas: ${tuntas}</span>
-                                    <span class="rekap-info-chip"><i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Tidak Tuntas: ${tidakTuntas}</span>
-                                </div>
-                                <div class="rekap-minmax">
-                                    <div class="rekap-mm-card"><div class="mm-label" style="color:var(--success);"><i class="fa-solid fa-check-circle"></i> Tuntas</div><div class="mm-value">${persentaseTuntas.toFixed(1)}%</div><div class="mm-subject">${tuntas} siswa</div></div>
-                                    <div class="rekap-mm-card"><div class="mm-label" style="color:var(--danger);"><i class="fa-solid fa-times-circle"></i> Tidak Tuntas</div><div class="mm-value">${(100 - persentaseTuntas).toFixed(1)}%</div><div class="mm-subject">${tidakTuntas} siswa</div></div>
-                                </div>
-                                <div style="margin-top: 12px; background: var(--surface-soft); border-radius: var(--radius-lg); padding: 8px 12px; display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted);"><span>Rerata: ${overall}</span><span>KKM: ${KKM.toFixed(1)}</span></div>
-                            </div>`;
-            });
-
-            html += `</div>`;
-            rekapJenjangContainer.innerHTML = html;
-        }
-
-        // Fungsi untuk filter ke jenjang tertentu (dipanggil dari rekap jenjang)
-        function filterByJenjang(key) {
-            document.querySelector('.main-tab[data-pane="jenjang"]').click();
-            jenjangSelect.value = key;
-            populateMapelSelect(key);
-            renderSingleJenjang(key, getSelectedMapels());
+            return `
+                    <div class="section-title" style="font-size:1.1rem; margin-top:24px;"><i class="fa-solid fa-ranking-star"></i> Ketuntasan</div>
+                    <div class="rekap-info-row" style="margin-bottom:12px;">
+                        <span class="rekap-info-chip"><i class="fa-solid fa-users"></i> Siswa: ${totalStudents}</span>
+                        <span class="rekap-info-chip"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i> Tuntas: ${tuntas}</span>
+                        <span class="rekap-info-chip"><i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Tidak Tuntas: ${tidakTuntas}</span>
+                    </div>
+                    <div class="rekap-minmax">
+                        <div class="rekap-mm-card"><div class="mm-label" style="color:var(--success);"><i class="fa-solid fa-check-circle"></i> Tuntas</div><div class="mm-value count-value" data-count-to="${persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tuntas} siswa</div></div>
+                        <div class="rekap-mm-card"><div class="mm-label" style="color:var(--danger);"><i class="fa-solid fa-times-circle"></i> Tidak Tuntas</div><div class="mm-value count-value" data-count-to="${100 - persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tidakTuntas} siswa</div></div>
+                    </div>
+                    <div style="margin-top: 12px; background: var(--surface-soft); border-radius: var(--radius-lg); padding: 8px 12px; display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted);"><span>Rerata: ${overall}</span><span>KKM: ${KKM.toFixed(1)}</span></div>`;
         }
 
         function filterBySheet(sheetName) {
@@ -2055,7 +2006,7 @@
                 currentAverages = d.averages;
                 currentStudentCount = d.studentCount || 0;
                 currentSheetName = sheetName;
-                renderKelasTable(currentSubjectNames, currentAverages, sheetName, currentStudentCount);
+                renderKelasTable(currentSubjectNames, currentAverages, sheetName, currentStudentCount, d);
             }
             saveUIState();
             document.querySelector('.main-tab[data-pane="kelas"]').click();
@@ -2063,13 +2014,66 @@
 
         function refreshAllViews() {
             if (!currentSubjectNames.length) return;
-            renderKelasTable(currentSubjectNames, currentAverages, currentSheetName, currentStudentCount);
+            const src = allSheetsData[currentSheetName] || groupedData[currentSheetName] || null;
+            renderKelasTable(currentSubjectNames, currentAverages, currentSheetName, currentStudentCount, src);
             buildJenjangDropdown();
-            renderRekapSection();
+        }
+
+        // Draw one line of (correctly-shaped) text to a PNG using the browser's own canvas text engine.
+        // A single fillText() call shapes Arabic ligatures correctly — html2canvas's own text drawing
+        // does NOT, since it draws glyph-by-glyph, which is what breaks Arabic letter joining.
+        function textToImageDataURL(text, { fontSize, color, weight, fontFamily }) {
+            const scale = 4; // supersample for crisp output at the 2x export scale
+            const probe = document.createElement('canvas').getContext('2d');
+            probe.font = `${weight} ${fontSize * scale}px ${fontFamily}`;
+            const textWidth = probe.measureText(text).width;
+            const w = Math.ceil(textWidth) + Math.ceil(fontSize * scale * 0.3);
+            const h = Math.ceil(fontSize * scale * 1.5);
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.font = `${weight} ${fontSize * scale}px ${fontFamily}`;
+            ctx.fillStyle = color;
+            ctx.direction = 'rtl';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, w - Math.ceil(fontSize * scale * 0.15), h / 2);
+            return { dataUrl: canvas.toDataURL('image/png'), widthPx: w / scale, heightPx: h / scale };
+        }
+
+        // Replace every Arabic (Amiri-font) text leaf inside `container` with a rasterized <img>
+        // so html2canvas just copies pixels instead of re-drawing (and breaking) the Arabic script.
+        function rasterizeArabicText(container) {
+            container.querySelectorAll('*').forEach(el => {
+                if (el.children.length > 0) return; // only text leaves
+                const text = el.textContent;
+                if (!text || !text.trim()) return;
+                const cs = getComputedStyle(el);
+                if (!cs.fontFamily || !cs.fontFamily.toLowerCase().includes('amiri')) return;
+
+                const fontSize = parseFloat(cs.fontSize) || 16;
+                const { dataUrl, heightPx } = textToImageDataURL(text.trim(), {
+                    fontSize,
+                    color: cs.color || '#000000',
+                    weight: cs.fontWeight || '700',
+                    fontFamily: cs.fontFamily
+                });
+
+                const img = document.createElement('img');
+                img.src = dataUrl;
+                img.style.height = heightPx + 'px';
+                img.style.width = 'auto';
+                img.style.display = 'inline-block';
+                img.style.verticalAlign = 'middle';
+                el.textContent = '';
+                el.appendChild(img);
+            });
         }
 
         // Export Functions
-        async function exportPDF(subjects, averages, title) {
+        // sourceEl: the live .section-container element to snapshot (so the PDF looks exactly like the app card)
+        async function exportPDF(subjects, averages, title, sourceEl) {
             if (!subjects.length) { alert("Tidak ada data untuk diekspor."); return; }
             const btns = document.querySelectorAll('.btn-pdf');
             btns.forEach(b => b.disabled = true);
@@ -2080,46 +2084,83 @@
                 btns.forEach(b => b.disabled = false);
                 return;
             }
-            btns.forEach(b => b.disabled = false);
 
-            const sorted = sortSubjectsByAverageDesc(subjects, averages);
-            const maxVal = Math.max(...averages),
-                minVal = Math.min(...averages);
-            const overall = (averages.reduce((a, b) => a + b, 0) / averages.length).toFixed(2);
+            try {
+                const cardEl = sourceEl || document.querySelector('#pane-kelas .section-container');
+                if (!cardEl) { alert("Tidak ada data untuk diekspor."); return; }
 
-            let tableRows = '';
-            sorted.subjects.forEach((sub, idx) => {
-                const avg = sorted.averages[idx];
-                tableRows +=
-                    `<tr><td>${idx + 1}</td><td style="font-family:'Amiri','Traditional Arabic',serif;font-size:13px;">${sub}</td><td style="font-family:'JetBrains Mono',monospace;">${avg.toFixed(2)}</td><td>${getStatusText(avg)}</td></tr>`;
-            });
+                // Clone the live card so we can strip buttons / lock-in final numbers without touching the real UI
+                const clone = cardEl.cloneNode(true);
+                clone.querySelectorAll('.export-row').forEach(row => row.remove());
+                clone.style.margin = '0';
+                clone.style.width = '760px';
+                clone.style.maxWidth = '760px';
 
-            pdfContainer.innerHTML = `
-                    <div style="font-weight:800;font-size:18px;margin-bottom:8px;">Laporan Rata-rata — ${title}</div>
-                    <div style="color:#666;font-size:12px;margin-bottom:16px;">Madrasah Diniyah "Miftahul Ulum" · ${new Date().toLocaleDateString('id-ID')}</div>
-                    <div style="font-size:11px;margin-bottom:12px;">Mapel: ${sorted.subjects.length} | Tertinggi: ${maxVal.toFixed(2)} | Terendah: ${minVal.toFixed(2)} | Rerata: ${overall} | KKM: ${KKM.toFixed(1)}</div>
-                    <table style="width:100%;border-collapse:collapse;font-size:11px;"><thead><tr style="background:#f5f3ff;"><th style="padding:8px;border:1px solid #ddd;">#</th><th style="padding:8px;border:1px solid #ddd;">Mapel</th><th style="padding:8px;border:1px solid #ddd;">Rata2</th><th style="padding:8px;border:1px solid #ddd;">Status</th></tr></thead><tbody>${tableRows}</tbody></table>`;
+                // Freeze any count-up animation at its final value + full progress-bar width
+                clone.querySelectorAll('.count-value[data-count-to]').forEach(el => {
+                    const target = parseFloat(el.dataset.countTo);
+                    const decimals = el.dataset.decimals !== undefined ? parseInt(el.dataset.decimals, 10) : 2;
+                    const suffix = el.dataset.suffix || '';
+                    if (!isNaN(target)) el.textContent = target.toFixed(decimals) + suffix;
+                });
+                clone.querySelectorAll('.progress-bar-fill[data-target-width]').forEach(bar => {
+                    bar.style.transition = 'none';
+                    bar.style.width = bar.dataset.targetWidth;
+                });
 
-            const canvas = await html2canvas(pdfContainer, { backgroundColor: '#ffffff', scale: 2, useCORS: true,
-                allowTaint: true });
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-            const pageW = 210,
-                margin = 10,
-                contentW = pageW - margin * 2;
-            const tableImgH = (canvas.height / canvas.width) * contentW;
-            let y = margin;
+                // Header (report title + date) styled to match the app's own type/colors
+                const pageBg = getComputedStyle(document.body).backgroundColor || '#14110C';
+                const textColor = getComputedStyle(document.body).color || '#F3EEE2';
+                const header = document.createElement('div');
+                header.style.cssText =
+                    `font-family:'Space Grotesk',sans-serif;color:${textColor};margin-bottom:16px;`;
+                header.innerHTML = `
+                        <div style="font-weight:800;font-size:20px;">Laporan Rata-rata — ${title}</div>
+                        <div style="opacity:0.6;font-size:12px;margin-top:4px;">Madrasah Diniyah "Miftahul Ulum" · ${new Date().toLocaleDateString('id-ID')}</div>`;
 
-            if (tableImgH > 250) {
-                const scale = 250 / tableImgH;
-                doc.addImage(canvas.toDataURL('image/png'), 'PNG', (pageW - contentW * scale) / 2, y, contentW * scale,
-                250);
-            } else {
-                doc.addImage(canvas.toDataURL('image/png'), 'PNG', margin, y, contentW, tableImgH);
+                const wrapper = document.createElement('div');
+                wrapper.style.cssText = `display:inline-block;padding:24px;background:${pageBg};`;
+                wrapper.appendChild(header);
+                wrapper.appendChild(clone);
+
+                pdfContainer.innerHTML = '';
+                pdfContainer.appendChild(wrapper);
+
+                // Wait for webfonts (Amiri etc.) to finish loading, THEN rasterize the Arabic text —
+                // this is what fixes the broken letter-joining, since it no longer needs html2canvas
+                // to draw the Arabic script itself. (Must happen after the clone is attached to the
+                // document, otherwise getComputedStyle can't resolve the CSS font-family rules.)
+                if (document.fonts && document.fonts.ready) { await document.fonts.ready; }
+                rasterizeArabicText(clone);
+
+                // Let images/layout settle before rasterizing the whole card
+                await new Promise(r => setTimeout(r, 80));
+
+                const canvas = await html2canvas(wrapper, {
+                    backgroundColor: pageBg,
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true
+                });
+
+                // Size the PDF page exactly to the captured card — no extra blank/black canvas around it
+                const pxToMm = px => px * 0.264583;
+                const contentWmm = pxToMm(canvas.width / 2);
+                const contentHmm = pxToMm(canvas.height / 2);
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({
+                    orientation: contentWmm >= contentHmm ? 'landscape' : 'portrait',
+                    unit: 'mm',
+                    format: [contentWmm, contentHmm]
+                });
+                doc.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, contentWmm, contentHmm);
+
+                const safe = title.replace(/[^a-zA-Z0-9]/g, '_');
+                doc.save(`Laporan_${safe}.pdf`);
+            } finally {
+                btns.forEach(b => b.disabled = false);
             }
-
-            const safe = title.replace(/[^a-zA-Z0-9]/g, '_');
-            doc.save(`Laporan_${safe}.pdf`);
         }
 
         function exportCSV(subjects, averages, title) {
@@ -2192,7 +2233,7 @@
                     currentSubjectNames = allSheetsData[targetSheet].subjects;
                     currentAverages = allSheetsData[targetSheet].averages;
                     currentStudentCount = allSheetsData[targetSheet].studentCount || 0;
-                    renderKelasTable(currentSubjectNames, currentAverages, targetSheet, currentStudentCount);
+                    renderKelasTable(currentSubjectNames, currentAverages, targetSheet, currentStudentCount, allSheetsData[targetSheet]);
                     found = true;
                 } else if (groupedData[targetSheet] && groupedData[targetSheet].subjects && groupedData[targetSheet]
                     .subjects.length) {
@@ -2200,7 +2241,7 @@
                     currentAverages = groupedData[targetSheet].averages;
                     currentStudentCount = groupedData[targetSheet].studentCount || 0;
                     renderKelasTable(currentSubjectNames, currentAverages, targetSheet.replace('_', ' '),
-                    currentStudentCount);
+                    currentStudentCount, groupedData[targetSheet]);
                     found = true;
                 }
             }
@@ -2212,12 +2253,11 @@
                     currentSubjectNames = fd.subjects;
                     currentAverages = fd.averages;
                     currentStudentCount = fd.studentCount || 0;
-                    renderKelasTable(currentSubjectNames, currentAverages, first, currentStudentCount);
+                    renderKelasTable(currentSubjectNames, currentAverages, first, currentStudentCount, fd);
                 } else { renderKelasTable([], [], ''); }
             }
 
             buildJenjangDropdown();
-            renderRekapSection();
             saveToLocalStorage();
             saveUIState();
             updateQuartalTabsUI();
@@ -2264,8 +2304,6 @@
                 renderKelasTable([], [], '');
                 jenjangContainer.innerHTML =
                     '<p style="color:var(--muted); text-align:center; padding:40px; font-size:1rem;">Menunggu data komparatif...</p>';
-                rekapGrid.innerHTML = '<p style="color:var(--muted); text-align:center; padding:40px; font-size:1rem;">Tidak ada data</p>';
-                rekapJenjangContainer.innerHTML = '';
                 saveUIState();
                 return;
             }
@@ -2300,14 +2338,14 @@
                     currentAverages = groupedData[targetSheet].averages;
                     currentStudentCount = groupedData[targetSheet].studentCount || 0;
                     renderKelasTable(currentSubjectNames, currentAverages, targetSheet.replace('_', ' '),
-                    currentStudentCount);
+                    currentStudentCount, groupedData[targetSheet]);
                     found = true;
                 } else if (allSheetsData[targetSheet] && allSheetsData[targetSheet].subjects && allSheetsData[
                     targetSheet].subjects.length) {
                     currentSubjectNames = allSheetsData[targetSheet].subjects;
                     currentAverages = allSheetsData[targetSheet].averages;
                     currentStudentCount = allSheetsData[targetSheet].studentCount || 0;
-                    renderKelasTable(currentSubjectNames, currentAverages, targetSheet, currentStudentCount);
+                    renderKelasTable(currentSubjectNames, currentAverages, targetSheet, currentStudentCount, allSheetsData[targetSheet]);
                     found = true;
                 }
             }
@@ -2319,7 +2357,7 @@
                     currentSubjectNames = fd.subjects;
                     currentAverages = fd.averages;
                     currentStudentCount = fd.studentCount || 0;
-                    renderKelasTable(currentSubjectNames, currentAverages, first, currentStudentCount);
+                    renderKelasTable(currentSubjectNames, currentAverages, first, currentStudentCount, fd);
                     found = true;
                 }
             }
@@ -2327,7 +2365,6 @@
             if (!found) renderKelasTable([], [], '');
             uploadBtnText.innerText = "Upload Data";
             buildJenjangDropdown();
-            renderRekapSection();
             saveUIState();
         }
 
@@ -2463,6 +2500,7 @@
                     if (paneId === 'kelas') filterBar.style.display = 'flex';
                     if (paneId === 'jenjang') jenjangDropdownBar.style.display = 'flex';
 
+                    runCountUps(nextPane);
                     paneSwitching = false;
                 };
 
@@ -2480,7 +2518,8 @@
 
         document.getElementById('exportPDFKelas').addEventListener('click', () => {
             if (!currentSubjectNames.length) { alert("Tidak ada data"); return; }
-            exportPDF(currentSubjectNames, currentAverages, currentSheetName || 'Kelas');
+            const src = document.querySelector('#pane-kelas .section-container');
+            exportPDF(currentSubjectNames, currentAverages, currentSheetName || 'Kelas', src);
         });
 
         document.getElementById('exportCSVKelas').addEventListener('click', () => {
@@ -2490,20 +2529,26 @@
 
         document.getElementById('clearDataBtn').addEventListener('click', clearStoredData);
 
-        function updateThemeUI() {
-            const isDark = document.body.classList.contains('dark');
-            lightBtn.classList.toggle('active-theme', !isDark);
-            darkBtn.classList.toggle('active-theme', isDark);
+        const THEME_BODY_CLASSES = ['dark', 'theme-purple', 'theme-orange'];
+
+        function applyTheme(theme) {
+            document.body.classList.remove(...THEME_BODY_CLASSES);
+            if (theme === 'dark') document.body.classList.add('dark');
+            else if (theme === 'purple') document.body.classList.add('theme-purple');
+            else if (theme === 'orange') document.body.classList.add('theme-orange');
+            // 'light' => no extra class, uses the :root defaults
+            localStorage.setItem('theme', theme);
+            updateThemeUI(theme);
         }
 
-        lightBtn.addEventListener('click', () => { document.body.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-            updateThemeUI(); });
-        darkBtn.addEventListener('click', () => { document.body.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-            updateThemeUI(); });
-        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
-        updateThemeUI();
+        function updateThemeUI(theme) {
+            themeBtns.forEach(btn => btn.classList.toggle('active-theme', btn.dataset.theme === theme));
+        }
+
+        themeBtns.forEach(btn => btn.addEventListener('click', () => applyTheme(btn.dataset.theme)));
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        applyTheme(savedTheme);
 
         const dashboardEl = document.querySelector('.dashboard');
         dashboardEl.addEventListener('dragover', (e) => { e.preventDefault();
