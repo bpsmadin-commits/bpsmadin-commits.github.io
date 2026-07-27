@@ -60,12 +60,12 @@
         }
 
         body.dark {
-            --bg: #14110C;
+            --bg: #16130E;
             --bg-2: #1C1811;
             --surface: rgba(255, 255, 255, 0.03);
-            --surface-solid: #1E1A13;
+            --surface-solid: #1E1B16;
             --surface-soft: rgba(217, 164, 65, 0.06);
-            --border: rgba(255, 255, 255, 0.10);
+            --border: #3D3932;
             --border-soft: rgba(255, 255, 255, 0.05);
             --text: #F3EEE2;
             --text-soft: #C9C0AC;
@@ -166,8 +166,143 @@
 
         .saas-main {
             flex: 1;
-            padding: 20px 32px 50px;
+            padding: 20px 32px 50px 96px;
             width: 100%;
+            min-width: 0;
+        }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 64px;
+            background: var(--bg-2);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 18px 0 16px;
+            gap: 6px;
+            z-index: 120;
+        }
+
+        .sidebar-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1C1914;
+            font-size: 1rem;
+            margin-bottom: 14px;
+            box-shadow: 0 6px 16px -6px var(--primary-glow);
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            width: 100%;
+        }
+
+        .sidebar-item {
+            position: relative;
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            font-size: 1.05rem;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            transition: all var(--t-fast);
+        }
+
+        .sidebar-item:hover {
+            color: var(--text);
+            background: var(--surface-soft);
+        }
+
+        .sidebar-item.active-nav {
+            color: var(--primary);
+            background: var(--surface-soft);
+        }
+
+        .sidebar-item.active-nav::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 20px;
+            border-radius: var(--radius-pill);
+            background: var(--primary);
+        }
+
+        .sidebar-item .sidebar-tip {
+            position: absolute;
+            left: 54px;
+            top: 50%;
+            transform: translateY(-50%) translateX(-6px);
+            background: var(--surface-solid);
+            color: var(--text);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all var(--t-fast);
+            box-shadow: var(--shadow-float);
+        }
+
+        .sidebar-item:hover .sidebar-tip {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar-upload-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: #1C1914;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
+            cursor: pointer;
+            box-shadow: 0 8px 18px -6px var(--primary-glow);
+            transition: all var(--t-spring);
+        }
+
+        .sidebar-upload-btn:hover {
+            filter: brightness(1.12);
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 12px 22px -6px var(--primary-glow);
+        }
+
+        @media (max-width: 720px) {
+            .sidebar { display: none; }
+            .saas-main { padding-left: 20px; }
         }
 
         @keyframes slideDown {
@@ -193,6 +328,73 @@
             margin-bottom: 28px;
             box-shadow: var(--shadow-float), var(--shadow-inner);
             animation: slideDown 0.6s var(--t-spring);
+        }
+
+        .topnav-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .topnav-links {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .topnav-link {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-decoration: none;
+            padding: 7px 14px;
+            border-radius: var(--radius-pill);
+            transition: all var(--t-fast);
+        }
+
+        .topnav-link:hover {
+            color: var(--text);
+            background: var(--surface-soft);
+        }
+
+        .topnav-link.active {
+            color: #1C1914;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+        }
+
+        .topnav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .academic-year {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .profile-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: #1C1914;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            border: 2px solid var(--border);
         }
 
         .topbar-wrap {
@@ -263,15 +465,27 @@
         }
 
         .btn-pdf {
-            background: linear-gradient(135deg, #EF4444, #B91C1C);
-            color: #fff;
-            box-shadow: 0 8px 20px -6px rgba(239, 68, 68, 0.3);
+            background: transparent;
+            color: #E5726A;
+            border: 1.5px solid rgba(229, 114, 106, 0.5);
+            box-shadow: none;
+        }
+
+        .btn-pdf:hover {
+            background: rgba(229, 114, 106, 0.12);
+            border-color: #E5726A;
         }
 
         .btn-csv {
-            background: linear-gradient(135deg, #10B981, #047857);
-            color: #fff;
-            box-shadow: 0 8px 20px -6px rgba(16, 185, 129, 0.3);
+            background: transparent;
+            color: var(--success);
+            border: 1.5px solid rgba(95, 199, 134, 0.5);
+            box-shadow: none;
+        }
+
+        .btn-csv:hover {
+            background: var(--success-soft);
+            border-color: var(--success);
         }
 
         .btn-sm {
@@ -555,8 +769,10 @@
             box-shadow: 0 4px 12px var(--primary-glow);
         }
 
-        .mapel-chip-btn .fa-check {
-            font-size: 0.6rem;
+        .mapel-chip-x {
+            font-size: 0.95rem;
+            line-height: 1;
+            opacity: 0.85;
         }
 
         /* ========== STATS CARDS ========== */
@@ -624,6 +840,30 @@
             font-size: 0.75rem;
             font-weight: 600;
             font-family: 'Manrope', sans-serif;
+        }
+
+        /* ========== FILTER ROW LAYOUT ========== */
+        .filter-row-flex {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .filter-stack {
+            flex: 1 1 420px;
+            min-width: 280px;
+        }
+
+        .filter-row-flex .main-tabs {
+            margin-bottom: 0;
+            flex: 0 0 auto;
+        }
+
+        @media (max-width: 720px) {
+            .filter-row-flex { flex-direction: column; }
+            .filter-row-flex .main-tabs { width: 100%; }
         }
 
         /* ========== MAIN TABS ========== */
@@ -857,6 +1097,70 @@
             background: var(--danger-soft);
             color: var(--danger);
             border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        /* ========== EMPTY STATE DROPZONE ========== */
+        .empty-dropzone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 6px;
+            padding: 56px 24px;
+            margin: 8px 0;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-2xl);
+            background: var(--surface-soft);
+            transition: all var(--t-fast);
+        }
+
+        .empty-dropzone:hover {
+            border-color: var(--primary);
+            background: var(--primary-glow);
+        }
+
+        .empty-dropzone-icon {
+            font-size: 3rem;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        .empty-dropzone-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .empty-dropzone-text {
+            font-size: 0.88rem;
+            color: var(--muted);
+            max-width: 380px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .empty-dropzone-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 26px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            font-family: 'Manrope', sans-serif;
+            color: #1C1914;
+            border-radius: var(--radius-pill);
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            box-shadow: 0 10px 24px -8px var(--primary-glow), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+            cursor: pointer;
+            transition: all var(--t-spring);
+        }
+
+        .empty-dropzone-btn:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 14px 30px -8px var(--primary-glow), inset 0 1px 1px rgba(255, 255, 255, 0.45);
         }
 
         .export-row {
@@ -1244,11 +1548,48 @@
     <div class="ambient-bg"></div>
 
     <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo"><i class="fa-solid fa-graduation-cap"></i></div>
+            <nav class="sidebar-nav" id="sidebarNav">
+                <button class="sidebar-item active-nav" data-side="overview" title="Overview">
+                    <i class="fa-solid fa-chart-simple"></i>
+                    <span class="sidebar-tip">Overview</span>
+                </button>
+                <button class="sidebar-item" data-side="kelas" title="Per Kelas">
+                    <i class="fa-solid fa-chalkboard"></i>
+                    <span class="sidebar-tip">Per Kelas</span>
+                </button>
+                <button class="sidebar-item" data-side="jenjang" title="Jenjang">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span class="sidebar-tip">Jenjang</span>
+                </button>
+                <button class="sidebar-item" data-side="mapel" title="Mapel">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span class="sidebar-tip">Mapel</span>
+                </button>
+            </nav>
+            <div class="sidebar-bottom">
+                <label for="file-input" class="sidebar-upload-btn" title="Upload Excel Data">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </label>
+            </div>
+        </aside>
         <main class="saas-main">
             <div class="dashboard">
 
                 <!-- TOP NAVIGATION -->
                 <div class="topbar">
+                    <div class="topnav-row">
+                        <nav class="topnav-links">
+                            <a href="#" class="topnav-link active">Dashboard</a>
+                            <a href="#" class="topnav-link">Akademik</a>
+                            <a href="#" class="topnav-link">Laporan</a>
+                        </nav>
+                        <div class="topnav-right">
+                            <span class="academic-year"><i class="fa-regular fa-calendar"></i> Academic Year 2023/2024</span>
+                            <div class="profile-avatar"><i class="fa-solid fa-user"></i></div>
+                        </div>
+                    </div>
                     <div class="topbar-wrap">
                         <div class="brand">
                             <h1>
@@ -1317,44 +1658,59 @@
                     </div>
                 </div>
 
-                <!-- MAIN TABS -->
-                <div class="main-tabs" id="mainTabs">
-                    <button class="main-tab active" data-pane="kelas">📋 Per Kelas</button>
-                    <button class="main-tab" data-pane="jenjang">📊 Per Jenjang</button>
-                </div>
+                <!-- FILTER ROW: filter card (left) + tab switcher (right) -->
+                <div class="filter-row-flex">
+                    <div class="filter-stack">
+                        <!-- FILTER BAR (Kelas) -->
+                        <div class="filter-bar" id="filterBar">
+                            <span class="meta-title" style="margin:0;">
+                                <i class="fa-solid fa-filter"></i> Filter Kelas
+                            </span>
+                            <select id="sheet-select" class="select-control"></select>
+                        </div>
 
-                <!-- FILTER BAR (Kelas) -->
-                <div class="filter-bar" id="filterBar">
-                    <span class="meta-title" style="margin:0;">
-                        <i class="fa-solid fa-filter"></i> Filter Kelas
-                    </span>
-                    <select id="sheet-select" class="select-control"></select>
-                </div>
-
-                <!-- DROPDOWN BAR (Jenjang) -->
-                <div class="jenjang-dropdown-bar" id="jenjangDropdownBar" style="display:none;">
-                    <div class="jenjang-dropdown-row">
-                        <span class="meta-title" style="margin:0;">
-                            <i class="fa-solid fa-filter"></i> Pilih Jenjang
-                        </span>
-                        <select id="jenjang-select" class="select-control"></select>
+                        <!-- DROPDOWN BAR (Jenjang) -->
+                        <div class="jenjang-dropdown-bar" id="jenjangDropdownBar" style="display:none;">
+                            <div class="jenjang-dropdown-row">
+                                <span class="meta-title" style="margin:0;">
+                                    <i class="fa-solid fa-filter"></i> Pilih Jenjang
+                                </span>
+                                <select id="jenjang-select" class="select-control"></select>
+                            </div>
+                            <div class="jenjang-dropdown-row">
+                                <span class="meta-title" style="margin:0;">
+                                    <i class="fa-solid fa-list-check"></i> Mata Pelajaran (tahan Ctrl untuk multi)
+                                </span>
+                                <div id="mapelSelect" class="mapel-chips"></div>
+                                <button id="selectAllMapel" class="btn btn-sm btn-primary">Pilih Semua</button>
+                                <button id="deselectAllMapel" class="btn btn-sm" style="background:var(--surface-solid);color:var(--text);">Hapus Semua</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="jenjang-dropdown-row">
-                        <span class="meta-title" style="margin:0;">
-                            <i class="fa-solid fa-list-check"></i> Pilih Mapel (tahan Ctrl untuk multi)
-                        </span>
-                        <div id="mapelSelect" class="mapel-chips"></div>
-                        <button id="selectAllMapel" class="btn btn-sm btn-primary">Pilih Semua</button>
-                        <button id="deselectAllMapel" class="btn btn-sm" style="background:var(--surface-solid);color:var(--text);">Hapus Semua</button>
+
+                    <!-- TAB SWITCHER -->
+                    <div class="main-tabs" id="mainTabs">
+                        <button class="main-tab active" data-pane="kelas">📋 Per Kelas</button>
+                        <button class="main-tab" data-pane="jenjang">📊 Per Jenjang</button>
                     </div>
                 </div>
 
                 <!-- PER KELAS PANE -->
                 <div class="main-pane active pane-show" id="pane-kelas">
                     <div class="section-container">
-                        <div class="section-title">
-                            <i class="fa-solid fa-table-cells-large"></i>
-                            <span id="kelasTableTitle">Tabel Analisis Per Kelas</span>
+                        <div class="section-title" style="justify-content:space-between; flex-wrap:wrap;">
+                            <span style="display:flex; align-items:center; gap:10px;">
+                                <i class="fa-solid fa-table-cells-large"></i>
+                                <span id="kelasTableTitle">Tabel Analisis Per Kelas</span>
+                            </span>
+                            <div class="export-row" style="margin-top:0;">
+                                <button id="exportPDFKelas" class="btn btn-pdf btn-sm">
+                                    <i class="fa-solid fa-file-pdf"></i> Export PDF
+                                </button>
+                                <button id="exportCSVKelas" class="btn btn-csv btn-sm">
+                                    <i class="fa-solid fa-file-csv"></i> Export CSV
+                                </button>
+                            </div>
                         </div>
                         <div id="kelasMiniStats"></div>
                         <div class="table-wrap">
@@ -1369,24 +1725,21 @@
                                 </thead>
                                 <tbody id="table-body-kelas">
                                     <tr>
-                                        <td colspan="4" style="text-align:center; padding:40px;">
-                                            <i class="fa-solid fa-inbox" style="font-size:2.5rem; color:var(--muted);"></i>
-                                            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-top:12px;">Belum ada data</div>
-                                            <div style="font-size:0.85rem;color:var(--muted);margin-top:4px;">Silakan upload file Excel untuk memulai.</div>
+                                        <td colspan="4" style="padding:0;">
+                                            <div class="empty-dropzone">
+                                                <div class="empty-dropzone-icon"><i class="fa-solid fa-file-excel"></i></div>
+                                                <div class="empty-dropzone-title">Belum ada data</div>
+                                                <div class="empty-dropzone-text">Silakan upload file Excel nilai siswa untuk mulai melihat analisis performa akademik.</div>
+                                                <label for="file-input" class="empty-dropzone-btn">
+                                                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload Data Sekarang
+                                                </label>
+                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <div id="kelasKetuntasanBox"></div>
-                        <div class="export-row">
-                            <button id="exportPDFKelas" class="btn btn-pdf">
-                                <i class="fa-solid fa-file-pdf"></i> Export PDF
-                            </button>
-                            <button id="exportCSVKelas" class="btn btn-csv">
-                                <i class="fa-solid fa-file-csv"></i> Export CSV
-                            </button>
-                        </div>
                     </div>
                 </div>
 
@@ -1794,7 +2147,7 @@
 
             if (!subjects.length || !averages.length) {
                 tableBodyKelas.innerHTML =
-                    `<tr><td colspan="4" style="text-align:center; padding:40px;"><i class="fa-solid fa-inbox" style="font-size:2.5rem; color:var(--muted);"></i><div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-top:12px;">Belum ada data</div><div style="font-size:0.85rem;color:var(--muted);margin-top:4px;">Silakan upload file Excel untuk memulai.</div></td></tr>`;
+                    `<tr><td colspan="4" style="padding:0;"><div class="empty-dropzone"><div class="empty-dropzone-icon"><i class="fa-solid fa-file-excel"></i></div><div class="empty-dropzone-title">Belum ada data</div><div class="empty-dropzone-text">Silakan upload file Excel nilai siswa untuk mulai melihat analisis performa akademik.</div><label for="file-input" class="empty-dropzone-btn"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Data Sekarang</label></div></td></tr>`;
                 kelasKetuntasanBox.innerHTML = '';
                 kelasMiniStats.innerHTML = '';
                 return;
@@ -1876,16 +2229,18 @@
             const ketuntasanHTML = buildKetuntasanHTML(data);
 
             jenjangContainer.innerHTML = `
-                    <div class="section-title" style="font-size:1.2rem;"><i class="fa-solid fa-table-list"></i> ${sTitle}</div>
+                    <div class="section-title" style="font-size:1.2rem; justify-content:space-between; flex-wrap:wrap;">
+                        <span style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-table-list"></i> ${sTitle}</span>
+                        <div class="export-row" style="margin-top:0;">
+                            <button id="exportPDFJenjang" class="btn btn-pdf btn-sm"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+                            <button id="exportCSVJenjang" class="btn btn-csv btn-sm"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+                        </div>
+                    </div>
                     ${miniStatsHTML}
                     <div class="table-wrap">
                         <table><thead><tr><th>#</th><th>Mapel</th><th>Rata2</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table>
                     </div>
-                    ${ketuntasanHTML}
-                    <div class="export-row">
-                        <button id="exportPDFJenjang" class="btn btn-pdf"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
-                        <button id="exportCSVJenjang" class="btn btn-csv"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
-                    </div>`;
+                    ${ketuntasanHTML}`;
 
             document.getElementById('exportPDFJenjang').addEventListener('click', () => exportPDF(sorted.subjects, sorted
                 .averages, title, jenjangContainer));
@@ -1945,9 +2300,12 @@
                 btn.type = 'button';
                 btn.className = 'mapel-chip-btn active-chip';
                 btn.dataset.value = sub;
-                btn.innerHTML = `<i class="fa-solid fa-check"></i> ${sub}`;
+                btn.innerHTML = `${sub} <span class="mapel-chip-x">&times;</span>`;
                 btn.addEventListener('click', () => {
                     btn.classList.toggle('active-chip');
+                    btn.innerHTML = btn.classList.contains('active-chip')
+                        ? `${sub} <span class="mapel-chip-x">&times;</span>`
+                        : sub;
                     const key2 = jenjangSelect.value;
                     if (key2) renderSingleJenjang(key2, getSelectedMapels());
                 });
@@ -2464,12 +2822,18 @@
         });
 
         selectAllMapelBtn.addEventListener('click', () => {
-            mapelSelect.querySelectorAll('.mapel-chip-btn').forEach(btn => btn.classList.add('active-chip'));
+            mapelSelect.querySelectorAll('.mapel-chip-btn').forEach(btn => {
+                btn.classList.add('active-chip');
+                btn.innerHTML = `${btn.dataset.value} <span class="mapel-chip-x">&times;</span>`;
+            });
             const key = jenjangSelect.value;
             if (key) renderSingleJenjang(key, getSelectedMapels());
         });
         deselectAllMapelBtn.addEventListener('click', () => {
-            mapelSelect.querySelectorAll('.mapel-chip-btn').forEach(btn => btn.classList.remove('active-chip'));
+            mapelSelect.querySelectorAll('.mapel-chip-btn').forEach(btn => {
+                btn.classList.remove('active-chip');
+                btn.innerHTML = btn.dataset.value;
+            });
             const key = jenjangSelect.value;
             if (key) renderSingleJenjang(key, getSelectedMapels());
         });
@@ -2558,6 +2922,22 @@
 
         updateQuartalTabsUI();
         loadAllFromLocalStorage();
+
+        // ========== SIDEBAR NAV ==========
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active-nav'));
+                this.classList.add('active-nav');
+                const target = this.dataset.side;
+                if (target === 'overview') {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else if (target === 'kelas') {
+                    document.querySelector('.main-tab[data-pane="kelas"]').click();
+                } else if (target === 'jenjang' || target === 'mapel') {
+                    document.querySelector('.main-tab[data-pane="jenjang"]').click();
+                }
+            });
+        });
     </script>
 </body>
 </html>
