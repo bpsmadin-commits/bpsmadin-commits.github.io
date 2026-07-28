@@ -330,73 +330,6 @@
             animation: slideDown 0.6s var(--t-spring);
         }
 
-        .topnav-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            flex-wrap: wrap;
-            padding-bottom: 12px;
-            margin-bottom: 12px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .topnav-links {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .topnav-link {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--muted);
-            text-decoration: none;
-            padding: 7px 14px;
-            border-radius: var(--radius-pill);
-            transition: all var(--t-fast);
-        }
-
-        .topnav-link:hover {
-            color: var(--text);
-            background: var(--surface-soft);
-        }
-
-        .topnav-link.active {
-            color: #1C1914;
-            background: linear-gradient(135deg, var(--primary), var(--primary-2));
-        }
-
-        .topnav-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .academic-year {
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: var(--muted);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-        }
-
-        .profile-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--primary-2));
-            color: #1C1914;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            border: 2px solid var(--border);
-        }
-
         .topbar-wrap {
             display: flex;
             gap: 16px;
@@ -843,29 +776,6 @@
         }
 
         /* ========== FILTER ROW LAYOUT ========== */
-        .filter-row-flex {
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
-        .filter-stack {
-            flex: 1 1 420px;
-            min-width: 280px;
-        }
-
-        .filter-row-flex .main-tabs {
-            margin-bottom: 0;
-            flex: 0 0 auto;
-        }
-
-        @media (max-width: 720px) {
-            .filter-row-flex { flex-direction: column; }
-            .filter-row-flex .main-tabs { width: 100%; }
-        }
-
         /* ========== MAIN TABS ========== */
         .main-tabs {
             display: flex;
@@ -891,6 +801,7 @@
             transition: all var(--t-spring);
             border: none;
             font-family: 'Manrope', sans-serif;
+            position: relative;
         }
 
         .main-tab:hover {
@@ -902,6 +813,18 @@
             background: var(--surface-solid);
             font-weight: 700;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .main-tab.active::after {
+            content: '';
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            bottom: 4px;
+            height: 2px;
+            border-radius: var(--radius-pill);
+            background: var(--primary);
+            opacity: 0.55;
         }
 
         .main-pane {
@@ -1245,6 +1168,306 @@
             gap: 10px;
         }
 
+        .ketuntasan-chart-row {
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 14px 16px;
+            margin-bottom: 12px;
+        }
+
+        .ketuntasan-chart-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        .ketuntasan-bar-track {
+            width: 100%;
+            height: 26px;
+            border-radius: var(--radius-pill);
+            overflow: hidden;
+            display: flex;
+            background: var(--danger-soft);
+            border: 1px solid var(--border);
+        }
+
+        .ketuntasan-bar-fill {
+            height: 100%;
+            background: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 800;
+            font-family: 'Space Grotesk', monospace;
+            white-space: nowrap;
+            transition: width 0.6s ease;
+            min-width: 0;
+        }
+
+        .ketuntasan-legend {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--text);
+        }
+
+        .ketuntasan-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ketuntasan-legend-item b {
+            font-family: 'Space Grotesk', monospace;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        /* ===== Grafik Perjenjang: chart batang perbandingan ketuntasan antar kelas ===== */
+        .ketuntasan-perkelas-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        .ketuntasan-perkelas-block {
+            background: var(--surface-soft, rgba(255,255,255,0.4));
+            border: 1px solid var(--border);
+            border-radius: var(--radius-2xl, 18px);
+            padding: 14px 16px;
+        }
+
+        .ketuntasan-perkelas-block .section-title {
+            margin-top: 0 !important;
+        }
+
+        .overview-jenjang-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-2xl);
+            padding: 18px 18px 6px;
+            margin-bottom: 18px;
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow var(--t-smooth), transform var(--t-smooth);
+        }
+
+        .overview-jenjang-section:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .overview-jenjang-section::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+        }
+
+        .overview-jenjang-section.accent-mid::before { background: var(--primary); }
+        .overview-jenjang-section.accent-mtsd::before { background: var(--warning); }
+
+        .overview-jenjang-heading {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .overview-jenjang-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .accent-mid .overview-jenjang-icon { background: var(--primary-glow); color: var(--primary); }
+        .accent-mtsd .overview-jenjang-icon { background: var(--warning-soft); color: var(--warning); }
+
+        .overview-jenjang-titles {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.25;
+        }
+
+        .overview-jenjang-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            font-family: 'Space Grotesk', monospace;
+            color: var(--text);
+        }
+
+        .overview-jenjang-subtitle {
+            font-size: 0.72rem;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .overview-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .overview-stat-card {
+            background: var(--surface-solid);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 14px;
+            text-align: center;
+            transition: all var(--t-spring);
+            box-shadow: var(--shadow-inner);
+        }
+
+        .overview-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .overview-stat-card .mini-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .overview-stat-card .mini-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            font-family: 'Space Grotesk', monospace;
+            color: var(--text);
+            line-height: 1.2;
+        }
+
+        .overview-highlight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .overview-highlight-card {
+            border-radius: var(--radius-xl);
+            padding: 16px;
+            border: 1px solid var(--border);
+            background: var(--surface-solid);
+        }
+
+        .overview-highlight-card.good { border-color: var(--success); background: var(--success-soft, rgba(34,197,94,0.08)); }
+        .overview-highlight-card.bad { border-color: var(--danger); background: var(--danger-soft, rgba(239,68,68,0.08)); }
+
+        .overview-highlight-card .mini-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .overview-highlight-name {
+            font-size: 1.2rem;
+            font-weight: 800;
+            font-family: 'Space Grotesk', monospace;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .overview-highlight-sub {
+            font-size: 0.8rem;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .jenjang-compare-chart-wrap {
+            overflow-x: auto;
+            padding-bottom: 6px;
+        }
+
+        .jenjang-compare-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            gap: 16px;
+            height: 260px;
+            padding: 24px 28px 16px;
+            width: 100%;
+        }
+
+        .jc-bar-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            flex: 1 1 0;
+            max-width: 160px;
+            min-width: 44px;
+            height: 100%;
+        }
+
+        .jc-bar-value {
+            font-size: 0.68rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 4px;
+            font-family: 'Space Grotesk', monospace;
+            white-space: nowrap;
+        }
+
+        .jc-bar-track {
+            width: 65%;
+            max-width: 70px;
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            background: var(--danger-soft);
+            border-radius: 6px 6px 0 0;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-bottom: none;
+        }
+
+        .jc-bar-fill {
+            width: 100%;
+            background: var(--success);
+            border-radius: 6px 6px 0 0;
+            transition: height 0.6s ease;
+        }
+
+        .jc-bar-label {
+            margin-top: 10px;
+            font-size: 0.68rem;
+            color: var(--muted);
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+            transform: rotate(-28deg);
+            transform-origin: top center;
+        }
+
         .rekap-mm-card {
             background: var(--surface-soft);
             border: 1px solid var(--border);
@@ -1412,6 +1635,30 @@
             border-radius: 10px;
         }
 
+        /* ========== ACCESSIBILITY ========== */
+        :focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+            border-radius: var(--radius-lg);
+        }
+
+        button:focus-visible,
+        .btn:focus-visible,
+        .main-tab:focus-visible,
+        .sidebar-item:focus-visible,
+        .theme-btn:focus-visible {
+            outline-offset: 3px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
         /* ========== RESPONSIVE ========== */
         @media (max-width: 1400px) {
             .stats {
@@ -1551,21 +1798,17 @@
         <aside class="sidebar">
             <div class="sidebar-logo"><i class="fa-solid fa-graduation-cap"></i></div>
             <nav class="sidebar-nav" id="sidebarNav">
-                <button class="sidebar-item active-nav" data-side="overview" title="Overview">
+                <button class="sidebar-item" data-side="overview" title="Overview">
                     <i class="fa-solid fa-chart-simple"></i>
                     <span class="sidebar-tip">Overview</span>
                 </button>
-                <button class="sidebar-item" data-side="kelas" title="Per Kelas">
+                <button class="sidebar-item active-nav" data-side="kelas" title="Per Kelas">
                     <i class="fa-solid fa-chalkboard"></i>
                     <span class="sidebar-tip">Per Kelas</span>
                 </button>
                 <button class="sidebar-item" data-side="jenjang" title="Jenjang">
                     <i class="fa-solid fa-layer-group"></i>
                     <span class="sidebar-tip">Jenjang</span>
-                </button>
-                <button class="sidebar-item" data-side="mapel" title="Mapel">
-                    <i class="fa-solid fa-book-open"></i>
-                    <span class="sidebar-tip">Mapel</span>
                 </button>
             </nav>
             <div class="sidebar-bottom">
@@ -1577,19 +1820,7 @@
         <main class="saas-main">
             <div class="dashboard">
 
-                <!-- TOP NAVIGATION -->
                 <div class="topbar">
-                    <div class="topnav-row">
-                        <nav class="topnav-links">
-                            <a href="#" class="topnav-link active">Dashboard</a>
-                            <a href="#" class="topnav-link">Akademik</a>
-                            <a href="#" class="topnav-link">Laporan</a>
-                        </nav>
-                        <div class="topnav-right">
-                            <span class="academic-year"><i class="fa-regular fa-calendar"></i> Academic Year 2026/2027</span>
-                            <div class="profile-avatar"><i class="fa-solid fa-user"></i></div>
-                        </div>
-                    </div>
                     <div class="topbar-wrap">
                         <div class="brand">
                             <h1>
@@ -1658,45 +1889,36 @@
                     </div>
                 </div>
 
-                <!-- FILTER ROW: filter card (left) + tab switcher (right) -->
-                <div class="filter-row-flex">
-                    <div class="filter-stack">
-                        <!-- FILTER BAR (Kelas) -->
-                        <div class="filter-bar" id="filterBar">
-                            <span class="meta-title" style="margin:0;">
-                                <i class="fa-solid fa-filter"></i> Filter Kelas
-                            </span>
-                            <select id="sheet-select" class="select-control"></select>
-                        </div>
+                <!-- TAB SWITCHER -->
+                <div class="main-tabs" id="mainTabs">
+                    <button class="main-tab active" data-pane="kelas">📋 Per Kelas</button>
+                    <button class="main-tab" data-pane="jenjang">📊 Per Jenjang</button>
+                    <button class="main-tab" data-pane="grafikjenjang">📈 Grafik Perjenjang</button>
+                </div>
 
-                        <!-- DROPDOWN BAR (Jenjang) -->
-                        <div class="jenjang-dropdown-bar" id="jenjangDropdownBar" style="display:none;">
-                            <div class="jenjang-dropdown-row">
-                                <span class="meta-title" style="margin:0;">
-                                    <i class="fa-solid fa-filter"></i> Pilih Jenjang
-                                </span>
-                                <select id="jenjang-select" class="select-control"></select>
-                            </div>
-                            <div class="jenjang-dropdown-row">
-                                <span class="meta-title" style="margin:0;">
-                                    <i class="fa-solid fa-list-check"></i> Mata Pelajaran (tahan Ctrl untuk multi)
-                                </span>
-                                <div id="mapelSelect" class="mapel-chips"></div>
-                                <button id="selectAllMapel" class="btn btn-sm btn-primary">Pilih Semua</button>
-                                <button id="deselectAllMapel" class="btn btn-sm" style="background:var(--surface-solid);color:var(--text);">Hapus Semua</button>
+                <!-- OVERVIEW PANE -->
+                <div class="main-pane" id="pane-overview">
+                    <div class="section-container">
+                        <div class="section-title" style="justify-content:space-between; flex-wrap:wrap;">
+                            <span style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chart-simple"></i> Ringkasan Sekolah</span>
+                            <div class="export-row" style="margin-top:0;">
+                                <button id="exportPDFOverview" class="btn btn-pdf btn-sm"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+                                <button id="exportCSVOverview" class="btn btn-csv btn-sm"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- TAB SWITCHER -->
-                    <div class="main-tabs" id="mainTabs">
-                        <button class="main-tab active" data-pane="kelas">📋 Per Kelas</button>
-                        <button class="main-tab" data-pane="jenjang">📊 Per Jenjang</button>
+                        <div id="overviewContent"></div>
                     </div>
                 </div>
 
                 <!-- PER KELAS PANE -->
                 <div class="main-pane active pane-show" id="pane-kelas">
+                    <!-- FILTER BAR (Kelas) -->
+                    <div class="filter-bar" id="filterBar">
+                        <span class="meta-title" style="margin:0;">
+                            <i class="fa-solid fa-filter"></i> Filter Kelas
+                        </span>
+                        <select id="sheet-select" class="select-control"></select>
+                    </div>
                     <div class="section-container">
                         <div class="section-title" style="justify-content:space-between; flex-wrap:wrap;">
                             <span style="display:flex; align-items:center; gap:10px;">
@@ -1745,7 +1967,49 @@
 
                 <!-- PER JENJANG PANE -->
                 <div class="main-pane" id="pane-jenjang">
+                    <!-- DROPDOWN BAR (Jenjang) -->
+                    <div class="jenjang-dropdown-bar" id="jenjangDropdownBar" style="display:none;">
+                        <div class="jenjang-dropdown-row">
+                            <span class="meta-title" style="margin:0;">
+                                <i class="fa-solid fa-filter"></i> Pilih Jenjang
+                            </span>
+                            <select id="jenjang-select" class="select-control"></select>
+                        </div>
+                        <div class="jenjang-dropdown-row">
+                            <span class="meta-title" style="margin:0;">
+                                <i class="fa-solid fa-list-check"></i> Mata Pelajaran (tahan Ctrl untuk multi)
+                            </span>
+                            <div id="mapelSelect" class="mapel-chips"></div>
+                            <button id="selectAllMapel" class="btn btn-sm btn-primary">Pilih Semua</button>
+                            <button id="deselectAllMapel" class="btn btn-sm" style="background:var(--surface-solid);color:var(--text);">Hapus Semua</button>
+                        </div>
+                    </div>
                     <div class="section-container" id="jenjangContainer"></div>
+                </div>
+
+                <!-- GRAFIK PERJENJANG PANE (perbandingan % ketuntasan antar kelas dalam satu jenjang) -->
+                <div class="main-pane" id="pane-grafikjenjang">
+                    <div class="section-container">
+                        <div class="section-title" style="justify-content:space-between; flex-wrap:wrap;">
+                            <span style="display:flex; align-items:center; gap:10px;">
+                                <i class="fa-solid fa-chart-column"></i>
+                                Grafik Perjenjang
+                            </span>
+                        </div>
+                        <div class="jenjang-dropdown-row" style="margin-bottom:16px;">
+                            <span class="meta-title" style="margin:0;">
+                                <i class="fa-solid fa-filter"></i> Pilih Jenjang
+                            </span>
+                            <select id="grafikJenjangSelect" class="select-control"></select>
+                        </div>
+                        <div class="jenjang-dropdown-row" style="margin-bottom:16px; align-items:flex-start;">
+                            <span class="meta-title" style="margin:0; padding-top:6px;">
+                                <i class="fa-solid fa-book"></i> Pilih Mapel
+                            </span>
+                            <div id="grafikMapelSelect" class="mapel-chips"></div>
+                        </div>
+                        <div id="grafikPerjenjangContainer"></div>
+                    </div>
                 </div>
 
                 <!-- FOOTER -->
@@ -1834,6 +2098,9 @@
         const kkmInput = document.getElementById('kkmInput');
         const resetKkmBtn = document.getElementById('resetKkmBtn');
         const jenjangContainer = document.getElementById('jenjangContainer');
+        const grafikJenjangSelect = document.getElementById('grafikJenjangSelect');
+        const grafikMapelSelect = document.getElementById('grafikMapelSelect');
+        const grafikPerjenjangContainer = document.getElementById('grafikPerjenjangContainer');
 
         // UI State Management
         function getUIState() {
@@ -2093,8 +2360,17 @@
                 bar.style.transition = 'none';
                 bar.style.width = '0%';
             });
+
+            // Sama juga buat batang grafik perjenjang (height, bukan width)
+            const jcBars = root.querySelectorAll('.jc-bar-fill[data-target-height]');
+            jcBars.forEach(bar => {
+                bar.style.transition = 'none';
+                bar.style.height = '0%';
+            });
+
             void root.offsetHeight; // force reflow before re-enabling the transition
             bars.forEach(bar => { bar.style.transition = ''; });
+            jcBars.forEach(bar => { bar.style.transition = ''; });
 
             root.querySelectorAll('.count-value[data-count-to]').forEach(el => {
                 const target = parseFloat(el.dataset.countTo);
@@ -2107,6 +2383,7 @@
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     bars.forEach(bar => { bar.style.width = bar.dataset.targetWidth; });
+                    jcBars.forEach(bar => { bar.style.height = bar.dataset.targetHeight; });
                 });
             });
         }
@@ -2173,7 +2450,7 @@
                 row.insertCell(3).innerHTML = getStatusBadge(avg);
             });
 
-            kelasKetuntasanBox.innerHTML = sourceData ? buildKetuntasanHTML(sourceData) : '';
+            kelasKetuntasanBox.innerHTML = sourceData ? buildKetuntasanHTML(sourceData, null, false) : '';
 
             runCountUps(document.getElementById('pane-kelas'));
         }
@@ -2198,6 +2475,7 @@
 
             let subjectsToShow = data.subjects;
             let averagesToShow = data.averages;
+            let selectedIndices = null; // null = pakai semua mapel (default)
             if (selectedSubjects && selectedSubjects.length) {
                 const indices = [];
                 selectedSubjects.forEach(name => {
@@ -2207,6 +2485,7 @@
                 if (indices.length) {
                     subjectsToShow = indices.map(i => data.subjects[i]);
                     averagesToShow = indices.map(i => data.averages[i]);
+                    selectedIndices = indices;
                 }
             }
 
@@ -2226,7 +2505,7 @@
 
             const sTitle = title + (data.studentCount ? ` (${data.studentCount} siswa)` : '');
             const miniStatsHTML = buildMiniStatsHTML(sorted.subjects, sorted.averages);
-            const ketuntasanHTML = buildKetuntasanHTML(data);
+            const ketuntasanHTML = buildKetuntasanHTML(data, selectedIndices, false);
 
             jenjangContainer.innerHTML = `
                     <div class="section-title" style="font-size:1.2rem; justify-content:space-between; flex-wrap:wrap;">
@@ -2319,9 +2598,192 @@
             return selected;
         }
 
+        // Ambil daftar nama sheet (kelas) yang tergabung dalam satu key jenjang,
+        // memakai logika pengelompokan yang sama persis dengan processAllSheets.
+        function getSheetsInJenjang(key) {
+            if (!originalSheetNames.length) return [];
+            const list = [];
+            originalSheetNames.forEach(name => {
+                let kelas = '0';
+                const jenis = /MTS/i.test(name) ? 'MTSD' : 'MID';
+                const numMatch = name.match(/\d+/);
+                if (numMatch) kelas = numMatch[0];
+                const k = `${kelas}_${jenis}`;
+                if (k === key) list.push(name);
+            });
+            return list;
+        }
+
+        // Bangun dropdown jenjang khusus untuk tab Grafik Perjenjang
+        function buildGrafikJenjangDropdown() {
+            grafikJenjangSelect.innerHTML = '';
+
+            const groupedKeys = Object.keys(groupedData);
+            const sheetKeys = Object.keys(allSheetsData);
+
+            let options = [];
+            if (groupedKeys.length) {
+                options = sortJenjangKeys(groupedKeys);
+            } else if (sheetKeys.length) {
+                options = sheetKeys;
+            }
+
+            if (!options.length) {
+                grafikJenjangSelect.innerHTML = '<option value="">Tidak ada data</option>';
+                grafikPerjenjangContainer.innerHTML =
+                    '<p style="color:var(--muted); text-align:center; padding:40px; font-size:1rem;">Menunggu data komparatif...</p>';
+                return;
+            }
+
+            options.forEach(key => {
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = key.replace('_', ' ');
+                grafikJenjangSelect.appendChild(opt);
+            });
+
+            grafikJenjangSelect.value = options[0];
+            populateGrafikMapelSelect(options[0]);
+            renderJenjangCompareChart(options[0], getSelectedGrafikMapels());
+        }
+
+        // Populate chip mapel khusus tab Grafik Perjenjang, persis sama polanya kayak populateMapelSelect
+        function populateGrafikMapelSelect(key) {
+            grafikMapelSelect.innerHTML = '';
+            let data = null;
+            if (groupedData[key]) data = groupedData[key];
+            else if (allSheetsData[key]) data = allSheetsData[key];
+            if (!data || !data.subjects.length) return;
+
+            data.subjects.forEach(sub => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'mapel-chip-btn active-chip';
+                btn.dataset.value = sub;
+                btn.innerHTML = `${sub} <span class="mapel-chip-x">&times;</span>`;
+                btn.addEventListener('click', () => {
+                    btn.classList.toggle('active-chip');
+                    btn.innerHTML = btn.classList.contains('active-chip')
+                        ? `${sub} <span class="mapel-chip-x">&times;</span>`
+                        : sub;
+                    const key2 = grafikJenjangSelect.value;
+                    if (key2) renderJenjangCompareChart(key2, getSelectedGrafikMapels());
+                });
+                grafikMapelSelect.appendChild(btn);
+            });
+        }
+
+        function getSelectedGrafikMapels() {
+            const selected = [];
+            grafikMapelSelect.querySelectorAll('.mapel-chip-btn.active-chip').forEach(btn => selected.push(btn.dataset.value));
+            return selected;
+        }
+
+        // Render chart batang: persentase siswa tuntas per kelas, dalam satu jenjang terpilih
+        // selectedSubjects: array nama mapel terpilih (dari chip). Kosong/null = pakai semua mapel.
+        function renderJenjangCompareChart(key, selectedSubjects) {
+            if (!key) {
+                grafikPerjenjangContainer.innerHTML =
+                    '<p style="color:var(--muted); text-align:center; padding:40px; font-size:1rem;">Tidak ada data</p>';
+                return;
+            }
+
+            let sheetList = getSheetsInJenjang(key);
+            // Fallback: kalau tidak ada pengelompokan (mode single-sheet), anggap key itu satu kelas
+            if (!sheetList.length && allSheetsData[key]) sheetList = [key];
+
+            if (!sheetList.length) {
+                grafikPerjenjangContainer.innerHTML =
+                    '<p style="color:var(--muted); text-align:center; padding:40px; font-size:1rem;">Tidak ada data kelas untuk jenjang ini.</p>';
+                return;
+            }
+
+            const hasFilter = selectedSubjects && selectedSubjects.length;
+
+            if (hasFilter) {
+                // Cek dulu apakah ada minimal satu mapel terpilih yang cocok di salah satu kelas
+                const anyMatch = sheetList.some(name => {
+                    const subs = (allSheetsData[name] && allSheetsData[name].subjects) || [];
+                    return selectedSubjects.some(s => subs.indexOf(s) !== -1);
+                });
+                if (!anyMatch) {
+                    grafikPerjenjangContainer.innerHTML =
+                        '<p style="color:var(--muted); text-align:center; padding:40px; font-size:1rem;">Tidak ada mapel dipilih.</p>';
+                    return;
+                }
+            }
+
+            const bars = sheetList.map(name => {
+                const d = allSheetsData[name];
+                let scores = d && d.scores ? d.scores : [];
+                // Cocokkan nama mapel terpilih ke kolom mapel di masing-masing kelas (urutan/mapel bisa beda tiap kelas)
+                if (hasFilter && d && d.subjects && d.subjects.length) {
+                    const indices = [];
+                    selectedSubjects.forEach(sub => {
+                        const idx = d.subjects.indexOf(sub);
+                        if (idx !== -1) indices.push(idx);
+                    });
+                    scores = indices.length ? scores.map(student => indices.map(i => student[i])) : [];
+                }
+                const studentAverages = computeStudentAverages(scores);
+                const total = studentAverages.length;
+                const tuntas = getTuntasCount(studentAverages);
+                const pct = total > 0 ? (tuntas / total) * 100 : 0;
+                return { name, pct, tuntas, total };
+            });
+
+            let barsHTML = '';
+            bars.forEach(b => {
+                const pctStr = b.pct.toFixed(1);
+                const targetH = b.total ? pctStr : 0;
+                barsHTML += `
+                    <div class="jc-bar-col" title="${b.name}: ${b.tuntas}/${b.total} siswa tuntas">
+                        <div class="jc-bar-value count-value" data-count-to="${targetH}" data-decimals="1" data-suffix="%">0.0%</div>
+                        <div class="jc-bar-track">
+                            <div class="jc-bar-fill" data-target-height="${targetH}%" style="height:0%"></div>
+                        </div>
+                        <div class="jc-bar-label">${b.name}</div>
+                    </div>`;
+            });
+
+            // Ketuntasan per-kelas (bukan digabung), satu blok per kelas di jenjang ini, ikut mapel yang difilter
+            let ketuntasanHTML = '';
+            sheetList.forEach(name => {
+                const d = allSheetsData[name];
+                if (!d) return;
+                let selectedIndices = null;
+                if (hasFilter && d.subjects && d.subjects.length) {
+                    const indices = [];
+                    selectedSubjects.forEach(sub => {
+                        const idx = d.subjects.indexOf(sub);
+                        if (idx !== -1) indices.push(idx);
+                    });
+                    if (indices.length) selectedIndices = indices;
+                }
+                const block = buildKetuntasanHTML(d, selectedIndices, false, name);
+                if (block) {
+                    ketuntasanHTML += `<div class="ketuntasan-perkelas-block">${block}</div>`;
+                }
+            });
+
+            grafikPerjenjangContainer.innerHTML = `
+                    <div class="jenjang-compare-chart-wrap">
+                        <div class="jenjang-compare-chart">${barsHTML}</div>
+                    </div>
+                    ${ketuntasanHTML ? `<div class="ketuntasan-perkelas-grid">${ketuntasanHTML}</div>` : ''}`;
+
+            runCountUps(grafikPerjenjangContainer);
+        }
+
         // Bangun blok Ketuntasan untuk satu jenjang (ditempel langsung di layout Per Jenjang)
-        function buildKetuntasanHTML(data) {
-            const scores = data.scores || [];
+        function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix) {
+            const allScores = data.scores || [];
+            // Jika ada mapel yang dipilih (selectedIndices), hitung ketuntasan hanya dari kolom mapel itu.
+            // Jika tidak (null/kosong), pakai semua mapel seperti semula.
+            const scores = (selectedIndices && selectedIndices.length && allScores.length) ?
+                allScores.map(student => selectedIndices.map(i => student[i])) :
+                allScores;
+
             let totalStudents = data.studentCount || 0;
             let tuntas = 0,
                 tidakTuntas = 0,
@@ -2337,18 +2799,31 @@
 
             if (!totalStudents) return '';
 
-            const avgs = data.averages || [];
+            const avgs = (selectedIndices && selectedIndices.length) ?
+                selectedIndices.map(i => (data.averages || [])[i]).filter(v => typeof v === 'number') :
+                (data.averages || []);
             const overall = avgs.length ? (avgs.reduce((a, b) => a + b, 0) / avgs.length).toFixed(2) : '-';
             const tuntasPct = persentaseTuntas.toFixed(1);
             const tidakTuntasPct = (100 - persentaseTuntas).toFixed(1);
 
             return `
-                    <div class="section-title" style="font-size:1.1rem; margin-top:24px;"><i class="fa-solid fa-ranking-star"></i> Ketuntasan</div>
+                    <div class="section-title" style="font-size:1.1rem; margin-top:24px;"><i class="fa-solid fa-ranking-star"></i> Ketuntasan${titleSuffix ? ' ' + titleSuffix : ''}</div>
                     <div class="rekap-info-row" style="margin-bottom:12px;">
                         <span class="rekap-info-chip"><i class="fa-solid fa-users"></i> Siswa: ${totalStudents}</span>
                         <span class="rekap-info-chip"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i> Tuntas: ${tuntas}</span>
                         <span class="rekap-info-chip"><i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Tidak Tuntas: ${tidakTuntas}</span>
                     </div>
+                    ${showChart ? `
+                    <div class="ketuntasan-chart-row">
+                        <div class="ketuntasan-chart-title"><i class="fa-solid fa-chart-simple"></i> Grafik Persentase Ketuntasan</div>
+                        <div class="ketuntasan-bar-track">
+                            <div class="ketuntasan-bar-fill" data-target-width="${tuntasPct}%" style="width:${tuntasPct}%;">${tuntasPct}%</div>
+                        </div>
+                        <div class="ketuntasan-legend">
+                            <div class="ketuntasan-legend-item"><span class="legend-dot" style="background:var(--success);"></span> Tuntas: <b>${tuntas}</b> siswa (${tuntasPct}%)</div>
+                            <div class="ketuntasan-legend-item"><span class="legend-dot" style="background:var(--danger);"></span> Tidak Tuntas: <b>${tidakTuntas}</b> siswa (${tidakTuntasPct}%)</div>
+                        </div>
+                    </div>` : ''}
                     <div class="rekap-minmax">
                         <div class="rekap-mm-card"><div class="mm-label" style="color:var(--success);"><i class="fa-solid fa-check-circle"></i> Tuntas</div><div class="mm-value count-value" data-count-to="${persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tuntas} siswa</div></div>
                         <div class="rekap-mm-card"><div class="mm-label" style="color:var(--danger);"><i class="fa-solid fa-times-circle"></i> Tidak Tuntas</div><div class="mm-value count-value" data-count-to="${100 - persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tidakTuntas} siswa</div></div>
@@ -2370,11 +2845,195 @@
             document.querySelector('.main-tab[data-pane="kelas"]').click();
         }
 
+        // Hitung ringkasan (total siswa, rata2, ketuntasan, dst) dari sekumpulan sheet — dipakai buat
+        // kuartal aktif maupun buat bandingin antar kuartal (tren), makanya gak nempel ke variabel global.
+        function computeOverviewStats(sheetsData, sheetNames) {
+            let totalSiswa = 0;
+            let allStudentAverages = [];
+            let belowKKMCount = 0;
+            const classStats = [];
+
+            (sheetNames || []).forEach(name => {
+                const d = sheetsData ? sheetsData[name] : null;
+                if (!d) return;
+                totalSiswa += d.studentCount || 0;
+
+                const studentAverages = computeStudentAverages(d.scores || []);
+                allStudentAverages = allStudentAverages.concat(studentAverages);
+
+                (d.averages || []).forEach(avg => { if (isBelowKKM(avg)) belowKKMCount++; });
+
+                const total = studentAverages.length;
+                if (total > 0) {
+                    const tuntas = getTuntasCount(studentAverages);
+                    const pct = (tuntas / total) * 100;
+                    const avgOverall = d.averages && d.averages.length ?
+                        (d.averages.reduce((a, b) => a + b, 0) / d.averages.length) : 0;
+                    classStats.push({ name, pct, avg: avgOverall });
+                }
+            });
+
+            const totalAll = allStudentAverages.length;
+            const totalTuntas = getTuntasCount(allStudentAverages);
+            const pctSekolah = totalAll > 0 ? (totalTuntas / totalAll) * 100 : 0;
+            const rataSekolah = totalAll > 0 ? (allStudentAverages.reduce((a, b) => a + b, 0) / totalAll) : 0;
+
+            classStats.sort((a, b) => b.pct - a.pct);
+
+            return { totalSiswa, pctSekolah, rataSekolah, belowKKMCount, classStats, hasData: totalAll > 0 };
+        }
+
+        // Pisahin daftar nama sheet jadi 2 kelompok jenjang: MID sama MTsD, pake aturan
+        // yang sama kayak getSheetsInJenjang (nama sheet yang ngandung "MTS" masuk MTsD).
+        function splitSheetsByJenjang(sheetNames) {
+            const mid = [];
+            const mtsd = [];
+            (sheetNames || []).forEach(name => {
+                if (/MTS/i.test(name)) mtsd.push(name); else mid.push(name);
+            });
+            return { mid, mtsd };
+        }
+
+        const JENJANG_META = {
+            MID:  { label: 'MID',  subtitle: 'Madrasah Ibtidaiyah Diniyah',  icon: 'fa-seedling',        accentClass: 'accent-mid' },
+            MTSD: { label: 'MTsD', subtitle: 'Madrasah Tsanawiyah Diniyah', icon: 'fa-graduation-cap',  accentClass: 'accent-mtsd' }
+        };
+
+        // Bangun satu section penuh (kartu ringkasan + highlight kelas + tren antar kuartal)
+        // buat satu jenjang tertentu. Semua angka di dalamnya cuma dihitung dari sheet-sheet
+        // yang emang masuk jenjang itu, gak ketimpuk sama jenjang satunya.
+        function buildJenjangSectionHTML(jenjangKey, sheetNames) {
+            const meta = JENJANG_META[jenjangKey];
+            const stats = computeOverviewStats(allSheetsData, sheetNames);
+
+            let bodyHTML;
+            if (!stats.hasData) {
+                bodyHTML = `
+                    <div style="text-align:center; padding:24px 12px; color:var(--muted);">
+                        <div style="font-size:1.4rem; margin-bottom:6px; opacity:0.5;"><i class="fa-solid ${meta.icon}"></i></div>
+                        <div style="font-size:0.85rem;">Belum ada data kelas untuk jenjang ${meta.label}.</div>
+                    </div>`;
+            } else {
+                const statsGridHTML = `
+                    <div class="overview-stats-grid">
+                        <div class="overview-stat-card">
+                            <div class="mini-label"><i class="fa-solid fa-users"></i> Total Siswa</div>
+                            <div class="mini-value count-value" data-count-to="${stats.totalSiswa}" data-decimals="0">0</div>
+                        </div>
+                        <div class="overview-stat-card">
+                            <div class="mini-label"><i class="fa-solid fa-bullseye"></i> Rata-rata</div>
+                            <div class="mini-value count-value" data-count-to="${stats.rataSekolah.toFixed(2)}" data-decimals="2">0.00</div>
+                        </div>
+                        <div class="overview-stat-card">
+                            <div class="mini-label"><i class="fa-solid fa-circle-check"></i> Ketuntasan</div>
+                            <div class="mini-value count-value" data-count-to="${stats.pctSekolah.toFixed(1)}" data-decimals="1" data-suffix="%">0.0%</div>
+                        </div>
+                        <div class="overview-stat-card">
+                            <div class="mini-label"><i class="fa-solid fa-triangle-exclamation"></i> Mapel di Bawah KKM</div>
+                            <div class="mini-value count-value" data-count-to="${stats.belowKKMCount}" data-decimals="0">0</div>
+                        </div>
+                    </div>`;
+
+                // Kelas paling unggul / perlu perhatian, dihitung dalam lingkup jenjang ini aja
+                const best = stats.classStats[0];
+                const worst = stats.classStats.length > 1 ? stats.classStats[stats.classStats.length - 1] : null;
+                let highlightHTML = '';
+                if (best) {
+                    highlightHTML += `
+                        <div class="overview-highlight-card good">
+                            <div class="mini-label"><i class="fa-solid fa-trophy"></i> Kelas Paling Unggul</div>
+                            <div class="overview-highlight-name">${best.name}</div>
+                            <div class="overview-highlight-sub">Ketuntasan ${best.pct.toFixed(1)}% &middot; Rata-rata ${best.avg.toFixed(2)}</div>
+                        </div>`;
+                }
+                if (worst) {
+                    highlightHTML += `
+                        <div class="overview-highlight-card bad">
+                            <div class="mini-label"><i class="fa-solid fa-arrow-trend-down"></i> Perlu Perhatian</div>
+                            <div class="overview-highlight-name">${worst.name}</div>
+                            <div class="overview-highlight-sub">Ketuntasan ${worst.pct.toFixed(1)}% &middot; Rata-rata ${worst.avg.toFixed(2)}</div>
+                        </div>`;
+                }
+
+                // Tren rata-rata antar Kuartal I/II/III buat jenjang ini, ditarik dari quartalCache
+                const qKeys = ['Kuartal_I', 'Kuartal_II', 'Kuartal_III'];
+                const trendBars = qKeys.map(q => {
+                    const cache = quartalCache[q];
+                    const names = cache ? splitSheetsByJenjang(cache.originalSheetNames || [])[jenjangKey === 'MTSD' ? 'mtsd' : 'mid'] : [];
+                    const s = cache ? computeOverviewStats(cache.allSheetsData || {}, names) : null;
+                    return { label: QUARTAL_LABELS[q] || q, rata: s && s.hasData ? s.rataSekolah : 0, hasData: !!(s && s.hasData) };
+                });
+                let trendHTML = '';
+                if (trendBars.some(b => b.hasData)) {
+                    let trendBarsHTML = '';
+                    trendBars.forEach(b => {
+                        const targetH = b.hasData ? ((b.rata / 10) * 100).toFixed(1) : 0;
+                        trendBarsHTML += `
+                            <div class="jc-bar-col" title="${b.label}: ${b.hasData ? b.rata.toFixed(2) : 'belum ada data'}">
+                                <div class="jc-bar-value count-value" data-count-to="${b.hasData ? b.rata.toFixed(2) : 0}" data-decimals="2">0.00</div>
+                                <div class="jc-bar-track">
+                                    <div class="jc-bar-fill" data-target-height="${targetH}%" style="height:0%"></div>
+                                </div>
+                                <div class="jc-bar-label">${b.label.replace('_', ' ')}</div>
+                            </div>`;
+                    });
+                    trendHTML = `
+                        <div class="section-title" style="font-size:0.95rem; margin-top:20px;"><i class="fa-solid fa-chart-line"></i> Tren Rata-rata Antar Kuartal</div>
+                        <div class="jenjang-compare-chart-wrap">
+                            <div class="jenjang-compare-chart">${trendBarsHTML}</div>
+                        </div>`;
+                }
+
+                bodyHTML = `
+                    ${statsGridHTML}
+                    ${highlightHTML ? `<div class="overview-highlight-grid" style="margin-top:14px;">${highlightHTML}</div>` : ''}
+                    ${trendHTML}`;
+            }
+
+            return `
+                <div class="overview-jenjang-section ${meta.accentClass}">
+                    <div class="overview-jenjang-heading">
+                        <span class="overview-jenjang-icon"><i class="fa-solid ${meta.icon}"></i></span>
+                        <span class="overview-jenjang-titles">
+                            <span class="overview-jenjang-title">${meta.label}</span>
+                            <span class="overview-jenjang-subtitle">${meta.subtitle}</span>
+                        </span>
+                    </div>
+                    ${bodyHTML}
+                </div>`;
+        }
+
+        // Ringkasan seluruh sekolah, dipisah per jenjang (MID & MTsD), dipakai buat pane Overview
+        function renderOverview() {
+            const overviewContent = document.getElementById('overviewContent');
+            if (!overviewContent) return;
+
+            if (!originalSheetNames.length) {
+                overviewContent.innerHTML = `
+                    <div style="text-align:center; padding:48px 20px; color:var(--muted);">
+                        <div style="font-size:2rem; margin-bottom:10px; opacity:0.6;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                        <div style="font-weight:700; color:var(--text-soft); margin-bottom:4px;">Belum ada data nilai</div>
+                        <div style="font-size:0.85rem;">Tekan tombol <b>Upload Data</b> di atas untuk memuat file Excel nilai ujian.</div>
+                    </div>`;
+                return;
+            }
+
+            const { mid, mtsd } = splitSheetsByJenjang(originalSheetNames);
+
+            overviewContent.innerHTML = `
+                    ${buildJenjangSectionHTML('MID', mid)}
+                    ${buildJenjangSectionHTML('MTSD', mtsd)}`;
+
+            runCountUps(overviewContent);
+        }
+
         function refreshAllViews() {
             if (!currentSubjectNames.length) return;
             const src = allSheetsData[currentSheetName] || groupedData[currentSheetName] || null;
             renderKelasTable(currentSubjectNames, currentAverages, currentSheetName, currentStudentCount, src);
             buildJenjangDropdown();
+            buildGrafikJenjangDropdown();
+            renderOverview();
         }
 
         // Draw one line of (correctly-shaped) text to a PNG using the browser's own canvas text engine.
@@ -2431,7 +3090,7 @@
 
         // Export Functions
         // sourceEl: the live .section-container element to snapshot (so the PDF looks exactly like the app card)
-        async function exportPDF(subjects, averages, title, sourceEl) {
+        async function exportPDF(subjects, averages, title, sourceEl, reportLabel) {
             if (!subjects.length) { alert("Tidak ada data untuk diekspor."); return; }
             const btns = document.querySelectorAll('.btn-pdf');
             btns.forEach(b => b.disabled = true);
@@ -2473,7 +3132,7 @@
                 header.style.cssText =
                     `font-family:'Space Grotesk',sans-serif;color:${textColor};margin-bottom:16px;`;
                 header.innerHTML = `
-                        <div style="font-weight:800;font-size:20px;">Laporan Rata-rata — ${title}</div>
+                        <div style="font-weight:800;font-size:20px;">${reportLabel || 'Laporan Rata-rata'} — ${title}</div>
                         <div style="opacity:0.6;font-size:12px;margin-top:4px;">Madrasah Diniyah "Miftahul Ulum" · ${new Date().toLocaleDateString('id-ID')}</div>`;
 
                 const wrapper = document.createElement('div');
@@ -2534,6 +3193,37 @@
             const a = document.createElement('a');
             a.href = url;
             a.download = `${title.replace(/[^a-zA-Z0-9]/g,'_')}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportOverviewCSV() {
+            if (!originalSheetNames.length) { alert("Tidak ada data."); return; }
+            const { mid, mtsd } = splitSheetsByJenjang(originalSheetNames);
+            let csv = '\uFEFF';
+            [{ key: 'MID', names: mid }, { key: 'MTSD', names: mtsd }].forEach(({ key, names }) => {
+                const meta = JENJANG_META[key];
+                const stats = computeOverviewStats(allSheetsData, names);
+                csv += `Ringkasan ${meta.label} (${meta.subtitle})\n`;
+                if (!stats.hasData) {
+                    csv += 'Belum ada data untuk jenjang ini\n\n';
+                    return;
+                }
+                csv += `Total Siswa;${stats.totalSiswa}\n`;
+                csv += `Rata-rata;${stats.rataSekolah.toFixed(2)}\n`;
+                csv += `Ketuntasan;${stats.pctSekolah.toFixed(1)}%\n`;
+                csv += `Mapel di Bawah KKM;${stats.belowKKMCount}\n`;
+                csv += 'Kelas;Ketuntasan (%);Rata-rata\n';
+                stats.classStats.forEach(c => {
+                    csv += `"${c.name}";${c.pct.toFixed(1)};${c.avg.toFixed(2)}\n`;
+                });
+                csv += '\n';
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Ringkasan_Sekolah_${QUARTAL_LABELS[currentQuartal].replace(/\s+/g,'_')}.csv`;
             a.click();
             URL.revokeObjectURL(url);
         }
@@ -2616,6 +3306,7 @@
             }
 
             buildJenjangDropdown();
+            buildGrafikJenjangDropdown();
             saveToLocalStorage();
             saveUIState();
             updateQuartalTabsUI();
@@ -2723,6 +3414,7 @@
             if (!found) renderKelasTable([], [], '');
             uploadBtnText.innerText = "Upload Data";
             buildJenjangDropdown();
+            buildGrafikJenjangDropdown();
             saveUIState();
         }
 
@@ -2821,6 +3513,12 @@
             renderSingleJenjang(e.target.value, getSelectedMapels());
         });
 
+        grafikJenjangSelect.addEventListener('change', (e) => {
+            if (!e.target.value) return;
+            populateGrafikMapelSelect(e.target.value);
+            renderJenjangCompareChart(e.target.value, getSelectedGrafikMapels());
+        });
+
         selectAllMapelBtn.addEventListener('click', () => {
             mapelSelect.querySelectorAll('.mapel-chip-btn').forEach(btn => {
                 btn.classList.add('active-chip');
@@ -2839,44 +3537,44 @@
         });
 
         let paneSwitching = false;
+        function switchPane(paneId) {
+            if (paneSwitching) return;
+            const nextPane = document.getElementById('pane-' + paneId);
+            const currentPane = document.querySelector('.main-pane.active');
+            if (!nextPane || currentPane === nextPane) return;
+
+            document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+            const matchingTab = document.querySelector(`.main-tab[data-pane="${paneId}"]`);
+            if (matchingTab) matchingTab.classList.add('active');
+
+            paneSwitching = true;
+
+            const showNextPane = () => {
+                nextPane.classList.add('active');
+                // force reflow so the transition to pane-show plays
+                void nextPane.offsetWidth;
+                nextPane.classList.add('pane-show');
+
+                if (paneId === 'overview') renderOverview();
+
+                runCountUps(nextPane);
+                paneSwitching = false;
+            };
+
+            if (currentPane) {
+                currentPane.classList.remove('pane-show');
+                setTimeout(() => {
+                    currentPane.classList.remove('active');
+                    showNextPane();
+                }, 220);
+            } else {
+                showNextPane();
+            }
+        }
+
         document.querySelectorAll('.main-tab').forEach(tab => {
             tab.addEventListener('click', function() {
-                if (paneSwitching) return;
-                const paneId = this.dataset.pane;
-                const nextPane = document.getElementById('pane-' + paneId);
-                const currentPane = document.querySelector('.main-pane.active');
-
-                if (currentPane === nextPane) return;
-
-                document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-
-                paneSwitching = true;
-
-                const showNextPane = () => {
-                    nextPane.classList.add('active');
-                    // force reflow so the transition to pane-show plays
-                    void nextPane.offsetWidth;
-                    nextPane.classList.add('pane-show');
-
-                    filterBar.style.display = 'none';
-                    jenjangDropdownBar.style.display = 'none';
-                    if (paneId === 'kelas') filterBar.style.display = 'flex';
-                    if (paneId === 'jenjang') jenjangDropdownBar.style.display = 'flex';
-
-                    runCountUps(nextPane);
-                    paneSwitching = false;
-                };
-
-                if (currentPane) {
-                    currentPane.classList.remove('pane-show');
-                    setTimeout(() => {
-                        currentPane.classList.remove('active');
-                        showNextPane();
-                    }, 220);
-                } else {
-                    showNextPane();
-                }
+                switchPane(this.dataset.pane);
             });
         });
 
@@ -2890,6 +3588,14 @@
             if (!currentSubjectNames.length) { alert("Tidak ada data"); return; }
             exportCSV(currentSubjectNames, currentAverages, currentSheetName || 'Kelas');
         });
+
+        document.getElementById('exportPDFOverview').addEventListener('click', () => {
+            if (!originalSheetNames.length) { alert("Tidak ada data"); return; }
+            const src = document.querySelector('#pane-overview .section-container');
+            exportPDF(['Ringkasan Sekolah'], [0], 'Ringkasan Sekolah', src, 'Laporan Ringkasan');
+        });
+
+        document.getElementById('exportCSVOverview').addEventListener('click', exportOverviewCSV);
 
         document.getElementById('clearDataBtn').addEventListener('click', clearStoredData);
 
@@ -2930,11 +3636,11 @@
                 this.classList.add('active-nav');
                 const target = this.dataset.side;
                 if (target === 'overview') {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    switchPane('overview');
                 } else if (target === 'kelas') {
-                    document.querySelector('.main-tab[data-pane="kelas"]').click();
-                } else if (target === 'jenjang' || target === 'mapel') {
-                    document.querySelector('.main-tab[data-pane="jenjang"]').click();
+                    switchPane('kelas');
+                } else if (target === 'jenjang') {
+                    switchPane('jenjang');
                 }
             });
         });
