@@ -552,45 +552,6 @@ body.dark .select-control {
 .theme-btn[data-theme="purple"].active-theme { color: #A78BFA; }
 .theme-btn[data-theme="orange"].active-theme { color: #FBBF24; }
 
-/* ========== HERO ========== */
-.hero {
-    position: relative;
-    background: var(--surface-solid);
-    border: 1px solid var(--border);
-    border-top: 3px solid var(--primary);
-    border-radius: var(--radius-2xl);
-    padding: 24px 28px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow-float);
-    animation: fadeUp 0.6s var(--t-spring) 0.1s both;
-}
-
-.hero-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.headline h2 {
-    font-family: 'Fraunces', serif;
-    font-size: 2.2rem;
-    font-weight: 600;
-    font-style: italic;
-    line-height: 1.08;
-    letter-spacing: -0.01em;
-    color: var(--text);
-}
-
-.headline p {
-    color: var(--text-soft);
-    line-height: 1.5;
-    font-size: 1rem;
-    max-width: 600px;
-    margin-top: 4px;
-}
-
 /* ========== QUARTAL BAR ========== */
 .quartal-bar {
     display: flex;
@@ -1683,12 +1644,6 @@ button:focus-visible,
     .rekap-grid {
         grid-template-columns: 1fr;
     }
-    .hero {
-        padding: 18px 20px;
-    }
-    .headline h2 {
-        font-size: 1.8rem;
-    }
     .section-title {
         font-size: 1.2rem;
     }
@@ -1719,12 +1674,6 @@ button:focus-visible,
         padding: 10px 12px;
         font-size: 0.8rem;
     }
-    .headline h2 {
-        font-size: 1.6rem;
-    }
-    .headline p {
-        font-size: 0.9rem;
-    }
     th, td {
         padding: 8px 10px;
         font-size: 0.75rem;
@@ -1747,9 +1696,6 @@ button:focus-visible,
     }
     .section-container {
         padding: 12px 14px;
-    }
-    .hero {
-        padding: 14px 16px;
     }
     .rekap-card {
         padding: 16px;

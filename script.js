@@ -540,7 +540,10 @@ function renderSingleJenjang(key, selectedSubjects) {
     let subjectsToShow = data.subjects;
     let averagesToShow = data.averages;
     let selectedIndices = null; // null = pakai semua mapel (default)
-    if (selectedSubjects && selectedSubjects.length) {
+    if (Array.isArray(selectedSubjects) && selectedSubjects.length === 0) {
+        subjectsToShow = [];
+        averagesToShow = [];
+    } else if (selectedSubjects && selectedSubjects.length) {
         const indices = [];
         selectedSubjects.forEach(name => {
             const idx = data.subjects.indexOf(name);
@@ -745,7 +748,7 @@ function getSelectedGrafikMapels() {
 }
 
 // Render chart batang: persentase siswa tuntas per kelas, dalam satu jenjang terpilih
-// selectedSubjects: array nama mapel terpilih (dari chip). Kosong/null = pakai semua mapel.
+// selectedSubjects: null = semua mapel; array kosong = tidak ada mapel dipilih.
 function renderJenjangCompareChart(key, selectedSubjects) {
     if (!key) {
         grafikPerjenjangContainer.innerHTML =
@@ -763,7 +766,7 @@ function renderJenjangCompareChart(key, selectedSubjects) {
         return;
     }
 
-    const hasFilter = selectedSubjects && selectedSubjects.length;
+    const hasFilter = Array.isArray(selectedSubjects);
 
     if (hasFilter) {
         // Cek dulu apakah ada minimal satu mapel terpilih yang cocok di salah satu kelas
