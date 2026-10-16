@@ -366,6 +366,15 @@ function computeStudentAverages(scores) {
     });
 }
 
+function getClassNumber(sheetName) {
+    const digits = sheetName.match(/\d+/);
+    if (digits) return parseInt(digits[0], 10);
+
+    const roman = sheetName.match(/\b(XII|XI|IX|VIII|VII|VI|X|IV|V|III|II|I)\b/i);
+    if (!roman) return 0;
+    return { I: 1, II: 2, III: 3, IV: 4, V: 5, VI: 6, VII: 7, VIII: 8, IX: 9, X: 10, XI: 11, XII: 12 }[roman[0].toUpperCase()];
+}
+
 function getTuntasCount(studentAverages) {
     return studentAverages.filter(avg => avg >= KKM).length;
 }
@@ -375,7 +384,7 @@ function sortJenjangKeys(keys) {
         const [numA, jenisA] = a.split('_');
         const [numB, jenisB] = b.split('_');
         if (jenisA !== jenisB) return jenisA.localeCompare(jenisB);
-        return parseInt(numA, 10) - parseInt(numB, 10);
+        return Number(numA) - Number(numB);
     });
 }
 
@@ -674,10 +683,8 @@ function getSheetsInJenjang(key) {
     if (!originalSheetNames.length) return [];
     const list = [];
     originalSheetNames.forEach(name => {
-        let kelas = '0';
+        let kelas = getClassNumber(name);
         const jenis = /MTS/i.test(name) ? 'MTSD' : 'MID';
-        const numMatch = name.match(/\d+/);
-        if (numMatch) kelas = numMatch[0];
         const k = `${kelas}_${jenis}`;
         if (k === key) list.push(name);
     });
@@ -1319,10 +1326,8 @@ function processAllSheets() {
 
     const groupMap = {};
     for (const name of sheetNames) {
-        let kelas = '0';
+        const kelas = getClassNumber(name);
         const jenis = /MTS/i.test(name) ? 'MTSD' : 'MID';
-        const numMatch = name.match(/\d+/);
-        if (numMatch) kelas = numMatch[0];
         const key = `${kelas}_${jenis}`;
         if (!groupMap[key]) groupMap[key] = [];
         groupMap[key].push(name);
