@@ -81,6 +81,8 @@ const jenjangSelect = document.getElementById('jenjang-select');
 const mapelSelect = document.getElementById('mapelSelect');
 const selectAllMapelBtn = document.getElementById('selectAllMapel');
 const deselectAllMapelBtn = document.getElementById('deselectAllMapel');
+const grafikSelectAllMapelBtn = document.getElementById('grafikSelectAllMapel');
+const grafikDeselectAllMapelBtn = document.getElementById('grafikDeselectAllMapel');
 const tableBodyKelas = document.getElementById('table-body-kelas');
 const kelasKetuntasanBox = document.getElementById('kelasKetuntasanBox');
 const kelasMiniStats = document.getElementById('kelasMiniStats');
@@ -1598,6 +1600,22 @@ deselectAllMapelBtn.addEventListener('click', () => {
     });
     const key = jenjangSelect.value;
     if (key) renderSingleJenjang(key, getSelectedMapels());
+});
+grafikSelectAllMapelBtn.addEventListener('click', () => {
+    grafikMapelSelect.querySelectorAll('.mapel-chip-btn').forEach(btn => {
+        btn.classList.add('active-chip');
+        btn.innerHTML = `${btn.dataset.value} <span class="mapel-chip-x">&times;</span>`;
+    });
+    const key = grafikJenjangSelect.value;
+    if (key) renderJenjangCompareChart(key, getSelectedGrafikMapels());
+});
+grafikDeselectAllMapelBtn.addEventListener('click', () => {
+    grafikMapelSelect.querySelectorAll('.mapel-chip-btn').forEach(btn => {
+        btn.classList.remove('active-chip');
+        btn.innerHTML = btn.dataset.value;
+    });
+    const key = grafikJenjangSelect.value;
+    if (key) renderJenjangCompareChart(key, getSelectedGrafikMapels());
 });
 
 let paneSwitching = false;
