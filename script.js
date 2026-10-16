@@ -482,7 +482,7 @@ function buildMiniStatsHTML(subjects, averages, wali = '') {
 function renderKelasTable(subjects, averages, sheetName, studentCount = 0, sourceData = null) {
     const title = sheetName || currentSheetName || 'Kelas';
     const wali = waliKelas[sheetName || currentSheetName] || (sourceData?.asuhan) || '';
-    kelasTableTitle.textContent = `Tabel Analisis — ${title}` + (studentCount ? ` (${studentCount} siswa)` : '') + (wali ? ` · Wali: ${wali}` : '');
+    kelasTableTitle.textContent = `Tabel Analisis — ${title}` + (studentCount ? ` (${studentCount} siswa)` : '') + (wali ? ` · Wali Kelas: ${wali}` : '');
 
     if (!subjects.length || !averages.length) {
         tableBodyKelas.innerHTML =
