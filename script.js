@@ -243,8 +243,8 @@ function detectHeaderAndData(worksheet) {
     const headerRow = rows[headerRowIndex];
     const subjectIndices = [],
         subjectNames = [];
-    const ignoreKeywords = ["NO", "NOPES", "NIS", "NAMA", "ASR", "KELAS", "ASUHAN", "جملة", "ألتسوية", "فائز", "RANK", "SUM",
-        "jml"
+    const ignoreKeywords = ["NO", "NOPES", "NIS", "NAMA", "ASR", "KELAS", "KLS", "RUANG", "ASUHAN", "الترتيب",
+        "جملة", "ألتسوية", "فائز", "RANK", "SUM", "jml"
     ];
 
     let asuhanColIdx = -1;
@@ -276,7 +276,8 @@ function detectHeaderAndData(worksheet) {
         subjectNames.length = 0;
         for (let c = 6; c < Math.min(headerRow.length, 30); c++) {
             let name = headerRow[c];
-            if (name && typeof name === 'string' && name.trim().length > 0) {
+            if (name && typeof name === 'string' && name.trim().length > 0 &&
+                !ignoreKeywords.some(ig => name.trim().toUpperCase().includes(ig))) {
                 subjectIndices.push(c);
                 subjectNames.push(name.trim());
             }
