@@ -33,8 +33,8 @@ let currentSheetName = "";
 let currentAverages = [];
 let currentSubjectNames = [];
 let currentStudentCount = 0;
-let KKM = 5.0;
-const DEFAULT_KKM = 5.0;
+let KKM = 50;
+const DEFAULT_KKM = 50;
 
 let waliKelas = {};
 
@@ -111,7 +111,8 @@ function saveUIState() {
     const state = {
         quartal: currentQuartal,
         sheet: currentSheetName,
-        kkm: KKM
+        kkm: KKM,
+        kkmScale: 100
     };
     localStorage.setItem(STORAGE_PREFIX + 'ui_state', JSON.stringify(state));
 }
@@ -379,13 +380,13 @@ function sortJenjangKeys(keys) {
 
 // UI Helpers
 function getProgressBarClass(avg) {
-    if (avg >= 7.5) return 'good';
+    if (avg >= 75) return 'good';
     if (avg >= KKM) return 'ok';
     return 'bad';
 }
 
 function getProgressBarHTML(avg) {
-    const pct = Math.min(100, (avg / 10) * 100);
+    const pct = Math.min(100, avg);
     const cls = getProgressBarClass(avg);
     return `<div class="progress-cell"><div class="progress-bar-wrap"><div class="progress-bar-fill ${cls}" style="width:0%" data-target-width="${pct}%"></div></div><strong class="count-value" data-count-to="${avg}" data-decimals="2">0.00</strong></div>`;
 }
@@ -447,13 +448,13 @@ function runCountUps(scope) {
 }
 
 function getStatusBadge(avg) {
-    if (avg >= 7.5) return '<span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> Baik</span>';
+    if (avg >= 75) return '<span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> Baik</span>';
     if (avg >= KKM) return '<span class="badge badge-warning"><i class="fa-solid fa-exclamation-triangle"></i> Cukup</span>';
     return '<span class="badge badge-danger"><i class="fa-solid fa-circle-exclamation"></i> Perlu Bimbingan</span>';
 }
 
 function getStatusText(avg) {
-    if (avg >= 7.5) return "Baik";
+    if (avg >= 75) return "Baik";
     if (avg >= KKM) return "Cukup";
     return "Perlu Bimbingan";
 }
@@ -896,7 +897,7 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix) {
                 <div class="rekap-mm-card"><div class="mm-label" style="color:var(--success);"><i class="fa-solid fa-check-circle"></i> Tuntas</div><div class="mm-value count-value" data-count-to="${persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tuntas} siswa</div></div>
                 <div class="rekap-mm-card"><div class="mm-label" style="color:var(--danger);"><i class="fa-solid fa-times-circle"></i> Tidak Tuntas</div><div class="mm-value count-value" data-count-to="${100 - persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tidakTuntas} siswa</div></div>
             </div>
-            <div style="margin-top: 12px; background: var(--surface-soft); border-radius: var(--radius-lg); padding: 8px 12px; display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted);"><span>Rerata: ${overall}</span><span>KKM: ${KKM.toFixed(1)}</span></div>`;
+            <div style="margin-top: 12px; background: var(--surface-soft); border-radius: var(--radius-lg); padding: 8px 12px; display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted);"><span>Rerata: ${overall}</span><span>KKM: ${KKM}</span></div>`;
 }
 
 function filterBySheet(sheetName) {
@@ -1035,7 +1036,7 @@ function buildJenjangSectionHTML(jenjangKey, sheetNames) {
         if (trendBars.some(b => b.hasData)) {
             let trendBarsHTML = '';
             trendBars.forEach(b => {
-                const targetH = b.hasData ? ((b.rata / 10) * 100).toFixed(1) : 0;
+                const targetH = b.hasData ? Math.min(100, b.rata).toFixed(1) : 0;
                 trendBarsHTML += `
                     <div class="jc-bar-col" title="${b.label}: ${b.hasData ? b.rata.toFixed(2) : 'belum ada data'}">
                         <div class="jc-bar-value count-value" data-count-to="${b.hasData ? b.rata.toFixed(2) : 0}" data-decimals="2">0.00</div>
@@ -1517,13 +1518,17 @@ function loadAllFromLocalStorage() {
         currentQuartal = firstWithData || 'Kuartal_I';
     }
 
-    if (uiState.kkm !== undefined && !isNaN(uiState.kkm) && uiState.kkm >= 0 && uiState.kkm <= 10) {
-        KKM = parseFloat(uiState.kkm);
-        kkmInput.value = KKM.toFixed(1);
+    if (uiState.kkm !== undefined && Number.isFinite(Number(uiState.kkm))) {
+        const oldScale = uiState.kkmScale === 100 ? 100 : 10;
+        if (uiState.kkm >= 0 && uiState.kkm <= oldScale) {
+            KKM = Number(uiState.kkm) * (100 / oldScale);
+        }
+        kkmInput.value = KKM;
     }
 
     updateQuartalTabsUI();
     renderQuartalView(currentQuartal);
+    saveUIState();
 }
 
 function clearStoredData() {
@@ -1553,9 +1558,9 @@ quartalTabs.querySelectorAll('.quartal-btn').forEach(btn => {
 
 function handleKKMChange(newValue) {
     const val = parseFloat(newValue);
-    if (isNaN(val) || val < 0 || val > 10) { kkmInput.value = KKM.toFixed(1); return; }
-    KKM = parseFloat(val.toFixed(1));
-    kkmInput.value = KKM.toFixed(1);
+    if (isNaN(val) || val < 0 || val > 100) { kkmInput.value = KKM; return; }
+    KKM = Math.round(val);
+    kkmInput.value = KKM;
     saveUIState();
     refreshAllViews();
 }
@@ -1567,7 +1572,7 @@ kkmInput.addEventListener('keydown', function(e) {
         this.blur(); }
 });
 resetKkmBtn.addEventListener('click', function() { KKM = DEFAULT_KKM;
-    kkmInput.value = KKM.toFixed(1);
+    kkmInput.value = KKM;
     saveUIState();
     refreshAllViews(); });
 

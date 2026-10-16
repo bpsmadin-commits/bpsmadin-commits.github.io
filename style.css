@@ -427,7 +427,7 @@ body {
 }
 
 .kkm-group input {
-    width: 56px;
+    width: 64px;
     padding: 4px 6px;
     border: 1px solid var(--border-soft);
     border-radius: var(--radius-pill);
