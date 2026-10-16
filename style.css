@@ -1364,7 +1364,8 @@ td .mapel-name {
     gap: 16px;
     height: 260px;
     padding: 24px 28px 16px;
-    width: 100%;
+    width: max-content;
+    min-width: 100%;
 }
 
 .jc-bar-col {
@@ -1372,9 +1373,7 @@ td .mapel-name {
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
-    flex: 1 1 0;
-    max-width: 160px;
-    min-width: 44px;
+    flex: 0 0 80px;
     height: 100%;
 }
 
@@ -1409,13 +1408,13 @@ td .mapel-name {
 
 .jc-bar-label {
     margin-top: 10px;
-    font-size: 0.68rem;
-    color: var(--muted);
+    width: 100%;
+    font-size: 0.72rem;
+    color: var(--text-soft);
     font-weight: 600;
     text-align: center;
-    white-space: nowrap;
-    transform: rotate(-28deg);
-    transform-origin: top center;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
 }
 
 .rekap-mm-card {
