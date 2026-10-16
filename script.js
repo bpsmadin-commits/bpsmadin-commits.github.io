@@ -18,6 +18,22 @@ function loadScript(url) {
     return loadedScripts[url];
 }
 
+function mergeCachedSheetData(sheetList, sheetsData) {
+    let subjects = [];
+    let scores = [];
+    let studentCount = 0;
+    for (const name of sheetList) {
+        const data = sheetsData[name];
+        if (!data || !data.subjects.length || !data.scores.length) continue;
+        if (!subjects.length) subjects = data.subjects.slice();
+        if (data.subjects.length === subjects.length) {
+            scores = scores.concat(data.scores);
+            studentCount += data.studentCount || 0;
+        }
+    }
+    return { subjects, averages: computeAverages(subjects, scores), studentCount, scores };
+}
+
 async function ensureXLSX() {
     if (typeof XLSX === 'undefined') await loadScript(CDN.xlsx);
 }
@@ -375,6 +391,20 @@ function getClassNumber(sheetName) {
     return { I: 1, II: 2, III: 3, IV: 4, V: 5, VI: 6, VII: 7, VIII: 8, IX: 9, X: 10, XI: 11, XII: 12 }[roman[0].toUpperCase()];
 }
 
+function getClassType(sheetName) {
+    const specificType = sheetName.match(/MDTA|MDTW|MTSD/i);
+    if (specificType) return specificType[0].toUpperCase();
+    return /MTS/i.test(sheetName) ? 'MTSD' : 'MID';
+}
+
+function getClassGroupKey(sheetName) {
+    return `${getClassNumber(sheetName)}_${getClassType(sheetName)}`;
+}
+
+function formatClassLabel(sheetName) {
+    return sheetName.replace(/^KLS\b/i, 'Kelas').replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
 function getTuntasCount(studentAverages) {
     return studentAverages.filter(avg => avg >= KKM).length;
 }
@@ -683,9 +713,7 @@ function getSheetsInJenjang(key) {
     if (!originalSheetNames.length) return [];
     const list = [];
     originalSheetNames.forEach(name => {
-        let kelas = getClassNumber(name);
-        const jenis = /MTS/i.test(name) ? 'MTSD' : 'MID';
-        const k = `${kelas}_${jenis}`;
+        const k = getClassGroupKey(name);
         if (k === key) list.push(name);
     });
     return list;
@@ -819,7 +847,7 @@ function renderJenjangCompareChart(key, selectedSubjects) {
                 <div class="jc-bar-track">
                     <div class="jc-bar-fill" data-target-height="${targetH}%" style="height:0%"></div>
                 </div>
-                <div class="jc-bar-label">${b.name}</div>
+                <div class="jc-bar-label">${formatClassLabel(b.name)}</div>
             </div>`;
     });
 
@@ -1326,9 +1354,7 @@ function processAllSheets() {
 
     const groupMap = {};
     for (const name of sheetNames) {
-        const kelas = getClassNumber(name);
-        const jenis = /MTS/i.test(name) ? 'MTSD' : 'MID';
-        const key = `${kelas}_${jenis}`;
+        const key = getClassGroupKey(name);
         if (!groupMap[key]) groupMap[key] = [];
         groupMap[key].push(name);
     }
@@ -1438,6 +1464,18 @@ function renderQuartalView(quartal) {
     originalSheetNames = cache.originalSheetNames || Object.keys(allSheetsData);
     if (!originalSheetNames.length && Object.keys(allSheetsData).length) originalSheetNames = Object.keys(
     allSheetsData);
+    if (originalSheetNames.length && originalSheetNames.every(name => allSheetsData[name])) {
+        const groups = {};
+        originalSheetNames.forEach(name => {
+            const key = getClassGroupKey(name);
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(name);
+        });
+        groupedData = Object.fromEntries(Object.entries(groups).map(([key, names]) => [
+            key, mergeCachedSheetData(names, allSheetsData)
+        ]));
+        cache.groupedData = groupedData;
+    }
 
     const uiState = getUIState();
     let targetSheet = uiState.sheet;
