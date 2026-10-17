@@ -1292,7 +1292,7 @@ td .mapel-name {
 
 .failed-student-subject li {
     display: grid;
-    grid-template-columns: 28px minmax(0, 1fr) auto;
+    grid-template-columns: 28px minmax(0, 1fr) 52px;
     align-items: center;
     gap: 8px;
     min-height: 42px;
@@ -1311,7 +1311,9 @@ td .mapel-name {
     color: var(--text);
     font-size: 1rem;
     font-weight: 600;
-    overflow-wrap: anywhere;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .failed-student-subject li strong {
