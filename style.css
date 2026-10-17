@@ -1118,6 +1118,48 @@ td .mapel-name {
     gap: 10px;
 }
 
+.failed-students {
+    margin-top: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface-soft);
+    color: var(--text);
+}
+
+.failed-students summary {
+    padding: 10px 12px;
+    color: var(--danger);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.failed-students ol {
+    display: grid;
+    gap: 6px;
+    padding: 0 12px 12px 36px;
+}
+
+.failed-students li {
+    padding-left: 2px;
+    color: var(--text-soft);
+}
+
+.failed-students li span {
+    margin-right: 10px;
+}
+
+.failed-students li strong {
+    color: var(--danger);
+    white-space: nowrap;
+}
+
+.failed-students > p {
+    padding: 0 12px 12px;
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
 .ketuntasan-chart-row {
     background: var(--surface-soft);
     border: 1px solid var(--border);
