@@ -757,10 +757,15 @@ body::before {
 }
 
 .mapel-chip-btn.active-chip {
-    background: linear-gradient(135deg, var(--primary), var(--primary-2));
+    background: var(--primary-glow);
+    color: var(--text);
+    border-color: var(--primary-2);
+    box-shadow: none;
+}
+
+.mapel-chip-btn.active-chip .mapel-chip-x {
+    background: var(--primary);
     color: #fff;
-    border-color: var(--primary);
-    box-shadow: 0 8px 18px -8px var(--primary-glow);
 }
 
 .mapel-chip-x {
