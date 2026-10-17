@@ -944,20 +944,21 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
     const failedStudentCount = new Set(failedSubjects.flatMap(subject =>
         subject.students.map(student => student.studentIndex)
     )).size;
-    const failedStudentsHTML = failedSubjects.length ? `
-            <details class="failed-students">
-                <summary>Siswa Belum Tuntas (${failedStudentCount} siswa)</summary>
-                <div class="failed-student-subject-controls">
-                    <span class="failed-student-subject-label"><i class="fa-solid fa-book"></i> Mata Pelajaran</span>
-                    <div class="failed-student-subject-filter" aria-label="Pilih mapel">
-                        ${failedSubjects.map((subject, index) => `
-                        <button type="button" class="mapel-chip-btn failed-subject-toggle active-chip" data-subject-index="${index}" aria-pressed="true">
-                            ${escapeHTML(subject.name)} <span class="mapel-chip-x" aria-hidden="true">&times;</span>
-                        </button>`).join('')}
-                    </div>
-                    <button type="button" class="btn btn-sm btn-primary" data-failed-subject-action="all">Pilih Semua</button>
-                    <button type="button" class="btn btn-sm" data-failed-subject-action="none">Hapus Semua</button>
+    const failedSubjectControlsHTML = failedSubjects.length ? `
+            <div class="failed-student-subject-controls">
+                <span class="failed-student-subject-label"><i class="fa-solid fa-book"></i> Mata Pelajaran</span>
+                <div class="failed-student-subject-filter" aria-label="Pilih mapel">
+                    ${failedSubjects.map((subject, index) => `
+                    <button type="button" class="mapel-chip-btn failed-subject-toggle active-chip" data-subject-index="${index}" aria-pressed="true">
+                        ${escapeHTML(subject.name)} <span class="mapel-chip-x" aria-hidden="true">&times;</span>
+                    </button>`).join('')}
                 </div>
+                <button type="button" class="btn btn-sm btn-primary" data-failed-subject-action="all">Pilih Semua</button>
+                <button type="button" class="btn btn-sm" data-failed-subject-action="none">Hapus Semua</button>
+            </div>` : '';
+    const failedStudentsHTML = failedSubjects.length ? `
+            <aside class="failed-students">
+                <h3><i class="fa-solid fa-user-xmark"></i> Siswa Belum Tuntas <span>${failedStudentCount} siswa</span></h3>
                 <div class="failed-student-subjects">
                     ${failedSubjects.map((subject, index) => `
                     <section class="failed-student-subject" data-subject-index="${index}">
@@ -967,32 +968,39 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
                         ).join('')}</ol>
                     </section>`).join('')}
                 </div>
-            </details>` : '';
+            </aside>` : '';
+    const ketuntasanTitleHTML = `<div class="section-title" style="font-size:1.1rem; margin-top:24px;"><i class="fa-solid fa-ranking-star"></i> Ketuntasan${titleSuffix ? ' ' + titleSuffix : ''}</div>`;
 
     return `
-            <div class="section-title" style="font-size:1.1rem; margin-top:24px;"><i class="fa-solid fa-ranking-star"></i> Ketuntasan${titleSuffix ? ' ' + titleSuffix : ''}</div>
-            <div class="rekap-info-row" style="margin-bottom:12px;">
-                <span class="rekap-info-chip"><i class="fa-solid fa-users"></i> Siswa: ${totalStudents}</span>
-                <span class="rekap-info-chip"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i> Tuntas: ${tuntas}</span>
-                <span class="rekap-info-chip"><i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Tidak Tuntas: ${tidakTuntas}</span>
-            </div>
-            ${showChart ? `
-            <div class="ketuntasan-chart-row">
-                <div class="ketuntasan-chart-title"><i class="fa-solid fa-chart-simple"></i> Grafik Persentase Ketuntasan</div>
-                <div class="ketuntasan-bar-track">
-                    <div class="ketuntasan-bar-fill" data-target-width="${tuntasPct}%" style="width:${tuntasPct}%;">${tuntasPct}%</div>
+            ${failedSubjects.length ? '' : ketuntasanTitleHTML}
+            <div class="ketuntasan-layout${failedSubjects.length ? ' has-failed-students' : ''}">
+                <div class="ketuntasan-summary">
+                    ${failedSubjects.length ? ketuntasanTitleHTML : ''}
+                    ${failedSubjectControlsHTML}
+                    <div class="rekap-info-row" style="margin-bottom:12px;">
+                        <span class="rekap-info-chip"><i class="fa-solid fa-users"></i> Siswa: ${totalStudents}</span>
+                        <span class="rekap-info-chip"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i> Tuntas: ${tuntas}</span>
+                        <span class="rekap-info-chip"><i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Tidak Tuntas: ${tidakTuntas}</span>
+                    </div>
+                    ${showChart ? `
+                    <div class="ketuntasan-chart-row">
+                        <div class="ketuntasan-chart-title"><i class="fa-solid fa-chart-simple"></i> Grafik Persentase Ketuntasan</div>
+                        <div class="ketuntasan-bar-track">
+                            <div class="ketuntasan-bar-fill" data-target-width="${tuntasPct}%" style="width:${tuntasPct}%;">${tuntasPct}%</div>
+                        </div>
+                        <div class="ketuntasan-legend">
+                            <div class="ketuntasan-legend-item"><span class="legend-dot" style="background:var(--success);"></span> Tuntas: <b>${tuntas}</b> siswa (${tuntasPct}%)</div>
+                            <div class="ketuntasan-legend-item"><span class="legend-dot" style="background:var(--danger);"></span> Tidak Tuntas: <b>${tidakTuntas}</b> siswa (${tidakTuntasPct}%)</div>
+                        </div>
+                    </div>` : ''}
+                    <div class="rekap-minmax">
+                        <div class="rekap-mm-card"><div class="mm-label" style="color:var(--success);"><i class="fa-solid fa-check-circle"></i> Tuntas</div><div class="mm-value count-value" data-count-to="${persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tuntas} siswa</div></div>
+                        <div class="rekap-mm-card"><div class="mm-label" style="color:var(--danger);"><i class="fa-solid fa-times-circle"></i> Tidak Tuntas</div><div class="mm-value count-value" data-count-to="${100 - persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tidakTuntas} siswa</div></div>
+                    </div>
+                    <div class="ketuntasan-average"><span>Rerata: ${overall}</span><span>KKM: ${KKM}</span></div>
                 </div>
-                <div class="ketuntasan-legend">
-                    <div class="ketuntasan-legend-item"><span class="legend-dot" style="background:var(--success);"></span> Tuntas: <b>${tuntas}</b> siswa (${tuntasPct}%)</div>
-                    <div class="ketuntasan-legend-item"><span class="legend-dot" style="background:var(--danger);"></span> Tidak Tuntas: <b>${tidakTuntas}</b> siswa (${tidakTuntasPct}%)</div>
-                </div>
-            </div>` : ''}
-            <div class="rekap-minmax">
-                <div class="rekap-mm-card"><div class="mm-label" style="color:var(--success);"><i class="fa-solid fa-check-circle"></i> Tuntas</div><div class="mm-value count-value" data-count-to="${persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tuntas} siswa</div></div>
-                <div class="rekap-mm-card"><div class="mm-label" style="color:var(--danger);"><i class="fa-solid fa-times-circle"></i> Tidak Tuntas</div><div class="mm-value count-value" data-count-to="${100 - persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tidakTuntas} siswa</div></div>
-            </div>
-            ${failedStudentsHTML}
-            <div style="margin-top: 12px; background: var(--surface-soft); border-radius: var(--radius-lg); padding: 8px 12px; display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted);"><span>Rerata: ${overall}</span><span>KKM: ${KKM}</span></div>`;
+                ${failedStudentsHTML}
+            </div>`;
 }
 
 function filterBySheet(sheetName) {
@@ -1254,7 +1262,7 @@ function rasterizeArabicText(container) {
 
 // Export Functions
 // sourceEl: the live .section-container element to snapshot (so the PDF looks exactly like the app card)
-async function exportPDF(subjects, averages, title, sourceEl, reportLabel) {
+async function exportPDF(subjects, averages, title, sourceEl, reportLabel, extraEl = null) {
     if (!subjects.length) { alert("Tidak ada data untuk diekspor."); return; }
     const btns = document.querySelectorAll('.btn-pdf');
     btns.forEach(b => b.disabled = true);
@@ -1272,6 +1280,10 @@ async function exportPDF(subjects, averages, title, sourceEl, reportLabel) {
 
         // Clone the live card so we can strip buttons / lock-in final numbers without touching the real UI
         const clone = cardEl.cloneNode(true);
+        if (extraEl) {
+            const extraClone = extraEl.cloneNode(true);
+            while (extraClone.firstChild) clone.appendChild(extraClone.firstChild);
+        }
         clone.querySelectorAll('.export-row').forEach(row => row.remove());
         clone.style.margin = '0';
         clone.style.width = '760px';
@@ -1655,7 +1667,7 @@ document.addEventListener('click', e => {
    if (button) {
        const isActive = button.classList.toggle('active-chip');
        button.setAttribute('aria-pressed', String(isActive));
-       button.closest('.failed-students')
+       button.closest('.ketuntasan-layout')
            .querySelector(`.failed-student-subject[data-subject-index="${button.dataset.subjectIndex}"]`)
            .classList.toggle('is-hidden', !isActive);
        return;
@@ -1663,9 +1675,9 @@ document.addEventListener('click', e => {
    const action = e.target.closest('[data-failed-subject-action]');
    if (!action) return;
    const isActive = action.dataset.failedSubjectAction === 'all';
-   const details = action.closest('.failed-students');
-   const toggles = details.querySelectorAll('.failed-subject-toggle');
-   const subjects = details.querySelectorAll('.failed-student-subject');
+   const layout = action.closest('.ketuntasan-layout');
+   const toggles = layout.querySelectorAll('.failed-subject-toggle');
+   const subjects = layout.querySelectorAll('.failed-student-subject');
    toggles.forEach((toggle, index) => {
        toggle.classList.toggle('active-chip', isActive);
        toggle.setAttribute('aria-pressed', String(isActive));
@@ -1797,7 +1809,7 @@ document.querySelectorAll('.main-tab').forEach(tab => {
 document.getElementById('exportPDFKelas').addEventListener('click', () => {
     if (!currentSubjectNames.length) { alert("Tidak ada data"); return; }
     const src = document.querySelector('#pane-kelas .section-container');
-    exportPDF(currentSubjectNames, currentAverages, currentSheetName || 'Kelas', src);
+    exportPDF(currentSubjectNames, currentAverages, currentSheetName || 'Kelas', src, null, kelasKetuntasanBox);
 });
 
 document.getElementById('exportCSVKelas').addEventListener('click', () => {
