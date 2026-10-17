@@ -1160,6 +1160,31 @@ td .mapel-name {
     font-size: 0.8rem;
 }
 
+.failed-student-subjects {
+    display: grid;
+    gap: 10px;
+    padding: 0 12px 12px;
+}
+
+.failed-student-subject label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    color: var(--text);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.failed-student-subject ol {
+    padding-bottom: 0;
+}
+
+.failed-student-subject.is-hidden {
+    display: none;
+}
+
 .ketuntasan-chart-row {
     background: var(--surface-soft);
     border: 1px solid var(--border);
