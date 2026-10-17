@@ -1252,6 +1252,8 @@ td .mapel-name {
 .failed-student-subjects {
     display: grid;
     gap: 12px;
+    max-height: 960px;
+    overflow-y: auto;
     padding: 0 10px 10px;
 }
 
