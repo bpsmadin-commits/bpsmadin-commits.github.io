@@ -106,6 +106,8 @@ const kelasKetuntasanSummaryBox = document.getElementById('kelasKetuntasanSummar
 const kelasKetuntasanBox = document.getElementById('kelasKetuntasanBox');
 const kelasMiniStats = document.getElementById('kelasMiniStats');
 const kelasQuickSummary = document.getElementById('kelasQuickSummary');
+const jenjangStudentSearchInput = document.getElementById('jenjangStudentSearchInput');
+const jenjangStudentSearchResults = document.getElementById('jenjangStudentSearchResults');
 const metaDataStatus = document.getElementById('meta-data-status');
 const metaSheet = document.getElementById('meta-sheet');
 const kelasTableTitle = document.getElementById('kelasTableTitle');
@@ -694,6 +696,7 @@ function buildJenjangDropdown() {
         jenjangDropdownBar.style.display = 'none';
         jenjangContainer.innerHTML =
             '<p style="color:var(--muted); text-align:center; padding:40px; font-size:1rem;">Menunggu data komparatif...</p>';
+        renderJenjangStudentSearch();
         return;
     }
 
@@ -709,6 +712,7 @@ function buildJenjangDropdown() {
     jenjangSelect.value = firstKey;
     populateMapelSelect(firstKey);
     renderSingleJenjang(firstKey, getSelectedMapels());
+    renderJenjangStudentSearch();
 }
 
 // Populate mapel chip toggle based on jenjang key
@@ -753,6 +757,58 @@ function getSheetsInJenjang(key) {
         if (k === key) list.push(name);
     });
     return list;
+}
+
+function renderJenjangStudentSearch() {
+    const query = jenjangStudentSearchInput.value.trim().toLocaleLowerCase();
+    const key = jenjangSelect.value;
+    if (!query || !key) {
+        jenjangStudentSearchResults.hidden = true;
+        jenjangStudentSearchResults.innerHTML = '';
+        return;
+    }
+
+    const sheets = getSheetsInJenjang(key);
+    const datasets = sheets.length ? sheets.map(name => [name, allSheetsData[name]]) :
+        (allSheetsData[key] ? [[key, allSheetsData[key]]] : []);
+    const matches = [];
+
+    datasets.forEach(([sheetName, data]) => {
+        if (!data?.scores?.length) return;
+        data.scores.forEach((scores, index) => {
+            const name = data.studentNames?.[index] || '';
+            if (!name.toLocaleLowerCase().includes(query)) return;
+            const average = computeStudentAverages([scores])[0] || 0;
+            const grades = (data.subjects || []).map((subject, subjectIndex) => ({
+                subject,
+                score: scores[subjectIndex]
+            })).filter(grade => typeof grade.score === 'number' && Number.isFinite(grade.score));
+            matches.push({ name, sheetName, average, grades });
+        });
+    });
+
+    const resultItems = matches.map(student => `
+        <article class="jenjang-student-result">
+            <div class="jenjang-student-result-heading">
+                <strong>${arabicTextHTML(student.name)}</strong>
+                <span class="jenjang-student-result-meta">
+                    <span>${escapeHTML(formatClassLabel(student.sheetName))}</span>
+                    <span>Rerata ${student.average.toFixed(1)}</span>
+                    <span class="${student.average >= KKM ? 'passed' : 'not-passed'}">${student.average >= KKM ? 'Tuntas' : 'Belum Tuntas'}</span>
+                </span>
+            </div>
+            <div class="jenjang-student-result-grades">
+                ${student.grades.map(grade => `
+                    <span class="jenjang-student-grade ${grade.score >= KKM ? 'passed' : 'not-passed'}">
+                        ${arabicTextHTML(grade.subject)}<strong>${grade.score.toFixed(1)}</strong>
+                    </span>`).join('')}
+            </div>
+        </article>`).join('');
+
+    jenjangStudentSearchResults.innerHTML = matches.length
+        ? `<div class="jenjang-student-search-count">${matches.length} siswa ditemukan</div>${resultItems}`
+        : '<div class="jenjang-student-search-empty">Nama siswa tidak ditemukan di jenjang ini.</div>';
+    jenjangStudentSearchResults.hidden = false;
 }
 
 // Bangun dropdown jenjang khusus untuk tab Grafik Perjenjang
@@ -948,9 +1004,13 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
     let tuntas = 0,
         tidakTuntas = 0,
         persentaseTuntas = 0;
+    const studentAverages = computeStudentAverages(scores);
+    const rankedStudents = studentAverages.map((average, index) => ({
+        name: data.studentNames?.[index] || 'Nama tidak terbaca',
+        average
+    })).sort((a, b) => b.average - a.average || a.name.localeCompare(b.name, 'id'));
 
     if (scores.length) {
-        const studentAverages = computeStudentAverages(scores);
         totalStudents = studentAverages.length;
         tuntas = getTuntasCount(studentAverages);
         tidakTuntas = totalStudents - tuntas;
@@ -965,6 +1025,15 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
     const overall = avgs.length ? (avgs.reduce((a, b) => a + b, 0) / avgs.length).toFixed(1) : '-';
     const tuntasPct = persentaseTuntas.toFixed(1);
     const tidakTuntasPct = (100 - persentaseTuntas).toFixed(1);
+    const renderStudentList = students => students.length
+        ? `<ol>${students.map(student => `
+            <li>
+                <span>${arabicTextHTML(student.name)}</span>
+                <strong>${student.average.toFixed(1)}</strong>
+            </li>`).join('')}</ol>`
+        : '<p class="rekap-student-empty">Data nama siswa tidak tersedia.</p>';
+    const tuntasStudents = rankedStudents.filter(student => student.average >= KKM);
+    const tidakTuntasStudents = rankedStudents.filter(student => student.average < KKM);
     const failedSubjects = showFailedStudents ? subjectIndices.map((subjectIndex, scoreIndex) => ({
         name: (data.subjects || [])[subjectIndex],
         students: scores.map((student, index) => ({
@@ -1025,8 +1094,28 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
                 </div>
             </div>` : ''}
             <div class="rekap-minmax">
-                <div class="rekap-mm-card"><div class="mm-label" style="color:var(--success);"><i class="fa-solid fa-check-circle"></i> Tuntas</div><div class="mm-value count-value" data-count-to="${persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tuntas} siswa</div></div>
-                <div class="rekap-mm-card"><div class="mm-label" style="color:var(--danger);"><i class="fa-solid fa-times-circle"></i> Tidak Tuntas</div><div class="mm-value count-value" data-count-to="${100 - persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tidakTuntas} siswa</div></div>
+                <section class="rekap-student-group is-passed">
+                    <div class="rekap-mm-card">
+                        <button type="button" class="rekap-mm-card-button" data-rekap-student-toggle aria-expanded="false">
+                            <span class="mm-label" style="color:var(--success);"><i class="fa-solid fa-check-circle"></i> Tuntas</span>
+                            <span class="mm-value count-value" data-count-to="${persentaseTuntas}" data-decimals="1" data-suffix="%">0%</span>
+                            <span class="mm-subject">${tuntas} siswa</span>
+                            <span class="rekap-student-hint"><i class="fa-solid fa-chevron-down"></i> Lihat nama</span>
+                        </button>
+                    </div>
+                    <div class="rekap-student-list" hidden>${renderStudentList(tuntasStudents)}</div>
+                </section>
+                <section class="rekap-student-group is-failed">
+                    <div class="rekap-mm-card">
+                        <button type="button" class="rekap-mm-card-button" data-rekap-student-toggle aria-expanded="false">
+                            <span class="mm-label" style="color:var(--danger);"><i class="fa-solid fa-times-circle"></i> Tidak Tuntas</span>
+                            <span class="mm-value count-value" data-count-to="${100 - persentaseTuntas}" data-decimals="1" data-suffix="%">0%</span>
+                            <span class="mm-subject">${tidakTuntas} siswa</span>
+                            <span class="rekap-student-hint"><i class="fa-solid fa-chevron-down"></i> Lihat nama</span>
+                        </button>
+                    </div>
+                    <div class="rekap-student-list" hidden>${renderStudentList(tidakTuntasStudents)}</div>
+                </section>
             </div>
             <div class="ketuntasan-average"><span>Rerata: ${overall}</span><span>KKM: ${KKM}</span></div>`;
 
@@ -1722,6 +1811,14 @@ document.addEventListener('input', e => {
 });
 
 document.addEventListener('click', e => {
+   const rekapToggle = e.target.closest('[data-rekap-student-toggle]');
+   if (rekapToggle) {
+       const list = rekapToggle.closest('.rekap-student-group').querySelector('.rekap-student-list');
+       const isExpanded = rekapToggle.getAttribute('aria-expanded') === 'true';
+       rekapToggle.setAttribute('aria-expanded', String(!isExpanded));
+       list.hidden = isExpanded;
+       return;
+   }
    const button = e.target.closest('.failed-subject-toggle');
    if (button) {
        const isActive = button.classList.toggle('active-chip');
@@ -1783,6 +1880,19 @@ jenjangSelect.addEventListener('change', (e) => {
     if (!e.target.value) return;
     populateMapelSelect(e.target.value);
     renderSingleJenjang(e.target.value, getSelectedMapels());
+    renderJenjangStudentSearch();
+});
+
+jenjangStudentSearchInput.addEventListener('input', renderJenjangStudentSearch);
+jenjangStudentSearchInput.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        jenjangStudentSearchInput.value = '';
+        renderJenjangStudentSearch();
+    }
+});
+
+document.addEventListener('click', e => {
+    if (!e.target.closest('#jenjangStudentSearch')) jenjangStudentSearchResults.hidden = true;
 });
 
 grafikJenjangSelect.addEventListener('change', (e) => {
@@ -1835,6 +1945,8 @@ function switchPane(paneId) {
     const matchingTab = document.querySelector(`.main-tab[data-pane="${paneId}"]`);
     if (matchingTab) matchingTab.classList.add('active');
     document.getElementById('mainTabs').classList.toggle('kelas-active', paneId === 'kelas');
+    document.getElementById('mainTabs').classList.toggle('jenjang-active', paneId === 'jenjang');
+    if (paneId !== 'jenjang') jenjangStudentSearchResults.hidden = true;
 
     paneSwitching = true;
 
