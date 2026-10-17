@@ -947,12 +947,23 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
     const failedStudentsHTML = failedSubjects.length ? `
             <details class="failed-students">
                 <summary>Siswa Belum Tuntas (${failedStudentCount} siswa)</summary>
+                <div class="failed-student-subject-controls">
+                    <span class="failed-student-subject-label"><i class="fa-solid fa-book"></i> Mata Pelajaran</span>
+                    <div class="failed-student-subject-filter" aria-label="Pilih mapel">
+                        ${failedSubjects.map((subject, index) => `
+                        <button type="button" class="mapel-chip-btn failed-subject-toggle active-chip" data-subject-index="${index}" aria-pressed="true">
+                            ${escapeHTML(subject.name)} <span class="mapel-chip-x" aria-hidden="true">&times;</span>
+                        </button>`).join('')}
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary" data-failed-subject-action="all">Pilih Semua</button>
+                    <button type="button" class="btn btn-sm" data-failed-subject-action="none">Hapus Semua</button>
+                </div>
                 <div class="failed-student-subjects">
                     ${failedSubjects.map((subject, index) => `
-                    <section class="failed-student-subject">
-                        <label><input type="checkbox" class="failed-subject-toggle" checked> ${escapeHTML(subject.name)} (${subject.students.length})</label>
+                    <section class="failed-student-subject" data-subject-index="${index}">
+                        <h4>${escapeHTML(subject.name)} <span>${subject.students.length} siswa</span></h4>
                         <ol>${subject.students.map(student =>
-                            `<li><span>${student.name ? escapeHTML(student.name) : 'Nama tidak terbaca'}</span><strong>${student.score.toFixed(1)}</strong></li>`
+                            `<li><span class="failed-student-name">${student.name ? escapeHTML(student.name) : 'Nama tidak terbaca'}</span><strong>${student.score.toFixed(1)}</strong></li>`
                         ).join('')}</ol>
                     </section>`).join('')}
                 </div>
@@ -1639,9 +1650,27 @@ function clearStoredData() {
 }
 
 // Event Listeners
-document.addEventListener('change', e => {
-    const input = e.target.closest('.failed-subject-toggle');
-    if (input) input.closest('.failed-student-subject').classList.toggle('is-hidden', !input.checked);
+document.addEventListener('click', e => {
+   const button = e.target.closest('.failed-subject-toggle');
+   if (button) {
+       const isActive = button.classList.toggle('active-chip');
+       button.setAttribute('aria-pressed', String(isActive));
+       button.closest('.failed-students')
+           .querySelector(`.failed-student-subject[data-subject-index="${button.dataset.subjectIndex}"]`)
+           .classList.toggle('is-hidden', !isActive);
+       return;
+   }
+   const action = e.target.closest('[data-failed-subject-action]');
+   if (!action) return;
+   const isActive = action.dataset.failedSubjectAction === 'all';
+   const details = action.closest('.failed-students');
+   const toggles = details.querySelectorAll('.failed-subject-toggle');
+   const subjects = details.querySelectorAll('.failed-student-subject');
+   toggles.forEach((toggle, index) => {
+       toggle.classList.toggle('active-chip', isActive);
+       toggle.setAttribute('aria-pressed', String(isActive));
+       subjects[index].classList.toggle('is-hidden', !isActive);
+   });
 });
 
 quartalTabs.querySelectorAll('.quartal-btn').forEach(btn => {

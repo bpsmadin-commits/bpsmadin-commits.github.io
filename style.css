@@ -1134,51 +1134,120 @@ td .mapel-name {
     cursor: pointer;
 }
 
-.failed-students ol {
-    display: grid;
-    gap: 6px;
-    padding: 0 12px 12px 36px;
-}
-
-.failed-students li {
-    padding-left: 2px;
-    color: var(--text-soft);
-}
-
-.failed-students li span {
-    margin-right: 10px;
-}
-
-.failed-students li strong {
-    color: var(--danger);
-    white-space: nowrap;
-}
-
 .failed-students > p {
     padding: 0 12px 12px;
     color: var(--muted);
     font-size: 0.8rem;
 }
 
+.failed-student-subject-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 0 12px 12px;
+    gap: 8px;
+}
+
+.failed-student-subject-label {
+    flex: 0 0 auto;
+    color: var(--text-soft);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.failed-student-subject-filter {
+    display: flex;
+    flex: 1 1 220px;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+}
+
+.failed-subject-toggle {
+    font-size: 0.8rem;
+}
+
+.failed-subject-toggle .mapel-chip-x {
+    display: none;
+}
+
+.failed-subject-toggle.active-chip .mapel-chip-x {
+    display: inline;
+}
+
 .failed-student-subjects {
     display: grid;
-    gap: 10px;
+    gap: 12px;
     padding: 0 12px 12px;
 }
 
-.failed-student-subject label {
-    display: inline-flex;
+.failed-student-subject {
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+}
+
+.failed-student-subject h4 {
+    display: flex;
     align-items: center;
-    gap: 6px;
-    margin-bottom: 4px;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
     color: var(--text);
-    font-size: 0.8rem;
+    font-size: 1rem;
     font-weight: 700;
-    cursor: pointer;
+}
+
+.failed-student-subject h4 span {
+    flex: 0 0 auto;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 600;
 }
 
 .failed-student-subject ol {
-    padding-bottom: 0;
+    display: grid;
+    padding: 0;
+    list-style: none;
+    counter-reset: failed-student;
+}
+
+.failed-student-subject li {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    border-top: 1px solid var(--border-soft);
+    counter-increment: failed-student;
+}
+
+.failed-student-subject li::before {
+    content: counter(failed-student, decimal-leading-zero);
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.failed-student-name {
+    color: var(--text);
+    font-size: 0.95rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.failed-student-subject li strong {
+    padding: 4px 8px;
+    border-radius: var(--radius-pill);
+    background: var(--danger-soft);
+    color: var(--danger);
+    font-size: 0.85rem;
+    white-space: nowrap;
 }
 
 .failed-student-subject.is-hidden {
