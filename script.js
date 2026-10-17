@@ -515,22 +515,22 @@ function getStatusText(avg) {
 
 function isBelowKKM(avg) { return avg < KKM && avg > 0; }
 
-function buildMiniStatsHTML(subjects, averages, wali = '') {
+function buildMiniStatsHTML(subjects, averages, wali = '', showWaliBadge = true) {
     if (!subjects.length || !averages.length) return '';
     const maxVal = Math.max(...averages),
         minVal = Math.min(...averages);
     const maxIdx = averages.indexOf(maxVal),
         minIdx = averages.indexOf(minVal);
     const overall = (averages.reduce((a, b) => a + b, 0) / averages.length).toFixed(1);
-    const waliBadge = wali ? `
+    const waliBadge = wali && showWaliBadge ? `
             <div class="mini-wali" style="margin:0 0 12px; padding:8px 12px; border-radius:999px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:var(--muted); font-size:0.8rem; display:inline-flex; align-items:center; gap:8px;">
-                <i class="fa-solid fa-user-tie"></i><span>Wali Kelas: <strong style="color:var(--text);">${wali}</strong></span>
+                <i class="fa-solid fa-user-tie"></i><span>Wali Kelas: <strong style="color:var(--text);">${arabicTextHTML(wali)}</strong></span>
             </div>` : '';
     return `
             ${waliBadge}
             <div class="mini-stats">
-                <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-trophy"></i> Tertinggi</div><div class="mini-value count-value" data-count-to="${maxVal}" data-decimals="1">0.0</div><div class="mini-sub" style="font-family:'Amiri','Traditional Arabic',serif;">${subjects[maxIdx]}</div></div>
-                <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-arrow-trend-down"></i> Terendah</div><div class="mini-value count-value" data-count-to="${minVal}" data-decimals="1">0.0</div><div class="mini-sub" style="font-family:'Amiri','Traditional Arabic',serif;">${subjects[minIdx]}</div></div>
+                <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-trophy"></i> Tertinggi</div><div class="mini-value count-value" data-count-to="${maxVal}" data-decimals="1">0.0</div><div class="mini-sub">${arabicTextHTML(subjects[maxIdx])}</div></div>
+                <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-arrow-trend-down"></i> Terendah</div><div class="mini-value count-value" data-count-to="${minVal}" data-decimals="1">0.0</div><div class="mini-sub">${arabicTextHTML(subjects[minIdx])}</div></div>
                 <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-bullseye"></i> Rata-rata</div><div class="mini-value count-value" data-count-to="${overall}" data-decimals="1">0.0</div><div class="mini-sub">Keseluruhan</div></div>
             </div>`;
 }
@@ -539,7 +539,7 @@ function buildMiniStatsHTML(subjects, averages, wali = '') {
 function renderKelasTable(subjects, averages, sheetName, studentCount = 0, sourceData = null) {
     const title = sheetName || currentSheetName || 'Kelas';
     const wali = waliKelas[sheetName || currentSheetName] || (sourceData?.asuhan) || '';
-    kelasTableTitle.textContent = `Tabel Analisis — ${title}` + (studentCount ? ` (${studentCount} siswa)` : '') + (wali ? ` · Wali Kelas: ${wali}` : '');
+    kelasTableTitle.innerHTML = `Tabel Analisis — ${arabicTextHTML(title)}` + (studentCount ? ` (${studentCount} siswa)` : '') + (wali ? ` · Wali Kelas: ${arabicTextHTML(wali)}` : '');
 
     if (!subjects.length || !averages.length) {
         tableBodyKelas.innerHTML =
@@ -556,7 +556,7 @@ function renderKelasTable(subjects, averages, sheetName, studentCount = 0, sourc
     currentStudentCount = studentCount;
     // Status & dataset di hero sudah dihapus, jadi tidak perlu update elemen itu lagi
 
-    kelasMiniStats.innerHTML = buildMiniStatsHTML(currentSubjectNames, currentAverages, wali);
+    kelasMiniStats.innerHTML = buildMiniStatsHTML(currentSubjectNames, currentAverages, wali, false);
 
     tableBodyKelas.innerHTML = '';
     currentSubjectNames.forEach((sub, idx) => {
@@ -565,7 +565,7 @@ function renderKelasTable(subjects, averages, sheetName, studentCount = 0, sourc
         const row = tableBodyKelas.insertRow();
         row.className = kkmClass;
         row.insertCell(0).innerText = idx + 1;
-        row.insertCell(1).innerHTML = `<span class="mapel-name">${sub}</span>`;
+        row.insertCell(1).innerHTML = `<span class="mapel-name">${arabicTextHTML(sub)}</span>`;
         row.insertCell(2).innerHTML = getProgressBarHTML(avg);
         row.insertCell(3).innerHTML = getStatusBadge(avg);
     });
@@ -625,7 +625,7 @@ function renderSingleJenjang(key, selectedSubjects) {
         const avg = sorted.averages[i];
         const kkmClass = isBelowKKM(avg) ? 'below-kkm' : '';
         tableRows +=
-            `<tr class="${kkmClass}"><td>${i+1}</td><td><span class="mapel-name">${sub}</span></td><td>${getProgressBarHTML(avg)}</td><td>${getStatusBadge(avg)}</td></tr>`;
+            `<tr class="${kkmClass}"><td>${i+1}</td><td><span class="mapel-name">${arabicTextHTML(sub)}</span></td><td>${getProgressBarHTML(avg)}</td><td>${getStatusBadge(avg)}</td></tr>`;
     });
 
     const sTitle = title + (data.studentCount ? ` (${data.studentCount} siswa)` : '');
@@ -705,12 +705,12 @@ function populateMapelSelect(key) {
         btn.type = 'button';
         btn.className = 'mapel-chip-btn active-chip';
         btn.dataset.value = sub;
-        btn.innerHTML = `${sub} <span class="mapel-chip-x">&times;</span>`;
+        btn.innerHTML = `${arabicTextHTML(sub)} <span class="mapel-chip-x">&times;</span>`;
         btn.addEventListener('click', () => {
             btn.classList.toggle('active-chip');
             btn.innerHTML = btn.classList.contains('active-chip')
-                ? `${sub} <span class="mapel-chip-x">&times;</span>`
-                : sub;
+                ? `${arabicTextHTML(sub)} <span class="mapel-chip-x">&times;</span>`
+                : arabicTextHTML(sub);
             const key2 = jenjangSelect.value;
             if (key2) renderSingleJenjang(key2, getSelectedMapels());
         });
@@ -782,12 +782,12 @@ function populateGrafikMapelSelect(key) {
         btn.type = 'button';
         btn.className = 'mapel-chip-btn active-chip';
         btn.dataset.value = sub;
-        btn.innerHTML = `${sub} <span class="mapel-chip-x">&times;</span>`;
+        btn.innerHTML = `${arabicTextHTML(sub)} <span class="mapel-chip-x">&times;</span>`;
         btn.addEventListener('click', () => {
             btn.classList.toggle('active-chip');
             btn.innerHTML = btn.classList.contains('active-chip')
-                ? `${sub} <span class="mapel-chip-x">&times;</span>`
-                : sub;
+                ? `${arabicTextHTML(sub)} <span class="mapel-chip-x">&times;</span>`
+                : arabicTextHTML(sub);
             const key2 = grafikJenjangSelect.value;
             if (key2) renderJenjangCompareChart(key2, getSelectedGrafikMapels());
         });
@@ -864,7 +864,7 @@ function renderJenjangCompareChart(key, selectedSubjects) {
                 <div class="jc-bar-track">
                     <div class="jc-bar-fill" data-target-height="${targetH}%" style="height:0%"></div>
                 </div>
-                <div class="jc-bar-label">${formatClassLabel(b.name)}</div>
+                <div class="jc-bar-label">${arabicTextHTML(formatClassLabel(b.name))}</div>
             </div>`;
     });
 
@@ -906,6 +906,13 @@ function escapeHTML(value) {
         '"': '&quot;',
         "'": '&#39;'
     })[char]);
+}
+
+function arabicTextHTML(value) {
+    const text = String(value);
+    return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(text)
+        ? `<span class="arabic-text" lang="ar">${escapeHTML(text)}</span>`
+        : escapeHTML(text);
 }
 
 function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, showFailedStudents = true, splitPanels = false) {
@@ -958,7 +965,7 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
                     <div class="failed-student-subject-filter" aria-label="Pilih mapel">
                         ${failedSubjects.map((subject, index) => `
                         <button type="button" class="mapel-chip-btn failed-subject-toggle active-chip" data-subject-index="${index}" aria-pressed="true">
-                            ${escapeHTML(subject.name)} <span class="mapel-chip-x" aria-hidden="true">&times;</span>
+                            ${arabicTextHTML(subject.name)} <span class="mapel-chip-x" aria-hidden="true">&times;</span>
                         </button>`).join('')}
                     </div>
                     <button type="button" class="btn btn-sm btn-primary" data-failed-subject-action="all">Pilih Semua</button>
@@ -967,9 +974,9 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
                 <div class="failed-student-subjects">
                     ${failedSubjects.map((subject, index) => `
                     <section class="failed-student-subject" data-subject-index="${index}">
-                        <h4>${escapeHTML(subject.name)} <span>${subject.students.length} siswa</span></h4>
+                        <h4><span class="failed-student-subject-name">${arabicTextHTML(subject.name)}</span><span class="failed-student-subject-count">${subject.students.length} siswa</span></h4>
                         <ol>${subject.students.map(student =>
-                            `<li><span class="failed-student-name" title="${escapeHTML(student.name || 'Nama tidak terbaca')}">${student.name ? escapeHTML(student.name) : 'Nama tidak terbaca'}</span><strong>${student.score.toFixed(1)}</strong></li>`
+                            `<li><span class="failed-student-name" title="${escapeHTML(student.name || 'Nama tidak terbaca')}">${arabicTextHTML(student.name || 'Nama tidak terbaca')}</span><strong>${student.score.toFixed(1)}</strong></li>`
                         ).join('')}</ol>
                     </section>`).join('')}
                 </div>
@@ -1121,7 +1128,7 @@ function buildJenjangSectionHTML(jenjangKey, sheetNames) {
             highlightHTML += `
                 <div class="overview-highlight-card good">
                     <div class="mini-label"><i class="fa-solid fa-trophy"></i> Kelas Paling Unggul</div>
-                    <div class="overview-highlight-name">${best.name}</div>
+                    <div class="overview-highlight-name">${arabicTextHTML(best.name)}</div>
                     <div class="overview-highlight-sub">Ketuntasan ${best.pct.toFixed(1)}% &middot; Rata-rata ${best.avg.toFixed(1)}</div>
                 </div>`;
         }
@@ -1129,7 +1136,7 @@ function buildJenjangSectionHTML(jenjangKey, sheetNames) {
             highlightHTML += `
                 <div class="overview-highlight-card bad">
                     <div class="mini-label"><i class="fa-solid fa-arrow-trend-down"></i> Perlu Perhatian</div>
-                    <div class="overview-highlight-name">${worst.name}</div>
+                    <div class="overview-highlight-name">${arabicTextHTML(worst.name)}</div>
                     <div class="overview-highlight-sub">Ketuntasan ${worst.pct.toFixed(1)}% &middot; Rata-rata ${worst.avg.toFixed(1)}</div>
                 </div>`;
         }
@@ -1742,7 +1749,7 @@ grafikJenjangSelect.addEventListener('change', (e) => {
 selectAllMapelBtn.addEventListener('click', () => {
     mapelSelect.querySelectorAll('.mapel-chip-btn').forEach(btn => {
         btn.classList.add('active-chip');
-        btn.innerHTML = `${btn.dataset.value} <span class="mapel-chip-x">&times;</span>`;
+        btn.innerHTML = `${arabicTextHTML(btn.dataset.value)} <span class="mapel-chip-x">&times;</span>`;
     });
     const key = jenjangSelect.value;
     if (key) renderSingleJenjang(key, getSelectedMapels());
@@ -1750,7 +1757,7 @@ selectAllMapelBtn.addEventListener('click', () => {
 deselectAllMapelBtn.addEventListener('click', () => {
     mapelSelect.querySelectorAll('.mapel-chip-btn').forEach(btn => {
         btn.classList.remove('active-chip');
-        btn.innerHTML = btn.dataset.value;
+        btn.innerHTML = arabicTextHTML(btn.dataset.value);
     });
     const key = jenjangSelect.value;
     if (key) renderSingleJenjang(key, getSelectedMapels());
@@ -1758,7 +1765,7 @@ deselectAllMapelBtn.addEventListener('click', () => {
 grafikSelectAllMapelBtn.addEventListener('click', () => {
     grafikMapelSelect.querySelectorAll('.mapel-chip-btn').forEach(btn => {
         btn.classList.add('active-chip');
-        btn.innerHTML = `${btn.dataset.value} <span class="mapel-chip-x">&times;</span>`;
+        btn.innerHTML = `${arabicTextHTML(btn.dataset.value)} <span class="mapel-chip-x">&times;</span>`;
     });
     const key = grafikJenjangSelect.value;
     if (key) renderJenjangCompareChart(key, getSelectedGrafikMapels());
@@ -1766,7 +1773,7 @@ grafikSelectAllMapelBtn.addEventListener('click', () => {
 grafikDeselectAllMapelBtn.addEventListener('click', () => {
     grafikMapelSelect.querySelectorAll('.mapel-chip-btn').forEach(btn => {
         btn.classList.remove('active-chip');
-        btn.innerHTML = btn.dataset.value;
+        btn.innerHTML = arabicTextHTML(btn.dataset.value);
     });
     const key = grafikJenjangSelect.value;
     if (key) renderJenjangCompareChart(key, getSelectedGrafikMapels());
@@ -1835,14 +1842,12 @@ document.getElementById('exportCSVOverview').addEventListener('click', exportOve
 
 document.getElementById('clearDataBtn').addEventListener('click', clearStoredData);
 
-const THEME_BODY_CLASSES = ['dark', 'theme-purple', 'theme-orange'];
+const THEME_BODY_CLASSES = ['theme-green'];
 
 function applyTheme(theme) {
+    theme = theme === 'green' ? 'green' : 'purple';
     document.body.classList.remove(...THEME_BODY_CLASSES);
-    if (theme === 'dark') document.body.classList.add('dark');
-    else if (theme === 'purple') document.body.classList.add('theme-purple');
-    else if (theme === 'orange') document.body.classList.add('theme-orange');
-    // 'light' => no extra class, uses the :root defaults
+    if (theme === 'green') document.body.classList.add('theme-green');
     localStorage.setItem('theme', theme);
     updateThemeUI(theme);
 }
@@ -1853,7 +1858,7 @@ function updateThemeUI(theme) {
 
 themeBtns.forEach(btn => btn.addEventListener('click', () => applyTheme(btn.dataset.theme)));
 
-const savedTheme = localStorage.getItem('theme') || 'dark';
+const savedTheme = localStorage.getItem('theme') || 'purple';
 applyTheme(savedTheme);
 
 const dashboardEl = document.querySelector('.dashboard');
