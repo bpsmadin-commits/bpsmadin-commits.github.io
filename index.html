@@ -101,10 +101,11 @@
                 </div>
 
                 <!-- TAB SWITCHER -->
-                <div class="main-tabs" id="mainTabs">
-                    <button class="main-tab active" data-pane="kelas">📋 Per Kelas</button>
-                    <button class="main-tab" data-pane="jenjang">📊 Per Jenjang</button>
-                    <button class="main-tab" data-pane="grafikjenjang">📈 Grafik Perjenjang</button>
+                <div class="main-tabs kelas-active" id="mainTabs">
+                    <button class="main-tab active" data-pane="kelas"><i class="fa-solid fa-table-list" aria-hidden="true"></i> Per Kelas</button>
+                    <button class="main-tab" data-pane="jenjang"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Per Jenjang</button>
+                    <button class="main-tab" data-pane="grafikjenjang"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> Grafik Perjenjang</button>
+                    <div class="kelas-quick-summary" id="kelasQuickSummary" role="status" aria-label="Ringkasan ketuntasan kelas"></div>
                 </div>
 
                 <!-- OVERVIEW PANE -->

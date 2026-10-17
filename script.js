@@ -105,6 +105,7 @@ const tableBodyKelas = document.getElementById('table-body-kelas');
 const kelasKetuntasanSummaryBox = document.getElementById('kelasKetuntasanSummaryBox');
 const kelasKetuntasanBox = document.getElementById('kelasKetuntasanBox');
 const kelasMiniStats = document.getElementById('kelasMiniStats');
+const kelasQuickSummary = document.getElementById('kelasQuickSummary');
 const metaDataStatus = document.getElementById('meta-data-status');
 const metaSheet = document.getElementById('meta-sheet');
 const kelasTableTitle = document.getElementById('kelasTableTitle');
@@ -542,6 +543,7 @@ function renderKelasTable(subjects, averages, sheetName, studentCount = 0, sourc
     kelasTableTitle.innerHTML = `Tabel Analisis — ${arabicTextHTML(title)}` + (studentCount ? ` (${studentCount} siswa)` : '') + (wali ? ` · Wali Kelas: ${arabicTextHTML(wali)}` : '');
 
     if (!subjects.length || !averages.length) {
+        kelasQuickSummary.innerHTML = '';
         tableBodyKelas.innerHTML =
             `<tr><td colspan="4" style="padding:0;"><div class="empty-dropzone"><div class="empty-dropzone-icon"><i class="fa-solid fa-file-excel"></i></div><div class="empty-dropzone-title">Belum ada data</div><div class="empty-dropzone-text">Silakan upload file Excel nilai siswa untuk mulai melihat analisis performa akademik.</div><label for="file-input" class="empty-dropzone-btn"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Data Sekarang</label></div></td></tr>`;
         kelasKetuntasanSummaryBox.innerHTML = '';
@@ -573,6 +575,23 @@ function renderKelasTable(subjects, averages, sheetName, studentCount = 0, sourc
     const ketuntasan = sourceData ? buildKetuntasanHTML(sourceData, null, false, null, true, true) : null;
     kelasKetuntasanSummaryBox.innerHTML = ketuntasan?.summary || '';
     kelasKetuntasanBox.innerHTML = ketuntasan?.students || '';
+    const studentAverages = sourceData?.scores?.length ? computeStudentAverages(sourceData.scores) : [];
+    if (studentAverages.length) {
+        const tuntas = getTuntasCount(studentAverages);
+        const total = studentAverages.length;
+        const percent = (tuntas / total) * 100;
+        kelasQuickSummary.innerHTML = `
+            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+            <div class="kelas-quick-copy">
+                <span>Ketuntasan kelas</span>
+                <strong>${tuntas}/${total} siswa <span>${percent.toFixed(1)}%</span></strong>
+            </div>
+            <div class="kelas-quick-progress" role="img" aria-label="${percent.toFixed(1)}% tuntas">
+                <span style="width:${percent.toFixed(1)}%"></span>
+            </div>`;
+    } else {
+        kelasQuickSummary.innerHTML = '';
+    }
 
     runCountUps(document.getElementById('pane-kelas'));
 }
@@ -1294,11 +1313,13 @@ async function exportPDF(subjects, averages, title, sourceEl, reportLabel, extra
 
         // Clone the live card so we can strip buttons / lock-in final numbers without touching the real UI
         const clone = cardEl.cloneNode(true);
+        clone.classList.add('pdf-export-clone');
         extraEls.forEach(extraEl => {
             const extraClone = extraEl.cloneNode(true);
             while (extraClone.firstChild) clone.appendChild(extraClone.firstChild);
         });
         clone.querySelectorAll('.export-row').forEach(row => row.remove());
+        clone.querySelectorAll('.failed-students').forEach(list => list.remove());
         clone.style.margin = '0';
         clone.style.width = '760px';
         clone.style.maxWidth = '760px';
@@ -1789,6 +1810,7 @@ function switchPane(paneId) {
     document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
     const matchingTab = document.querySelector(`.main-tab[data-pane="${paneId}"]`);
     if (matchingTab) matchingTab.classList.add('active');
+    document.getElementById('mainTabs').classList.toggle('kelas-active', paneId === 'kelas');
 
     paneSwitching = true;
 
@@ -1824,7 +1846,7 @@ document.querySelectorAll('.main-tab').forEach(tab => {
 document.getElementById('exportPDFKelas').addEventListener('click', () => {
     if (!currentSubjectNames.length) { alert("Tidak ada data"); return; }
     const src = document.querySelector('#pane-kelas .section-container');
-    exportPDF(currentSubjectNames, currentAverages, currentSheetName || 'Kelas', src, null, [kelasKetuntasanSummaryBox, kelasKetuntasanBox]);
+    exportPDF(currentSubjectNames, currentAverages, currentSheetName || 'Kelas', src);
 });
 
 document.getElementById('exportCSVKelas').addEventListener('click', () => {

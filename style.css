@@ -847,6 +847,7 @@ body::before {
 /* ========== MAIN TABS ========== */
 .main-tabs {
     display: flex;
+    align-items: center;
     gap: 6px;
     padding: 4px;
     background: var(--surface-soft);
@@ -854,7 +855,7 @@ body::before {
     margin-bottom: 20px;
     border: 1px solid var(--border);
     box-shadow: var(--shadow-inner);
-    width: fit-content;
+    width: 100%;
     animation: fadeUp 0.8s var(--t-spring) 0.3s both;
 }
 
@@ -870,6 +871,67 @@ body::before {
     border: none;
     font-family: 'Manrope', sans-serif;
     position: relative;
+}
+
+.main-tab i {
+    margin-right: 6px;
+}
+
+.kelas-quick-summary {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+    min-width: 250px;
+    padding: 7px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface-solid);
+    color: var(--primary);
+}
+
+.main-tabs.kelas-active .kelas-quick-summary:not(:empty) {
+    display: flex;
+}
+
+.kelas-quick-summary > i {
+    font-size: 1rem;
+}
+
+.kelas-quick-copy {
+    display: grid;
+    gap: 1px;
+    min-width: 112px;
+    color: var(--muted);
+    font-size: 0.68rem;
+    line-height: 1.2;
+}
+
+.kelas-quick-copy strong {
+    color: var(--text);
+    font-size: 0.78rem;
+    white-space: nowrap;
+}
+
+.kelas-quick-copy strong span {
+    color: var(--primary);
+    margin-left: 5px;
+}
+
+.kelas-quick-progress {
+    flex: 1;
+    min-width: 45px;
+    height: 7px;
+    overflow: hidden;
+    border-radius: var(--radius-pill);
+    background: var(--border-soft);
+}
+
+.kelas-quick-progress span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--success);
 }
 
 .main-tab:hover {
@@ -934,6 +996,18 @@ body::before {
     line-height: 1.2;
     flex-wrap: wrap;
     transform: translateY(4px);
+}
+
+.pdf-export-clone .section-title > span {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.pdf-export-clone #kelasTableTitle {
+    flex: 1 1 0;
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
 
 .section-title i {
@@ -2021,6 +2095,9 @@ button:focus-visible,
     }
     .main-tabs {
         width: 100%;
+    }
+    .kelas-quick-summary {
+        display: none !important;
     }
     .main-tab {
         flex: 1;
