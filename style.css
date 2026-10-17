@@ -1177,9 +1177,17 @@ td .mapel-name {
     align-items: center;
     gap: 8px;
     padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
     color: var(--danger);
     font-size: 0.95rem;
     font-weight: 700;
+}
+
+.failed-students-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .failed-students h3 span {
@@ -1195,15 +1203,15 @@ td .mapel-name {
 }
 
 .failed-student-subject-controls {
-    display: grid;
-    grid-template-columns: max-content max-content 1fr;
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    margin: 0 0 12px;
+    padding: 12px;
     gap: 8px;
 }
 
 .failed-student-subject-label {
-    grid-column: 1 / -1;
+    flex: 0 0 100%;
     color: var(--text-soft);
     font-size: 0.8rem;
     font-weight: 600;
@@ -1211,20 +1219,26 @@ td .mapel-name {
 
 .failed-student-subject-filter {
     display: flex;
-    grid-column: 1 / -1;
+    flex: 0 0 100%;
     flex-wrap: wrap;
     min-width: 0;
     width: 100%;
     gap: 6px;
-    padding: 10px;
+    padding: 8px;
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     background: var(--surface);
     justify-content: flex-start;
+    box-sizing: border-box;
 }
 
 .failed-subject-toggle {
     font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.failed-student-subject-filter + .btn {
+    margin-left: auto;
 }
 
 .failed-subject-toggle .mapel-chip-x {
