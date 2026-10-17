@@ -569,6 +569,7 @@ function renderKelasTable(subjects, averages, sheetName, studentCount = 0, sourc
     kelasKetuntasanBox.innerHTML = sourceData ? buildKetuntasanHTML(sourceData, null, false) : '';
 
     runCountUps(document.getElementById('pane-kelas'));
+    runCountUps(kelasKetuntasanBox);
 }
 
 // Render Single Jenjang (dengan filter mapel)
