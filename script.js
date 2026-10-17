@@ -980,6 +980,10 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
             <aside class="failed-students">
                 <h3><span class="failed-students-title"><i class="fa-solid fa-user-xmark"></i> Siswa Belum Tuntas</span><span>${failedStudentCount} siswa</span></h3>
                 <div class="failed-student-subject-controls">
+                    <label class="failed-student-search">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                        <input type="search" class="failed-student-search-input" placeholder="Cari nama siswa..." aria-label="Cari nama siswa">
+                    </label>
                     <span class="failed-student-subject-label"><i class="fa-solid fa-book"></i> Mata Pelajaran</span>
                     <div class="failed-student-subject-filter" aria-label="Pilih mapel">
                         ${failedSubjects.map((subject, index) => `
@@ -999,6 +1003,7 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
                         ).join('')}</ol>
                     </section>`).join('')}
                 </div>
+                <p class="failed-student-no-results" hidden>Nama siswa tidak ditemukan.</p>
             </aside>` : '';
     const ketuntasanTitleHTML = `<div class="section-title" style="font-size:1.1rem; margin-top:24px;"><i class="fa-solid fa-ranking-star"></i> Ketuntasan${titleSuffix ? ' ' + titleSuffix : ''}</div>`;
     const summaryHTML = `
@@ -1697,6 +1702,25 @@ function clearStoredData() {
 }
 
 // Event Listeners
+document.addEventListener('input', e => {
+    if (!e.target.matches('.failed-student-search-input')) return;
+    const query = e.target.value.trim().toLocaleLowerCase();
+    const panel = e.target.closest('.failed-students');
+    let matchingStudents = 0;
+    panel.querySelectorAll('.failed-student-subject').forEach(subject => {
+        const students = subject.querySelectorAll('li');
+        let subjectHasMatch = false;
+        students.forEach(student => {
+            const matches = student.querySelector('.failed-student-name').textContent.toLocaleLowerCase().includes(query);
+            student.hidden = !matches;
+            subjectHasMatch ||= matches;
+        });
+        subject.hidden = !subjectHasMatch;
+        if (subjectHasMatch) matchingStudents++;
+    });
+    panel.querySelector('.failed-student-no-results').hidden = matchingStudents > 0;
+});
+
 document.addEventListener('click', e => {
    const button = e.target.closest('.failed-subject-toggle');
    if (button) {
