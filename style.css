@@ -853,6 +853,7 @@ body::before {
 .main-tabs {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 6px;
     padding: 4px;
     background: var(--surface-soft);
@@ -861,6 +862,8 @@ body::before {
     border: 1px solid var(--border);
     box-shadow: var(--shadow-inner);
     width: 100%;
+    position: relative;
+    z-index: 10;
     animation: fadeUp 0.8s var(--t-spring) 0.3s both;
 }
 
@@ -880,6 +883,145 @@ body::before {
 
 .main-tab i {
     margin-right: 6px;
+}
+
+.jenjang-student-search {
+    display: none;
+    position: relative;
+    width: min(300px, 30%);
+    min-width: 220px;
+    margin-left: auto;
+}
+
+.main-tabs.jenjang-active .jenjang-student-search {
+    display: block;
+}
+
+.jenjang-student-search-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface-solid);
+    color: var(--muted);
+}
+
+.jenjang-student-search-input-wrap:focus-within {
+    border-color: var(--primary-2);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.jenjang-student-search-input-wrap input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+}
+
+.jenjang-student-search-input-wrap input::placeholder {
+    color: var(--muted);
+}
+
+.jenjang-student-search-results {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: min(620px, calc(100vw - 40px));
+    max-height: min(65vh, 520px);
+    overflow: auto;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--surface-solid);
+    box-shadow: var(--shadow-float);
+    color: var(--text);
+}
+
+.jenjang-student-search-results[hidden] {
+    display: none;
+}
+
+.jenjang-student-search-count,
+.jenjang-student-search-empty {
+    padding: 6px 8px 10px;
+    color: var(--muted);
+    font-size: 0.78rem;
+}
+
+.jenjang-student-result {
+    padding: 10px;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+}
+
+.jenjang-student-result + .jenjang-student-result {
+    margin-top: 8px;
+}
+
+.jenjang-student-result-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.jenjang-student-result-heading strong {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.jenjang-student-result-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+
+.jenjang-student-result-meta .passed {
+    color: var(--success);
+    font-weight: 700;
+}
+
+.jenjang-student-result-meta .not-passed {
+    color: var(--danger);
+    font-weight: 700;
+}
+
+.jenjang-student-result-grades {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.jenjang-student-grade {
+    padding: 4px 7px;
+    border-radius: 6px;
+    background: var(--surface-soft);
+    color: var(--text-soft);
+    font-size: 0.72rem;
+}
+
+.jenjang-student-grade.passed {
+    border: 1px solid var(--success-soft);
+    color: var(--success);
+}
+
+.jenjang-student-grade.not-passed {
+    border: 1px solid var(--danger-soft);
+    color: var(--danger);
+}
+
+.jenjang-student-grade strong {
+    margin-left: 4px;
+    color: inherit;
 }
 
 .kelas-quick-summary {
@@ -1328,6 +1470,10 @@ td .mapel-name {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
+}
+
+.rekap-student-group {
+    min-width: 0;
 }
 
 .failed-students {
@@ -1907,6 +2053,94 @@ td .mapel-name {
     background: var(--surface);
 }
 
+.rekap-mm-card-button {
+    display: grid;
+    justify-items: center;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+.rekap-mm-card-button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-lg);
+}
+
+.rekap-student-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 7px;
+    color: var(--muted);
+    font-size: 0.7rem;
+}
+
+.rekap-student-hint i {
+    transition: transform var(--t-fast);
+}
+
+.rekap-mm-card-button[aria-expanded="true"] .rekap-student-hint i {
+    transform: rotate(180deg);
+}
+
+.rekap-student-list {
+    max-height: 320px;
+    overflow-y: auto;
+    margin-top: 8px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+}
+
+.rekap-student-list[hidden] {
+    display: none;
+}
+
+.rekap-student-list ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.rekap-student-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 2px;
+    border-bottom: 1px solid var(--border-soft);
+    color: var(--text);
+    font-size: 0.82rem;
+}
+
+.rekap-student-list li:last-child {
+    border-bottom: 0;
+}
+
+.rekap-student-list li > span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.rekap-student-group.is-passed .rekap-student-list li strong {
+    color: var(--success);
+}
+
+.rekap-student-group.is-failed .rekap-student-list li strong {
+    color: var(--danger);
+}
+
+.rekap-student-empty {
+    padding: 8px 2px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-align: center;
+}
+
 .mm-label {
     font-size: 0.65rem;
     font-weight: 700;
@@ -2151,6 +2385,22 @@ button:focus-visible,
         text-align: center;
         padding: 10px 12px;
         font-size: 0.8rem;
+    }
+    .jenjang-student-search {
+        width: 100%;
+        min-width: 0;
+        margin-left: 0;
+    }
+    .jenjang-student-result-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .jenjang-student-search-results {
+        width: min(620px, calc(100vw - 96px));
+    }
+    .jenjang-student-result-meta {
+        justify-content: flex-start;
     }
     th, td {
         padding: 8px 10px;

@@ -105,6 +105,13 @@
                     <button class="main-tab active" data-pane="kelas"><i class="fa-solid fa-table-list" aria-hidden="true"></i> Per Kelas</button>
                     <button class="main-tab" data-pane="jenjang"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Per Jenjang</button>
                     <button class="main-tab" data-pane="grafikjenjang"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> Grafik Perjenjang</button>
+                    <div class="jenjang-student-search" id="jenjangStudentSearch">
+                        <label class="jenjang-student-search-input-wrap">
+                            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                            <input id="jenjangStudentSearchInput" type="search" placeholder="Cari nilai siswa..." aria-label="Cari siswa di jenjang terpilih">
+                        </label>
+                        <div class="jenjang-student-search-results" id="jenjangStudentSearchResults" role="region" aria-live="polite" hidden></div>
+                    </div>
                     <div class="kelas-quick-summary" id="kelasQuickSummary" role="status" aria-label="Ringkasan ketuntasan kelas"></div>
                 </div>
 
