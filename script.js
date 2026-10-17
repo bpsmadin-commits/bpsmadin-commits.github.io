@@ -21,6 +21,7 @@ function loadScript(url) {
 function mergeCachedSheetData(sheetList, sheetsData) {
     let subjects = [];
     let scores = [];
+    let studentNames = [];
     let studentCount = 0;
     for (const name of sheetList) {
         const data = sheetsData[name];
@@ -28,10 +29,11 @@ function mergeCachedSheetData(sheetList, sheetsData) {
         if (!subjects.length) subjects = data.subjects.slice();
         if (data.subjects.length === subjects.length) {
             scores = scores.concat(data.scores);
+            studentNames = studentNames.concat(data.studentNames || data.scores.map(() => ''));
             studentCount += data.studentCount || 0;
         }
     }
-    return { subjects, averages: computeAverages(subjects, scores), studentCount, scores };
+    return { subjects, averages: computeAverages(subjects, scores), studentCount, scores, studentNames };
 }
 
 async function ensureXLSX() {
@@ -254,11 +256,12 @@ function detectHeaderAndData(worksheet) {
 
     if (headerRowIndex === -1 && rows.length > 6) { headerRowIndex = 5;
         dataStartRow = 6; }
-    if (headerRowIndex === -1 || dataStartRow === -1) return { subjects: [], scores: [] };
+    if (headerRowIndex === -1 || dataStartRow === -1) return { subjects: [], scores: [], studentNames: [] };
 
     const headerRow = rows[headerRowIndex];
     const subjectIndices = [],
         subjectNames = [];
+    const nameColIdx = headerRow.findIndex(cell => ['NAMA', 'NAMA SISWA'].includes(normalizeCellText(cell).toUpperCase()));
     const ignoreKeywords = ["NO", "NOPES", "NIS", "NAMA", "ASR", "KELAS", "KLS", "RUANG", "ASUHAN", "الترتيب",
         "جملة", "ألتسوية", "فائز", "RANK", "SUM", "jml"
     ];
@@ -301,6 +304,7 @@ function detectHeaderAndData(worksheet) {
     }
 
     const studentScores = [];
+    const studentNames = [];
     for (let r = dataStartRow; r < rows.length; r++) {
         const row = rows[r];
         if (!row || row.length === 0) continue;
@@ -318,7 +322,10 @@ function detectHeaderAndData(worksheet) {
             }
             scoreRow.push(num);
         }
-        if (hasNumeric) studentScores.push(scoreRow);
+        if (hasNumeric) {
+            studentScores.push(scoreRow);
+            studentNames.push(normalizeCellText(row[nameColIdx]));
+        }
     }
 
     const asuhanRaw = (asuhanColIdx !== -1 && headerRowIndex !== -1 && rows[headerRowIndex]) ?
@@ -329,7 +336,7 @@ function detectHeaderAndData(worksheet) {
         asuhanVal = parseAsuhanText(asuhanRaw);
     }
 
-    return { subjects: subjectNames, scores: studentScores, studentCount: studentScores.length, asuhan: asuhanVal };
+    return { subjects: subjectNames, scores: studentScores, studentNames, studentCount: studentScores.length, asuhan: asuhanVal };
 }
 
 function computeAverages(subjects, scores) {
@@ -355,20 +362,24 @@ function sortSubjectsByAverageDesc(subjects, averages) {
 function mergeSheetData(sheetList) {
     let allSubjects = [],
         allScores = [],
+        allStudentNames = [],
         totalStudents = 0;
     for (const sheetName of sheetList) {
         const ws = workbookData.Sheets[sheetName];
         if (!ws) continue;
-        const { subjects, scores, studentCount } = detectHeaderAndData(ws);
+        const { subjects, scores, studentNames, studentCount } = detectHeaderAndData(ws);
         if (subjects.length === 0 || scores.length === 0) continue;
         if (allSubjects.length === 0) allSubjects = subjects.slice();
-        for (const student of scores) {
-            if (student.length === allSubjects.length) allScores.push(student.slice());
+        for (let i = 0; i < scores.length; i++) {
+            if (scores[i].length === allSubjects.length) {
+                allScores.push(scores[i].slice());
+                allStudentNames.push(studentNames[i] || '');
+            }
         }
         totalStudents += studentCount;
     }
     return { subjects: allSubjects, averages: computeAverages(allSubjects, allScores), studentCount: totalStudents,
-        scores: allScores };
+        scores: allScores, studentNames: allStudentNames };
 }
 
 function computeStudentAverages(scores) {
@@ -614,7 +625,7 @@ function renderSingleJenjang(key, selectedSubjects) {
     const sTitle = title + (data.studentCount ? ` (${data.studentCount} siswa)` : '');
     const wali = data?.asuhan || waliKelas[key] || '';
     const miniStatsHTML = buildMiniStatsHTML(sorted.subjects, sorted.averages, wali);
-    const ketuntasanHTML = buildKetuntasanHTML(data, selectedIndices, false);
+    const ketuntasanHTML = buildKetuntasanHTML(data, selectedIndices, false, null, false);
 
     jenjangContainer.innerHTML = `
             <div class="section-title" style="font-size:1.2rem; justify-content:space-between; flex-wrap:wrap;">
@@ -881,7 +892,17 @@ function renderJenjangCompareChart(key, selectedSubjects) {
 }
 
 // Bangun blok Ketuntasan untuk satu jenjang (ditempel langsung di layout Per Jenjang)
-function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix) {
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    })[char]);
+}
+
+function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, showFailedStudents = true) {
     const allScores = data.scores || [];
     // Jika ada mapel yang dipilih (selectedIndices), hitung ketuntasan hanya dari kolom mapel itu.
     // Jika tidak (null/kosong), pakai semua mapel seperti semula.
@@ -910,6 +931,16 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix) {
     const overall = avgs.length ? (avgs.reduce((a, b) => a + b, 0) / avgs.length).toFixed(1) : '-';
     const tuntasPct = persentaseTuntas.toFixed(1);
     const tidakTuntasPct = (100 - persentaseTuntas).toFixed(1);
+    const failedStudents = showFailedStudents ? computeStudentAverages(scores)
+        .map((average, index) => ({ name: (data.studentNames || [])[index], average }))
+        .filter(student => student.average < KKM) : [];
+    const failedStudentsHTML = failedStudents.length ? `
+            <details class="failed-students">
+                <summary>Siswa Belum Tuntas (${failedStudents.length})</summary>
+                ${failedStudents.some(student => student.name) ? `
+                <ol>${failedStudents.map(student => `<li><span>${student.name ? escapeHTML(student.name) : 'Nama tidak terbaca'}</span><strong>${student.average.toFixed(1)}</strong></li>`).join('')}</ol>` :
+                '<p>Nama siswa tidak tersedia. Upload ulang file Excel untuk memuat nama.</p>'}
+            </details>` : '';
 
     return `
             <div class="section-title" style="font-size:1.1rem; margin-top:24px;"><i class="fa-solid fa-ranking-star"></i> Ketuntasan${titleSuffix ? ' ' + titleSuffix : ''}</div>
@@ -933,6 +964,7 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix) {
                 <div class="rekap-mm-card"><div class="mm-label" style="color:var(--success);"><i class="fa-solid fa-check-circle"></i> Tuntas</div><div class="mm-value count-value" data-count-to="${persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tuntas} siswa</div></div>
                 <div class="rekap-mm-card"><div class="mm-label" style="color:var(--danger);"><i class="fa-solid fa-times-circle"></i> Tidak Tuntas</div><div class="mm-value count-value" data-count-to="${100 - persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tidakTuntas} siswa</div></div>
             </div>
+            ${failedStudentsHTML}
             <div style="margin-top: 12px; background: var(--surface-soft); border-radius: var(--radius-lg); padding: 8px 12px; display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted);"><span>Rerata: ${overall}</span><span>KKM: ${KKM}</span></div>`;
 }
 
@@ -1345,10 +1377,10 @@ function processAllSheets() {
 
     for (const name of sheetNames) {
         const ws = workbookData.Sheets[name];
-        if (!ws) { allSheetsData[name] = { subjects: [], averages: [], studentCount: 0, scores: [] }; continue; }
-        const { subjects, scores, studentCount, asuhan } = detectHeaderAndData(ws);
+        if (!ws) { allSheetsData[name] = { subjects: [], averages: [], studentCount: 0, scores: [], studentNames: [] }; continue; }
+        const { subjects, scores, studentNames, studentCount, asuhan } = detectHeaderAndData(ws);
         const avgs = computeAverages(subjects, scores);
-        allSheetsData[name] = { subjects, averages: avgs, studentCount, scores: scores || [], asuhan };
+        allSheetsData[name] = { subjects, averages: avgs, studentCount, scores: scores || [], studentNames, asuhan };
         if (asuhan) waliKelas[name] = asuhan;
     }
 
