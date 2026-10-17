@@ -953,7 +953,7 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
     )).size;
     const failedStudentsHTML = failedSubjects.length ? `
             <aside class="failed-students">
-                <h3><i class="fa-solid fa-user-xmark"></i> Siswa Belum Tuntas <span>${failedStudentCount} siswa</span></h3>
+                <h3><span class="failed-students-title"><i class="fa-solid fa-user-xmark"></i> Siswa Belum Tuntas</span><span>${failedStudentCount} siswa</span></h3>
                 <div class="failed-student-subject-controls">
                     <span class="failed-student-subject-label"><i class="fa-solid fa-book"></i> Mata Pelajaran</span>
                     <div class="failed-student-subject-filter" aria-label="Pilih mapel">
