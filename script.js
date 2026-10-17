@@ -102,6 +102,7 @@ const deselectAllMapelBtn = document.getElementById('deselectAllMapel');
 const grafikSelectAllMapelBtn = document.getElementById('grafikSelectAllMapel');
 const grafikDeselectAllMapelBtn = document.getElementById('grafikDeselectAllMapel');
 const tableBodyKelas = document.getElementById('table-body-kelas');
+const kelasKetuntasanSummaryBox = document.getElementById('kelasKetuntasanSummaryBox');
 const kelasKetuntasanBox = document.getElementById('kelasKetuntasanBox');
 const kelasMiniStats = document.getElementById('kelasMiniStats');
 const metaDataStatus = document.getElementById('meta-data-status');
@@ -403,9 +404,12 @@ function getClassNumber(sheetName) {
 }
 
 function getClassType(sheetName) {
-    const specificType = sheetName.match(/MDTA|MDTW|MTSD/i);
-    if (specificType) return specificType[0].toUpperCase();
-    return /MTS/i.test(sheetName) ? 'MTSD' : 'MID';
+    const specificType = sheetName.match(/MDTA|MID|MDTW|MTSD/i);
+    if (specificType) {
+        const type = specificType[0].toUpperCase();
+        return type === 'MDTA' || type === 'MID' ? 'MID' : 'MDTW';
+    }
+    return /MTS/i.test(sheetName) ? 'MDTW' : 'MID';
 }
 
 function getClassGroupKey(sheetName) {
@@ -541,6 +545,7 @@ function renderKelasTable(subjects, averages, sheetName, studentCount = 0, sourc
     if (!subjects.length || !averages.length) {
         tableBodyKelas.innerHTML =
             `<tr><td colspan="4" style="padding:0;"><div class="empty-dropzone"><div class="empty-dropzone-icon"><i class="fa-solid fa-file-excel"></i></div><div class="empty-dropzone-title">Belum ada data</div><div class="empty-dropzone-text">Silakan upload file Excel nilai siswa untuk mulai melihat analisis performa akademik.</div><label for="file-input" class="empty-dropzone-btn"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Data Sekarang</label></div></td></tr>`;
+        kelasKetuntasanSummaryBox.innerHTML = '';
         kelasKetuntasanBox.innerHTML = '';
         kelasMiniStats.innerHTML = '';
         return;
@@ -566,10 +571,11 @@ function renderKelasTable(subjects, averages, sheetName, studentCount = 0, sourc
         row.insertCell(3).innerHTML = getStatusBadge(avg);
     });
 
-    kelasKetuntasanBox.innerHTML = sourceData ? buildKetuntasanHTML(sourceData, null, false) : '';
+    const ketuntasan = sourceData ? buildKetuntasanHTML(sourceData, null, false, null, true, true) : null;
+    kelasKetuntasanSummaryBox.innerHTML = ketuntasan?.summary || '';
+    kelasKetuntasanBox.innerHTML = ketuntasan?.students || '';
 
     runCountUps(document.getElementById('pane-kelas'));
-    runCountUps(kelasKetuntasanBox);
 }
 
 // Render Single Jenjang (dengan filter mapel)
@@ -903,7 +909,7 @@ function escapeHTML(value) {
     })[char]);
 }
 
-function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, showFailedStudents = true) {
+function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, showFailedStudents = true, splitPanels = false) {
     const allScores = data.scores || [];
     // Jika ada mapel yang dipilih (selectedIndices), hitung ketuntasan hanya dari kolom mapel itu.
     // Jika tidak (null/kosong), pakai semua mapel seperti semula.
@@ -945,21 +951,20 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
     const failedStudentCount = new Set(failedSubjects.flatMap(subject =>
         subject.students.map(student => student.studentIndex)
     )).size;
-    const failedSubjectControlsHTML = failedSubjects.length ? `
-            <div class="failed-student-subject-controls">
-                <span class="failed-student-subject-label"><i class="fa-solid fa-book"></i> Mata Pelajaran</span>
-                <div class="failed-student-subject-filter" aria-label="Pilih mapel">
-                    ${failedSubjects.map((subject, index) => `
-                    <button type="button" class="mapel-chip-btn failed-subject-toggle active-chip" data-subject-index="${index}" aria-pressed="true">
-                        ${escapeHTML(subject.name)} <span class="mapel-chip-x" aria-hidden="true">&times;</span>
-                    </button>`).join('')}
-                </div>
-                <button type="button" class="btn btn-sm btn-primary" data-failed-subject-action="all">Pilih Semua</button>
-                <button type="button" class="btn btn-sm" data-failed-subject-action="none">Hapus Semua</button>
-            </div>` : '';
     const failedStudentsHTML = failedSubjects.length ? `
             <aside class="failed-students">
                 <h3><i class="fa-solid fa-user-xmark"></i> Siswa Belum Tuntas <span>${failedStudentCount} siswa</span></h3>
+                <div class="failed-student-subject-controls">
+                    <span class="failed-student-subject-label"><i class="fa-solid fa-book"></i> Mata Pelajaran</span>
+                    <div class="failed-student-subject-filter" aria-label="Pilih mapel">
+                        ${failedSubjects.map((subject, index) => `
+                        <button type="button" class="mapel-chip-btn failed-subject-toggle active-chip" data-subject-index="${index}" aria-pressed="true">
+                            ${escapeHTML(subject.name)} <span class="mapel-chip-x" aria-hidden="true">&times;</span>
+                        </button>`).join('')}
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary" data-failed-subject-action="all">Pilih Semua</button>
+                    <button type="button" class="btn btn-sm" data-failed-subject-action="none">Hapus Semua</button>
+                </div>
                 <div class="failed-student-subjects">
                     ${failedSubjects.map((subject, index) => `
                     <section class="failed-student-subject" data-subject-index="${index}">
@@ -971,35 +976,38 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
                 </div>
             </aside>` : '';
     const ketuntasanTitleHTML = `<div class="section-title" style="font-size:1.1rem; margin-top:24px;"><i class="fa-solid fa-ranking-star"></i> Ketuntasan${titleSuffix ? ' ' + titleSuffix : ''}</div>`;
+    const summaryHTML = `
+            ${ketuntasanTitleHTML}
+            <div class="rekap-info-row" style="margin-bottom:12px;">
+                <span class="rekap-info-chip"><i class="fa-solid fa-users"></i> Siswa: ${totalStudents}</span>
+                <span class="rekap-info-chip"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i> Tuntas: ${tuntas}</span>
+                <span class="rekap-info-chip"><i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Tidak Tuntas: ${tidakTuntas}</span>
+            </div>
+            ${showChart ? `
+            <div class="ketuntasan-chart-row">
+                <div class="ketuntasan-chart-title"><i class="fa-solid fa-chart-simple"></i> Grafik Persentase Ketuntasan</div>
+                <div class="ketuntasan-bar-track">
+                    <div class="ketuntasan-bar-fill" data-target-width="${tuntasPct}%" style="width:${tuntasPct}%;">${tuntasPct}%</div>
+                </div>
+                <div class="ketuntasan-legend">
+                    <div class="ketuntasan-legend-item"><span class="legend-dot" style="background:var(--success);"></span> Tuntas: <b>${tuntas}</b> siswa (${tuntasPct}%)</div>
+                    <div class="ketuntasan-legend-item"><span class="legend-dot" style="background:var(--danger);"></span> Tidak Tuntas: <b>${tidakTuntas}</b> siswa (${tidakTuntasPct}%)</div>
+                </div>
+            </div>` : ''}
+            <div class="rekap-minmax">
+                <div class="rekap-mm-card"><div class="mm-label" style="color:var(--success);"><i class="fa-solid fa-check-circle"></i> Tuntas</div><div class="mm-value count-value" data-count-to="${persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tuntas} siswa</div></div>
+                <div class="rekap-mm-card"><div class="mm-label" style="color:var(--danger);"><i class="fa-solid fa-times-circle"></i> Tidak Tuntas</div><div class="mm-value count-value" data-count-to="${100 - persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tidakTuntas} siswa</div></div>
+            </div>
+            <div class="ketuntasan-average"><span>Rerata: ${overall}</span><span>KKM: ${KKM}</span></div>`;
+
+    if (splitPanels) return {
+        summary: `<div class="ketuntasan-summary">${summaryHTML}</div>`,
+        students: failedStudentsHTML
+    };
 
     return `
-            ${failedSubjects.length ? '' : ketuntasanTitleHTML}
             <div class="ketuntasan-layout${failedSubjects.length ? ' has-failed-students' : ''}">
-                <div class="ketuntasan-summary">
-                    ${failedSubjects.length ? ketuntasanTitleHTML : ''}
-                    ${failedSubjectControlsHTML}
-                    <div class="rekap-info-row" style="margin-bottom:12px;">
-                        <span class="rekap-info-chip"><i class="fa-solid fa-users"></i> Siswa: ${totalStudents}</span>
-                        <span class="rekap-info-chip"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i> Tuntas: ${tuntas}</span>
-                        <span class="rekap-info-chip"><i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> Tidak Tuntas: ${tidakTuntas}</span>
-                    </div>
-                    ${showChart ? `
-                    <div class="ketuntasan-chart-row">
-                        <div class="ketuntasan-chart-title"><i class="fa-solid fa-chart-simple"></i> Grafik Persentase Ketuntasan</div>
-                        <div class="ketuntasan-bar-track">
-                            <div class="ketuntasan-bar-fill" data-target-width="${tuntasPct}%" style="width:${tuntasPct}%;">${tuntasPct}%</div>
-                        </div>
-                        <div class="ketuntasan-legend">
-                            <div class="ketuntasan-legend-item"><span class="legend-dot" style="background:var(--success);"></span> Tuntas: <b>${tuntas}</b> siswa (${tuntasPct}%)</div>
-                            <div class="ketuntasan-legend-item"><span class="legend-dot" style="background:var(--danger);"></span> Tidak Tuntas: <b>${tidakTuntas}</b> siswa (${tidakTuntasPct}%)</div>
-                        </div>
-                    </div>` : ''}
-                    <div class="rekap-minmax">
-                        <div class="rekap-mm-card"><div class="mm-label" style="color:var(--success);"><i class="fa-solid fa-check-circle"></i> Tuntas</div><div class="mm-value count-value" data-count-to="${persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tuntas} siswa</div></div>
-                        <div class="rekap-mm-card"><div class="mm-label" style="color:var(--danger);"><i class="fa-solid fa-times-circle"></i> Tidak Tuntas</div><div class="mm-value count-value" data-count-to="${100 - persentaseTuntas}" data-decimals="1" data-suffix="%">0%</div><div class="mm-subject">${tidakTuntas} siswa</div></div>
-                    </div>
-                    <div class="ketuntasan-average"><span>Rerata: ${overall}</span><span>KKM: ${KKM}</span></div>
-                </div>
+                <div class="ketuntasan-summary">${summaryHTML}</div>
                 ${failedStudentsHTML}
             </div>`;
 }
@@ -1056,20 +1064,19 @@ function computeOverviewStats(sheetsData, sheetNames) {
     return { totalSiswa, pctSekolah, rataSekolah, belowKKMCount, classStats, hasData: totalAll > 0 };
 }
 
-// Pisahin daftar nama sheet jadi 2 kelompok jenjang: MID sama MTsD, pake aturan
-// yang sama kayak getSheetsInJenjang (nama sheet yang ngandung "MTS" masuk MTsD).
+// Satukan alias MID/MDTA dan MTSD/MDTW untuk ringkasan seluruh sekolah.
 function splitSheetsByJenjang(sheetNames) {
     const mid = [];
-    const mtsd = [];
+    const mdtw = [];
     (sheetNames || []).forEach(name => {
-        if (/MTS/i.test(name)) mtsd.push(name); else mid.push(name);
+        if (getClassType(name) === 'MDTW') mdtw.push(name); else mid.push(name);
     });
-    return { mid, mtsd };
+    return { mid, mdtw };
 }
 
 const JENJANG_META = {
-    MID:  { label: 'MID',  subtitle: 'Madrasah Ibtidaiyah Diniyah',  icon: 'fa-seedling',        accentClass: 'accent-mid' },
-    MTSD: { label: 'MTsD', subtitle: 'Madrasah Tsanawiyah Diniyah', icon: 'fa-graduation-cap',  accentClass: 'accent-mtsd' }
+    MID:  { label: 'MDTA', subtitle: 'Madrasah Ibtidaiyah Diniyah (MID)',  icon: 'fa-seedling',       accentClass: 'accent-mid' },
+    MDTW: { label: 'MDTW', subtitle: 'Madrasah Tsanawiyah Diniyah (MTsD)', icon: 'fa-graduation-cap', accentClass: 'accent-mtsd' }
 };
 
 // Bangun satu section penuh (kartu ringkasan + highlight kelas + tren antar kuartal)
@@ -1132,7 +1139,7 @@ function buildJenjangSectionHTML(jenjangKey, sheetNames) {
         const qKeys = ['Kuartal_I', 'Kuartal_II', 'Kuartal_III'];
         const trendBars = qKeys.map(q => {
             const cache = quartalCache[q];
-            const names = cache ? splitSheetsByJenjang(cache.originalSheetNames || [])[jenjangKey === 'MTSD' ? 'mtsd' : 'mid'] : [];
+            const names = cache ? splitSheetsByJenjang(cache.originalSheetNames || [])[jenjangKey === 'MDTW' ? 'mdtw' : 'mid'] : [];
             const s = cache ? computeOverviewStats(cache.allSheetsData || {}, names) : null;
             return { label: QUARTAL_LABELS[q] || q, rata: s && s.hasData ? s.rataSekolah : 0, hasData: !!(s && s.hasData) };
         });
@@ -1176,7 +1183,7 @@ function buildJenjangSectionHTML(jenjangKey, sheetNames) {
         </div>`;
 }
 
-// Ringkasan seluruh sekolah, dipisah per jenjang (MID & MTsD), dipakai buat pane Overview
+// Ringkasan sekolah dipisah per jenjang MDTA/MID dan MDTW/MTsD.
 function renderOverview() {
     const overviewContent = document.getElementById('overviewContent');
     if (!overviewContent) return;
@@ -1191,11 +1198,11 @@ function renderOverview() {
         return;
     }
 
-    const { mid, mtsd } = splitSheetsByJenjang(originalSheetNames);
+    const { mid, mdtw } = splitSheetsByJenjang(originalSheetNames);
 
     overviewContent.innerHTML = `
             ${buildJenjangSectionHTML('MID', mid)}
-            ${buildJenjangSectionHTML('MTSD', mtsd)}`;
+            ${buildJenjangSectionHTML('MDTW', mdtw)}`;
 
     runCountUps(overviewContent);
 }
@@ -1263,7 +1270,7 @@ function rasterizeArabicText(container) {
 
 // Export Functions
 // sourceEl: the live .section-container element to snapshot (so the PDF looks exactly like the app card)
-async function exportPDF(subjects, averages, title, sourceEl, reportLabel, extraEl = null) {
+async function exportPDF(subjects, averages, title, sourceEl, reportLabel, extraEls = []) {
     if (!subjects.length) { alert("Tidak ada data untuk diekspor."); return; }
     const btns = document.querySelectorAll('.btn-pdf');
     btns.forEach(b => b.disabled = true);
@@ -1281,10 +1288,10 @@ async function exportPDF(subjects, averages, title, sourceEl, reportLabel, extra
 
         // Clone the live card so we can strip buttons / lock-in final numbers without touching the real UI
         const clone = cardEl.cloneNode(true);
-        if (extraEl) {
+        extraEls.forEach(extraEl => {
             const extraClone = extraEl.cloneNode(true);
             while (extraClone.firstChild) clone.appendChild(extraClone.firstChild);
-        }
+        });
         clone.querySelectorAll('.export-row').forEach(row => row.remove());
         clone.style.margin = '0';
         clone.style.width = '760px';
@@ -1376,9 +1383,9 @@ function exportCSV(subjects, averages, title) {
 
 function exportOverviewCSV() {
     if (!originalSheetNames.length) { alert("Tidak ada data."); return; }
-    const { mid, mtsd } = splitSheetsByJenjang(originalSheetNames);
+    const { mid, mdtw } = splitSheetsByJenjang(originalSheetNames);
     let csv = '\uFEFF';
-    [{ key: 'MID', names: mid }, { key: 'MTSD', names: mtsd }].forEach(({ key, names }) => {
+    [{ key: 'MID', names: mid }, { key: 'MDTW', names: mdtw }].forEach(({ key, names }) => {
         const meta = JENJANG_META[key];
         const stats = computeOverviewStats(allSheetsData, names);
         csv += `Ringkasan ${meta.label} (${meta.subtitle})\n`;
@@ -1668,7 +1675,7 @@ document.addEventListener('click', e => {
    if (button) {
        const isActive = button.classList.toggle('active-chip');
        button.setAttribute('aria-pressed', String(isActive));
-       button.closest('.ketuntasan-layout')
+       button.closest('.failed-students')
            .querySelector(`.failed-student-subject[data-subject-index="${button.dataset.subjectIndex}"]`)
            .classList.toggle('is-hidden', !isActive);
        return;
@@ -1676,9 +1683,9 @@ document.addEventListener('click', e => {
    const action = e.target.closest('[data-failed-subject-action]');
    if (!action) return;
    const isActive = action.dataset.failedSubjectAction === 'all';
-   const layout = action.closest('.ketuntasan-layout');
-   const toggles = layout.querySelectorAll('.failed-subject-toggle');
-   const subjects = layout.querySelectorAll('.failed-student-subject');
+   const studentsPanel = action.closest('.failed-students');
+   const toggles = studentsPanel.querySelectorAll('.failed-subject-toggle');
+   const subjects = studentsPanel.querySelectorAll('.failed-student-subject');
    toggles.forEach((toggle, index) => {
        toggle.classList.toggle('active-chip', isActive);
        toggle.setAttribute('aria-pressed', String(isActive));
@@ -1810,7 +1817,7 @@ document.querySelectorAll('.main-tab').forEach(tab => {
 document.getElementById('exportPDFKelas').addEventListener('click', () => {
     if (!currentSubjectNames.length) { alert("Tidak ada data"); return; }
     const src = document.querySelector('#pane-kelas .section-container');
-    exportPDF(currentSubjectNames, currentAverages, currentSheetName || 'Kelas', src, null, kelasKetuntasanBox);
+    exportPDF(currentSubjectNames, currentAverages, currentSheetName || 'Kelas', src, null, [kelasKetuntasanSummaryBox, kelasKetuntasanBox]);
 });
 
 document.getElementById('exportCSVKelas').addEventListener('click', () => {

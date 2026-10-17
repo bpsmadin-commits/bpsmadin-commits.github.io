@@ -352,6 +352,11 @@ body {
     align-items: start;
 }
 
+.dashboard-workspace:has(#pane-kelas.active):has(#kelasKetuntasanBox:not(:empty)) {
+    grid-template-columns: minmax(900px, 1.7fr) minmax(360px, 1fr);
+    column-gap: 18px;
+}
+
 .dashboard-workspace > .quartal-bar,
 .dashboard-workspace > .main-tabs,
 .dashboard-workspace > .main-pane {
@@ -366,7 +371,22 @@ body {
 
 .dashboard-workspace:has(#pane-kelas.active):has(#kelasKetuntasanBox:not(:empty)) > .kelas-ketuntasan-panel {
     display: block;
-    grid-column: 1;
+    grid-column: 2;
+    grid-row: 1 / span 3;
+}
+
+@media (max-width: 1350px) {
+    .dashboard-workspace:has(#pane-kelas.active):has(#kelasKetuntasanBox:not(:empty)) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .dashboard-workspace:has(#pane-kelas.active):has(#kelasKetuntasanBox:not(:empty)) > .kelas-ketuntasan-panel {
+        grid-column: 1;
+        grid-row: auto;
+    }
+}
+
+#kelasTableTitle {
+    white-space: nowrap;
 }
 
 /* ========== BUTTONS ========== */
