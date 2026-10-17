@@ -970,7 +970,7 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
                     <section class="failed-student-subject" data-subject-index="${index}">
                         <h4>${escapeHTML(subject.name)} <span>${subject.students.length} siswa</span></h4>
                         <ol>${subject.students.map(student =>
-                            `<li><span class="failed-student-name">${student.name ? escapeHTML(student.name) : 'Nama tidak terbaca'}</span><strong>${student.score.toFixed(1)}</strong></li>`
+                            `<li><span class="failed-student-name" title="${escapeHTML(student.name || 'Nama tidak terbaca')}">${student.name ? escapeHTML(student.name) : 'Nama tidak terbaca'}</span><strong>${student.score.toFixed(1)}</strong></li>`
                         ).join('')}</ol>
                     </section>`).join('')}
                 </div>
