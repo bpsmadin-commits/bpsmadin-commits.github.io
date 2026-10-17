@@ -346,6 +346,45 @@ body {
     flex-wrap: wrap;
 }
 
+.dashboard-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 18px;
+    align-items: start;
+}
+
+.dashboard-workspace:has(#pane-kelas.active):has(#kelasKetuntasanBox:not(:empty)) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.dashboard-workspace > .quartal-bar,
+.dashboard-workspace > .main-tabs,
+.dashboard-workspace > .main-pane {
+    grid-column: 1;
+    min-width: 0;
+}
+
+.kelas-ketuntasan-panel {
+    display: none;
+    min-width: 0;
+}
+
+.dashboard-workspace:has(#pane-kelas.active):has(#kelasKetuntasanBox:not(:empty)) > .kelas-ketuntasan-panel {
+    display: block;
+    grid-column: 2;
+    grid-row: 1 / span 3;
+}
+
+@media (max-width: 1100px) {
+    .dashboard-workspace:has(#pane-kelas.active):has(#kelasKetuntasanBox:not(:empty)) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .dashboard-workspace:has(#pane-kelas.active):has(#kelasKetuntasanBox:not(:empty)) > .kelas-ketuntasan-panel {
+        grid-column: 1;
+        grid-row: auto;
+    }
+}
+
 /* ========== BUTTONS ========== */
 .btn {
     display: inline-flex;
@@ -1119,19 +1158,30 @@ td .mapel-name {
 }
 
 .failed-students {
-    margin-top: 12px;
+    min-width: 0;
+    align-self: start;
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     background: var(--surface-soft);
     color: var(--text);
+    overflow: hidden;
 }
 
-.failed-students summary {
+.failed-students h3 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
     padding: 10px 12px;
     color: var(--danger);
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 700;
-    cursor: pointer;
+}
+
+.failed-students h3 span {
+    flex: 0 0 auto;
+    font-size: 0.8rem;
+    color: var(--muted);
 }
 
 .failed-students > p {
@@ -1141,15 +1191,15 @@ td .mapel-name {
 }
 
 .failed-student-subject-controls {
-    display: flex;
+    display: grid;
+    grid-template-columns: max-content max-content 1fr;
     align-items: center;
-    flex-wrap: wrap;
-    margin: 0 12px 12px;
+    margin: 0 0 12px;
     gap: 8px;
 }
 
 .failed-student-subject-label {
-    flex: 0 0 auto;
+    grid-column: 1 / -1;
     color: var(--text-soft);
     font-size: 0.8rem;
     font-weight: 600;
@@ -1157,13 +1207,16 @@ td .mapel-name {
 
 .failed-student-subject-filter {
     display: flex;
-    flex: 1 1 220px;
+    grid-column: 1 / -1;
     flex-wrap: wrap;
+    min-width: 0;
+    width: 100%;
     gap: 6px;
     padding: 10px;
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     background: var(--surface);
+    justify-content: flex-start;
 }
 
 .failed-subject-toggle {
@@ -1181,7 +1234,9 @@ td .mapel-name {
 .failed-student-subjects {
     display: grid;
     gap: 12px;
-    padding: 0 12px 12px;
+    max-height: 620px;
+    overflow-y: auto;
+    padding: 0 10px 10px;
 }
 
 .failed-student-subject {
@@ -1236,7 +1291,7 @@ td .mapel-name {
 
 .failed-student-name {
     color: var(--text);
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 600;
     overflow-wrap: anywhere;
 }
@@ -1252,6 +1307,36 @@ td .mapel-name {
 
 .failed-student-subject.is-hidden {
     display: none;
+}
+
+.ketuntasan-layout {
+    display: grid;
+    gap: 14px;
+}
+
+.ketuntasan-layout.has-failed-students {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+}
+
+.ketuntasan-summary {
+    min-width: 0;
+}
+
+.ketuntasan-summary > .section-title {
+    margin-top: 0 !important;
+}
+
+.ketuntasan-average {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 8px 12px;
+    border-radius: var(--radius-lg);
+    background: var(--surface-soft);
+    color: var(--muted);
+    font-size: 0.8rem;
 }
 
 .ketuntasan-chart-row {
@@ -1342,6 +1427,8 @@ td .mapel-name {
 .ketuntasan-perkelas-block .section-title {
     margin-top: 0 !important;
 }
+
+
 
 .overview-jenjang-section {
     background: var(--surface);
