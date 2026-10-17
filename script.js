@@ -906,6 +906,8 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
     const allScores = data.scores || [];
     // Jika ada mapel yang dipilih (selectedIndices), hitung ketuntasan hanya dari kolom mapel itu.
     // Jika tidak (null/kosong), pakai semua mapel seperti semula.
+    const subjectIndices = selectedIndices && selectedIndices.length ?
+        selectedIndices : (data.subjects || []).map((_, index) => index);
     const scores = (selectedIndices && selectedIndices.length && allScores.length) ?
         allScores.map(student => selectedIndices.map(i => student[i])) :
         allScores;
@@ -931,15 +933,29 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
     const overall = avgs.length ? (avgs.reduce((a, b) => a + b, 0) / avgs.length).toFixed(1) : '-';
     const tuntasPct = persentaseTuntas.toFixed(1);
     const tidakTuntasPct = (100 - persentaseTuntas).toFixed(1);
-    const failedStudents = showFailedStudents ? computeStudentAverages(scores)
-        .map((average, index) => ({ name: (data.studentNames || [])[index], average }))
-        .filter(student => student.average < KKM) : [];
-    const failedStudentsHTML = failedStudents.length ? `
+    const failedSubjects = showFailedStudents ? subjectIndices.map((subjectIndex, scoreIndex) => ({
+        name: (data.subjects || [])[subjectIndex],
+        students: scores.map((student, index) => ({
+            studentIndex: index,
+            name: (data.studentNames || [])[index],
+            score: student[scoreIndex]
+        })).filter(student => typeof student.score === 'number' && student.score < KKM)
+    })).filter(subject => subject.students.length) : [];
+    const failedStudentCount = new Set(failedSubjects.flatMap(subject =>
+        subject.students.map(student => student.studentIndex)
+    )).size;
+    const failedStudentsHTML = failedSubjects.length ? `
             <details class="failed-students">
-                <summary>Siswa Belum Tuntas (${failedStudents.length})</summary>
-                ${failedStudents.some(student => student.name) ? `
-                <ol>${failedStudents.map(student => `<li><span>${student.name ? escapeHTML(student.name) : 'Nama tidak terbaca'}</span><strong>${student.average.toFixed(1)}</strong></li>`).join('')}</ol>` :
-                '<p>Nama siswa tidak tersedia. Upload ulang file Excel untuk memuat nama.</p>'}
+                <summary>Siswa Belum Tuntas (${failedStudentCount} siswa)</summary>
+                <div class="failed-student-subjects">
+                    ${failedSubjects.map((subject, index) => `
+                    <section class="failed-student-subject">
+                        <label><input type="checkbox" class="failed-subject-toggle" checked> ${escapeHTML(subject.name)} (${subject.students.length})</label>
+                        <ol>${subject.students.map(student =>
+                            `<li><span>${student.name ? escapeHTML(student.name) : 'Nama tidak terbaca'}</span><strong>${student.score.toFixed(1)}</strong></li>`
+                        ).join('')}</ol>
+                    </section>`).join('')}
+                </div>
             </details>` : '';
 
     return `
@@ -1623,6 +1639,11 @@ function clearStoredData() {
 }
 
 // Event Listeners
+document.addEventListener('change', e => {
+    const input = e.target.closest('.failed-subject-toggle');
+    if (input) input.closest('.failed-student-subject').classList.toggle('is-hidden', !input.checked);
+});
+
 quartalTabs.querySelectorAll('.quartal-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         currentQuartal = btn.dataset.q;
