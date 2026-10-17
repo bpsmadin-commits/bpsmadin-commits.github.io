@@ -1386,6 +1386,37 @@ td .mapel-name {
     font-weight: 600;
 }
 
+.failed-student-search {
+    display: flex;
+    flex: 0 0 100%;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface-solid);
+    color: var(--muted);
+}
+
+.failed-student-search:focus-within {
+    border-color: var(--primary-2);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.failed-student-search input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+}
+
+.failed-student-search input::placeholder {
+    color: var(--muted);
+}
+
 .failed-student-subject-filter {
     display: flex;
     flex: 0 0 100%;
@@ -1434,6 +1465,13 @@ td .mapel-name {
     background: var(--surface);
 }
 
+.failed-student-no-results {
+    padding: 12px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
 .failed-student-subject h4 {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -1478,6 +1516,10 @@ td .mapel-name {
     min-height: 42px;
     border-top: 1px solid var(--border-soft);
     counter-increment: failed-student;
+}
+
+.failed-student-subject li[hidden] {
+    display: none;
 }
 
 .failed-student-subject li::before {
