@@ -428,7 +428,7 @@ function getProgressBarClass(avg) {
 function getProgressBarHTML(avg) {
     const pct = Math.min(100, avg);
     const cls = getProgressBarClass(avg);
-    return `<div class="progress-cell"><div class="progress-bar-wrap"><div class="progress-bar-fill ${cls}" style="width:0%" data-target-width="${pct}%"></div></div><strong class="count-value" data-count-to="${avg}" data-decimals="2">0.00</strong></div>`;
+    return `<div class="progress-cell"><div class="progress-bar-wrap"><div class="progress-bar-fill ${cls}" style="width:0%" data-target-width="${pct}%"></div></div><strong class="count-value" data-count-to="${avg}" data-decimals="1">0.0</strong></div>`;
 }
 
 // Animate a numeric text node counting up from 0 to its target value
@@ -507,7 +507,7 @@ function buildMiniStatsHTML(subjects, averages, wali = '') {
         minVal = Math.min(...averages);
     const maxIdx = averages.indexOf(maxVal),
         minIdx = averages.indexOf(minVal);
-    const overall = (averages.reduce((a, b) => a + b, 0) / averages.length).toFixed(2);
+    const overall = (averages.reduce((a, b) => a + b, 0) / averages.length).toFixed(1);
     const waliBadge = wali ? `
             <div class="mini-wali" style="margin:0 0 12px; padding:8px 12px; border-radius:999px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:var(--muted); font-size:0.8rem; display:inline-flex; align-items:center; gap:8px;">
                 <i class="fa-solid fa-user-tie"></i><span>Wali Kelas: <strong style="color:var(--text);">${wali}</strong></span>
@@ -515,9 +515,9 @@ function buildMiniStatsHTML(subjects, averages, wali = '') {
     return `
             ${waliBadge}
             <div class="mini-stats">
-                <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-trophy"></i> Tertinggi</div><div class="mini-value count-value" data-count-to="${maxVal}" data-decimals="2">0.00</div><div class="mini-sub" style="font-family:'Amiri','Traditional Arabic',serif;">${subjects[maxIdx]}</div></div>
-                <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-arrow-trend-down"></i> Terendah</div><div class="mini-value count-value" data-count-to="${minVal}" data-decimals="2">0.00</div><div class="mini-sub" style="font-family:'Amiri','Traditional Arabic',serif;">${subjects[minIdx]}</div></div>
-                <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-bullseye"></i> Rata-rata</div><div class="mini-value count-value" data-count-to="${overall}" data-decimals="2">0.00</div><div class="mini-sub">Keseluruhan</div></div>
+                <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-trophy"></i> Tertinggi</div><div class="mini-value count-value" data-count-to="${maxVal}" data-decimals="1">0.0</div><div class="mini-sub" style="font-family:'Amiri','Traditional Arabic',serif;">${subjects[maxIdx]}</div></div>
+                <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-arrow-trend-down"></i> Terendah</div><div class="mini-value count-value" data-count-to="${minVal}" data-decimals="1">0.0</div><div class="mini-sub" style="font-family:'Amiri','Traditional Arabic',serif;">${subjects[minIdx]}</div></div>
+                <div class="mini-stat"><div class="mini-label"><i class="fa-solid fa-bullseye"></i> Rata-rata</div><div class="mini-value count-value" data-count-to="${overall}" data-decimals="1">0.0</div><div class="mini-sub">Keseluruhan</div></div>
             </div>`;
 }
 
@@ -907,7 +907,7 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix) {
     const avgs = (selectedIndices && selectedIndices.length) ?
         selectedIndices.map(i => (data.averages || [])[i]).filter(v => typeof v === 'number') :
         (data.averages || []);
-    const overall = avgs.length ? (avgs.reduce((a, b) => a + b, 0) / avgs.length).toFixed(2) : '-';
+    const overall = avgs.length ? (avgs.reduce((a, b) => a + b, 0) / avgs.length).toFixed(1) : '-';
     const tuntasPct = persentaseTuntas.toFixed(1);
     const tidakTuntasPct = (100 - persentaseTuntas).toFixed(1);
 
@@ -1027,7 +1027,7 @@ function buildJenjangSectionHTML(jenjangKey, sheetNames) {
                 </div>
                 <div class="overview-stat-card">
                     <div class="mini-label"><i class="fa-solid fa-bullseye"></i> Rata-rata</div>
-                    <div class="mini-value count-value" data-count-to="${stats.rataSekolah.toFixed(2)}" data-decimals="2">0.00</div>
+                    <div class="mini-value count-value" data-count-to="${stats.rataSekolah.toFixed(1)}" data-decimals="1">0.0</div>
                 </div>
                 <div class="overview-stat-card">
                     <div class="mini-label"><i class="fa-solid fa-circle-check"></i> Ketuntasan</div>
@@ -1048,7 +1048,7 @@ function buildJenjangSectionHTML(jenjangKey, sheetNames) {
                 <div class="overview-highlight-card good">
                     <div class="mini-label"><i class="fa-solid fa-trophy"></i> Kelas Paling Unggul</div>
                     <div class="overview-highlight-name">${best.name}</div>
-                    <div class="overview-highlight-sub">Ketuntasan ${best.pct.toFixed(1)}% &middot; Rata-rata ${best.avg.toFixed(2)}</div>
+                    <div class="overview-highlight-sub">Ketuntasan ${best.pct.toFixed(1)}% &middot; Rata-rata ${best.avg.toFixed(1)}</div>
                 </div>`;
         }
         if (worst) {
@@ -1056,7 +1056,7 @@ function buildJenjangSectionHTML(jenjangKey, sheetNames) {
                 <div class="overview-highlight-card bad">
                     <div class="mini-label"><i class="fa-solid fa-arrow-trend-down"></i> Perlu Perhatian</div>
                     <div class="overview-highlight-name">${worst.name}</div>
-                    <div class="overview-highlight-sub">Ketuntasan ${worst.pct.toFixed(1)}% &middot; Rata-rata ${worst.avg.toFixed(2)}</div>
+                    <div class="overview-highlight-sub">Ketuntasan ${worst.pct.toFixed(1)}% &middot; Rata-rata ${worst.avg.toFixed(1)}</div>
                 </div>`;
         }
 
@@ -1074,8 +1074,8 @@ function buildJenjangSectionHTML(jenjangKey, sheetNames) {
             trendBars.forEach(b => {
                 const targetH = b.hasData ? Math.min(100, b.rata).toFixed(1) : 0;
                 trendBarsHTML += `
-                    <div class="jc-bar-col" title="${b.label}: ${b.hasData ? b.rata.toFixed(2) : 'belum ada data'}">
-                        <div class="jc-bar-value count-value" data-count-to="${b.hasData ? b.rata.toFixed(2) : 0}" data-decimals="2">0.00</div>
+                    <div class="jc-bar-col" title="${b.label}: ${b.hasData ? b.rata.toFixed(1) : 'belum ada data'}">
+                        <div class="jc-bar-value count-value" data-count-to="${b.hasData ? b.rata.toFixed(1) : 0}" data-decimals="1">0.0</div>
                         <div class="jc-bar-track">
                             <div class="jc-bar-fill" data-target-height="${targetH}%" style="height:0%"></div>
                         </div>
@@ -1291,7 +1291,7 @@ function exportCSV(subjects, averages, title) {
     let csv = '\uFEFF#;Mata Pelajaran;Rata-rata;Status\n';
     sorted.subjects.forEach((sub, idx) => {
         const avg = sorted.averages[idx];
-        csv += `${idx+1};"${sub}";${avg.toFixed(2)};${getStatusText(avg)}\n`;
+        csv += `${idx+1};"${sub}";${avg.toFixed(1)};${getStatusText(avg)}\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -1315,12 +1315,12 @@ function exportOverviewCSV() {
             return;
         }
         csv += `Total Siswa;${stats.totalSiswa}\n`;
-        csv += `Rata-rata;${stats.rataSekolah.toFixed(2)}\n`;
+        csv += `Rata-rata;${stats.rataSekolah.toFixed(1)}\n`;
         csv += `Ketuntasan;${stats.pctSekolah.toFixed(1)}%\n`;
         csv += `Mapel di Bawah KKM;${stats.belowKKMCount}\n`;
         csv += 'Kelas;Ketuntasan (%);Rata-rata\n';
         stats.classStats.forEach(c => {
-            csv += `"${c.name}";${c.pct.toFixed(1)};${c.avg.toFixed(2)}\n`;
+            csv += `"${c.name}";${c.pct.toFixed(1)};${c.avg.toFixed(1)}\n`;
         });
         csv += '\n';
     });
