@@ -117,12 +117,26 @@ body.theme-orange {
 }
 
 body {
-    background-color: var(--bg);
+    background:
+        radial-gradient(circle at top left, rgba(217, 164, 65, 0.12), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(124, 58, 237, 0.09), transparent 25%),
+        var(--bg);
     color: var(--text);
     min-height: 100vh;
     overflow-x: hidden;
     transition: background-color var(--t-smooth), color var(--t-smooth);
     -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(circle at center, black 25%, transparent 90%);
+    opacity: 0.35;
 }
 
 .ambient-bg {
@@ -300,13 +314,13 @@ body {
     position: sticky;
     top: 20px;
     z-index: 99;
-    background: var(--surface);
+    background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06));
     backdrop-filter: var(--glass-blur) var(--glass-sat);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-2xl);
-    padding: 14px 20px;
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 26px;
+    padding: 16px 20px;
     margin-bottom: 28px;
-    box-shadow: var(--shadow-float), var(--shadow-inner);
+    box-shadow: 0 18px 45px -28px rgba(15, 23, 42, 0.35), inset 0 1px 0 rgba(255,255,255,0.2);
     animation: slideDown 0.6s var(--t-spring);
 }
 
@@ -320,7 +334,7 @@ body {
 
 .brand h1 {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.3rem;
+    font-size: clamp(1.25rem, 1.5vw, 1.8rem);
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -331,12 +345,16 @@ body {
 .brand h1 i {
     color: var(--primary);
     font-size: 1.2rem;
+    background: rgba(184, 132, 44, 0.16);
+    padding: 10px;
+    border-radius: 12px;
 }
 
 .brand p {
     color: var(--muted);
     font-size: 0.8rem;
     font-weight: 500;
+    margin-top: 4px;
 }
 
 .top-actions {
@@ -367,6 +385,7 @@ body {
 .kelas-ketuntasan-panel {
     display: none;
     min-width: 0;
+    align-self: stretch;
 }
 
 .dashboard-workspace:has(#pane-kelas.active):has(#kelasKetuntasanBox:not(:empty)) > .kelas-ketuntasan-panel {
@@ -394,16 +413,17 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
     padding: 8px 16px;
     font-size: 0.85rem;
     font-weight: 600;
     border-radius: var(--radius-pill);
-    border: none;
+    border: 1px solid transparent;
     cursor: pointer;
     transition: all var(--t-spring);
     font-family: 'Manrope', sans-serif;
     box-shadow: var(--shadow-inner);
+    line-height: 1;
 }
 
 .btn:hover {
@@ -417,36 +437,98 @@ body {
 .btn-primary {
     background: linear-gradient(135deg, var(--primary), var(--primary-2));
     color: #FFFFFF;
-    box-shadow: 0 8px 20px -6px var(--primary-glow), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 12px 26px -10px var(--primary-glow), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+
+.btn-pdf,
+.btn-csv {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 46px;
+    min-height: 46px;
+    padding: 0 20px 0 10px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    border-radius: 999px;
+    line-height: 1;
+    border: 1px solid rgba(10, 25, 12, 0.06);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 10px 18px -14px rgba(15, 23, 42, 0.22);
 }
 
 .btn-pdf {
-    background: transparent;
-    color: #E5726A;
-    border: 1.5px solid rgba(229, 114, 106, 0.5);
-    box-shadow: none;
-}
-
-.btn-pdf:hover {
-    background: rgba(229, 114, 106, 0.12);
-    border-color: #E5726A;
+    background: linear-gradient(135deg, #f7d7b7 0%, #efb177 100%);
+    color: #5b2d12;
 }
 
 .btn-csv {
-    background: transparent;
-    color: var(--success);
-    border: 1.5px solid rgba(95, 199, 134, 0.5);
-    box-shadow: none;
+    background: linear-gradient(135deg, #d9f3d8 0%, #bae8b9 100%);
+    color: #1d5f2c;
 }
 
+.btn-pdf i,
+.btn-csv i {
+    position: relative;
+    top: -6px;
+    left: 1px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    border-radius: 9px;
+    background: rgba(255,255,255,0.38);
+    font-size: 0.8rem;
+    line-height: 1;
+    flex-shrink: 0;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+    transform: none;
+}
+
+.btn.btn-csv.btn-sm {
+    height: 46px;
+    min-height: 46px;
+    padding: 0 20px 0 10px;
+    font-size: 0.96rem;
+}
+
+.btn-pdf i { color: #7b3f18; }
+.btn-csv i { color: #1f5b2d; }
+
+.btn-pdf:hover,
 .btn-csv:hover {
-    background: var(--success-soft);
-    border-color: var(--success);
+    filter: brightness(1.02);
+    transform: translateY(-1px);
+}
+
+.export-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .btn-sm {
     padding: 6px 14px;
     font-size: 0.8rem;
+}
+
+.btn.btn-pdf.btn-sm,
+.btn.btn-csv.btn-sm {
+    padding: 8px 18px 8px 8px;
+    font-size: 0.92rem;
+    min-height: 38px;
+    height: auto;
+    line-height: 1;
+    min-width: 0;
+}
+
+.btn.btn-csv {
+    padding-left: 8px;
+    padding-right: 18px;
 }
 
 /* ========== KKM & SELECT ========== */
@@ -657,18 +739,49 @@ body.dark .select-control {
 /* ========== MAPEL CHIPS ========== */
 .mapel-chips {
     display: flex;
+    flex: 1 1 auto;
     flex-wrap: wrap;
-    gap: 6px;
-    padding: 10px;
+    gap: 8px;
+    padding: 10px 12px;
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: var(--surface);
-    box-shadow: var(--shadow-inner);
-    min-width: 200px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.02);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    min-width: 0;
+    min-height: 42px;
+}
+
+.mapel-control-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    margin-left: 0;
+}
+
+.mapel-control-actions .btn {
+    min-width: 110px;
+    white-space: nowrap;
+    height: 36px;
+    transform: translateY(5px);
+}
+
+.btn-mapel-clear {
+    background: var(--surface-solid);
+    color: var(--text);
+    border-color: var(--border);
+    box-shadow: none;
+}
+
+.btn-mapel-clear:hover {
+    background: var(--surface-soft);
+    border-color: var(--primary);
+    color: var(--text);
 }
 
 .mapel-chip-btn {
-    padding: 6px 14px;
+    padding: 7px 12px;
     border-radius: var(--radius-pill);
     border: 1px solid var(--border);
     background: var(--surface-solid);
@@ -680,25 +793,35 @@ body.dark .select-control {
     transition: all var(--t-fast);
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+    line-height: 1.2;
+    transform: translateY(2px);
 }
 
 .mapel-chip-btn:hover {
     border-color: var(--primary);
     color: var(--text);
+    transform: translateY(-1px);
 }
 
 .mapel-chip-btn.active-chip {
-    background: var(--primary);
+    background: linear-gradient(135deg, var(--primary), var(--primary-2));
     color: #fff;
     border-color: var(--primary);
-    box-shadow: 0 4px 12px var(--primary-glow);
+    box-shadow: 0 8px 18px -8px var(--primary-glow);
 }
 
 .mapel-chip-x {
-    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    font-size: 0.82rem;
     line-height: 1;
-    opacity: 0.85;
+    opacity: 0.9;
+    background: rgba(255,255,255,0.18);
 }
 
 /* ========== STATS CARDS ========== */
@@ -839,12 +962,12 @@ body.dark .select-control {
 /* ========== SECTIONS ========== */
 .section-container {
     margin-bottom: 20px;
-    background: var(--surface);
+    background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
     backdrop-filter: var(--glass-blur);
     border: 1px solid var(--border);
-    border-radius: var(--radius-3xl);
+    border-radius: 26px;
     padding: 24px 28px;
-    box-shadow: var(--shadow-float), var(--shadow-inner);
+    box-shadow: 0 18px 33px -25px rgba(15, 23, 42, 0.26), inset 0 1px 0 rgba(255,255,255,0.09);
 }
 
 .section-title {
@@ -854,17 +977,27 @@ body.dark .select-control {
     color: var(--text);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     margin-bottom: 20px;
+    line-height: 1.2;
+    flex-wrap: wrap;
+    transform: translateY(4px);
 }
 
 .section-title i {
-    padding: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
     border-radius: var(--radius-lg);
     background: linear-gradient(135deg, var(--primary), var(--primary-2));
     color: #fff;
     box-shadow: 0 4px 15px var(--primary-glow);
     font-size: 1.2rem;
+    flex-shrink: 0;
+    transform: translateY(6px);
 }
 
 .table-wrap {
@@ -1084,6 +1217,7 @@ td .mapel-name {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 /* ========== REKAP CARDS ========== */
@@ -1345,6 +1479,11 @@ td .mapel-name {
 
 .ketuntasan-summary > .section-title {
     margin-top: 0 !important;
+    align-items: flex-end;
+}
+
+.ketuntasan-summary > .section-title i {
+    transform: translateY(3px);
 }
 
 .ketuntasan-average {
@@ -1785,8 +1924,8 @@ td .mapel-name {
 .jenjang-dropdown-row {
     display: flex;
     align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
+    gap: 12px;
+    flex-wrap: nowrap;
 }
 
 /* ========== FOOTER ========== */

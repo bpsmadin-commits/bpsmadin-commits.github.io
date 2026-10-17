@@ -65,7 +65,7 @@
 
                             <div class="kkm-group">
                                 <label for="kkmInput">KKM</label>
-                                <input type="number" id="kkmInput" value="50" min="0" max="100" step="1" title="Kriteria Ketuntasan Minimal">
+                                <input type="number" id="kkmInput" value="50" min="0" max="100" step="0.1" title="Kriteria Ketuntasan Minimal">
                                 <button id="resetKkmBtn" class="btn-kkm-reset" title="Reset ke 50">
                                     <i class="fa-solid fa-rotate-left"></i>
                                 </button>
@@ -197,8 +197,10 @@
                                 <i class="fa-solid fa-list-check"></i> Mata Pelajaran (tahan Ctrl untuk multi)
                             </span>
                             <div id="mapelSelect" class="mapel-chips"></div>
-                            <button id="selectAllMapel" class="btn btn-sm btn-primary">Pilih Semua</button>
-                            <button id="deselectAllMapel" class="btn btn-sm" style="background:var(--surface-solid);color:var(--text);">Hapus Semua</button>
+                            <div class="mapel-control-actions">
+                                <button id="selectAllMapel" class="btn btn-sm btn-primary">Pilih Semua</button>
+                                <button id="deselectAllMapel" class="btn btn-sm btn-mapel-clear">Hapus Semua</button>
+                            </div>
                         </div>
                     </div>
                     <div class="section-container" id="jenjangContainer"></div>
@@ -224,8 +226,10 @@
                                 <i class="fa-solid fa-book"></i> Pilih Mapel
                             </span>
                             <div id="grafikMapelSelect" class="mapel-chips"></div>
-                            <button id="grafikSelectAllMapel" class="btn btn-sm btn-primary" type="button">Pilih Semua</button>
-                            <button id="grafikDeselectAllMapel" class="btn btn-sm" style="background:var(--surface-solid);color:var(--text);" type="button">Hapus Semua</button>
+                            <div class="mapel-control-actions">
+                                <button id="grafikSelectAllMapel" class="btn btn-sm btn-primary" type="button">Pilih Semua</button>
+                                <button id="grafikDeselectAllMapel" class="btn btn-sm btn-mapel-clear" type="button">Hapus Semua</button>
+                            </div>
                         </div>
                         <div id="grafikPerjenjangContainer"></div>
                     </div>

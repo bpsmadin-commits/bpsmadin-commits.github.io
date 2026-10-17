@@ -420,6 +420,18 @@ function formatClassLabel(sheetName) {
     return sheetName.replace(/^KLS\b/i, 'Kelas').replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
+function getScoreScale() {
+    if (!Number.isFinite(KKM)) return 100;
+    return KKM > 10 ? 100 : 10;
+}
+
+function normalizeScoreToPercent(avg) {
+    const scale = getScoreScale();
+    const safeAvg = Number.isFinite(avg) ? avg : 0;
+    if (scale <= 0) return 0;
+    return Math.min(100, (safeAvg / scale) * 100);
+}
+
 function getTuntasCount(studentAverages) {
     return studentAverages.filter(avg => avg >= KKM).length;
 }
@@ -435,56 +447,41 @@ function sortJenjangKeys(keys) {
 
 // UI Helpers
 function getProgressBarClass(avg) {
-    if (avg >= 75) return 'good';
+    const scale = getScoreScale();
+    const goodThreshold = scale > 10 ? 75 : scale * 0.75;
+    if (avg >= goodThreshold) return 'good';
     if (avg >= KKM) return 'ok';
     return 'bad';
 }
 
 function getProgressBarHTML(avg) {
-    const pct = Math.min(100, avg);
+    const pct = normalizeScoreToPercent(avg);
     const cls = getProgressBarClass(avg);
-    return `<div class="progress-cell"><div class="progress-bar-wrap"><div class="progress-bar-fill ${cls}" style="width:0%" data-target-width="${pct}%"></div></div><strong class="count-value" data-count-to="${avg}" data-decimals="1">0.0</strong></div>`;
+    return `<div class="progress-cell"><div class="progress-bar-wrap"><div class="progress-bar-fill ${cls}" style="width:0%" data-target-width="${pct.toFixed(1)}%"></div></div><strong class="count-value" data-count-to="${avg}" data-decimals="1">0.0</strong></div>`;
 }
 
-// Animate a numeric text node counting up from 0 to its target value
-let countAnimSeq = 0;
-function animateCountValue(el, target, decimals, suffix, duration = 1000) {
-    const seq = ++countAnimSeq;
-    el.dataset.animSeq = seq;
-    const startTime = performance.now();
-    function step(now) {
-        if (parseInt(el.dataset.animSeq, 10) !== seq) return; // a newer animation took over
-        const t = Math.min((now - startTime) / duration, 1);
-        const eased = 1 - Math.pow(1 - t, 4);
-        el.textContent = (target * eased).toFixed(decimals) + suffix;
-        if (t < 1) requestAnimationFrame(step);
-        else el.textContent = target.toFixed(decimals) + suffix;
-    }
-    requestAnimationFrame(step);
+// Counter animation dibuang supaya render lebih ringan di dataset besar.
+// Angka langsung ditampilkan final, bar masih punya transisi CSS yang ringan.
+function animateCountValue(el, target, decimals, suffix) {
+    el.textContent = target.toFixed(decimals) + suffix;
 }
 
-// Find every [data-count-to] / progress bar inside `scope` and (re)animate them from 0.
-// Safe to call repeatedly — e.g. every time a tab/pane is switched into view.
+// Find every [data-count-to] / progress bar inside `scope` and set them to final state.
+// Ini menghindari requestAnimationFrame yang berat di banyak elemen.
 function runCountUps(scope) {
     const root = scope || document;
 
-    // Snap progress bars back to 0 instantly so the fill can replay every single time
     const bars = root.querySelectorAll('.progress-bar-fill[data-target-width]');
     bars.forEach(bar => {
         bar.style.transition = 'none';
-        bar.style.width = '0%';
+        bar.style.width = bar.dataset.targetWidth || '0%';
     });
 
-    // Sama juga buat batang grafik perjenjang (height, bukan width)
     const jcBars = root.querySelectorAll('.jc-bar-fill[data-target-height]');
     jcBars.forEach(bar => {
         bar.style.transition = 'none';
-        bar.style.height = '0%';
+        bar.style.height = bar.dataset.targetHeight || '0%';
     });
-
-    void root.offsetHeight; // force reflow before re-enabling the transition
-    bars.forEach(bar => { bar.style.transition = ''; });
-    jcBars.forEach(bar => { bar.style.transition = ''; });
 
     root.querySelectorAll('.count-value[data-count-to]').forEach(el => {
         const target = parseFloat(el.dataset.countTo);
@@ -495,21 +492,23 @@ function runCountUps(scope) {
     });
 
     requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            bars.forEach(bar => { bar.style.width = bar.dataset.targetWidth; });
-            jcBars.forEach(bar => { bar.style.height = bar.dataset.targetHeight; });
-        });
+        bars.forEach(bar => { bar.style.transition = ''; });
+        jcBars.forEach(bar => { bar.style.transition = ''; });
     });
 }
 
 function getStatusBadge(avg) {
-    if (avg >= 75) return '<span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> Baik</span>';
+    const scale = getScoreScale();
+    const goodThreshold = scale > 10 ? 75 : scale * 0.75;
+    if (avg >= goodThreshold) return '<span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> Baik</span>';
     if (avg >= KKM) return '<span class="badge badge-warning"><i class="fa-solid fa-exclamation-triangle"></i> Cukup</span>';
     return '<span class="badge badge-danger"><i class="fa-solid fa-circle-exclamation"></i> Perlu Bimbingan</span>';
 }
 
 function getStatusText(avg) {
-    if (avg >= 75) return "Baik";
+    const scale = getScoreScale();
+    const goodThreshold = scale > 10 ? 75 : scale * 0.75;
+    if (avg >= goodThreshold) return "Baik";
     if (avg >= KKM) return "Cukup";
     return "Perlu Bimbingan";
 }
@@ -1705,8 +1704,9 @@ quartalTabs.querySelectorAll('.quartal-btn').forEach(btn => {
 function handleKKMChange(newValue) {
     const val = parseFloat(newValue);
     if (isNaN(val) || val < 0 || val > 100) { kkmInput.value = KKM; return; }
-    KKM = Math.round(val);
-    kkmInput.value = KKM;
+    KKM = Number.parseFloat(val.toFixed(2));
+    const displayValue = Number.isInteger(KKM) ? String(KKM) : KKM.toString();
+    kkmInput.value = displayValue;
     saveUIState();
     refreshAllViews();
 }
