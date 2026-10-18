@@ -1351,7 +1351,8 @@ body::before {
 
 .leger-pdf-page {
     width: 1080px;
-    padding: 18px;
+    padding: 1.5mm;
+    box-sizing: border-box;
     background: #fff;
     color: #111;
     font-family: 'Manrope', sans-serif;
@@ -1379,7 +1380,7 @@ body::before {
 .leger-pdf-page .leger-table {
     width: 100%;
     min-width: 0;
-    table-layout: fixed;
+    table-layout: auto;
     font-size: 7px;
 }
 
@@ -1400,6 +1401,7 @@ body::before {
     line-height: 1.15;
     white-space: nowrap;
 }
+
 
 .leger-pdf-page .leger-table .leger-failed td:last-child {
     color: #b42318;

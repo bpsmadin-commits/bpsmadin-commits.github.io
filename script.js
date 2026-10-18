@@ -436,7 +436,7 @@ function renderLeger(sheetName = legerSheetSelect.value) {
             ...metaFields.map(([key]) => meta[key] || ''),
             studentName,
             meta.kelas || formatClassLabel(sheetName),
-            ...scores.map(score => typeof score === 'number' && Number.isFinite(score) ? score.toFixed(1) : ''),
+            ...scores.map(score => typeof score === 'number' && Number.isFinite(score) ? score.toFixed(0) : ''),
             total.toFixed(1),
             average.toFixed(1),
             average >= KKM ? 'Tuntas' : 'Tidak Tuntas'
@@ -2162,13 +2162,14 @@ document.getElementById('exportPDFLeger').addEventListener('click', async () => 
             if (pageIndex > 0) doc.addPage('a4', 'landscape');
             const imageW = canvas.width / 3 * 0.264583;
             const imageH = canvas.height / 3 * 0.264583;
-            const usableWmm = 297 - 16;
-            const usableHmm = 210 - 12;
+            const pdfMargin = 1.5;
+            const usableWmm = 297 - (pdfMargin * 2);
+            const usableHmm = 210 - (pdfMargin * 2);
             const scale = Math.min(usableWmm / imageW, usableHmm / imageH);
             const width = imageW * scale;
             const height = imageH * scale;
             doc.addImage(canvas.toDataURL('image/png'), 'PNG',
-                (297 - width) / 2, (210 - height) / 2, width, height);
+                (297 - width) / 2, pdfMargin, width, height);
         }
 
         const safe = sheetName.replace(/[^a-zA-Z0-9]/g, '_');
