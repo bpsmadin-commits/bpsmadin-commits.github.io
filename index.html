@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>Statistik Nilai Ujian | Madrasah Diniyah</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='%23B8842C'%3E%3Cpath d='M16 2L8 14h16L16 2zM12 22l2-4 2 4zM16 10l4 4h-8z'/%3E%3C/svg%3E" />
+
+    <!-- Font Awesome -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet';">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></noscript>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@1,600&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body class="dark">
+    <div class="ambient-bg"></div>
+
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo"><i class="fa-solid fa-graduation-cap"></i></div>
+            <nav class="sidebar-nav" id="sidebarNav">
+                <button class="sidebar-item" data-side="overview" title="Overview">
+                    <i class="fa-solid fa-chart-simple"></i>
+                    <span class="sidebar-tip">Overview</span>
+                </button>
+                <button class="sidebar-item active-nav" data-side="kelas" title="Per Kelas">
+                    <i class="fa-solid fa-chalkboard"></i>
+                    <span class="sidebar-tip">Per Kelas</span>
+                </button>
+                <button class="sidebar-item" data-side="jenjang" title="Jenjang">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span class="sidebar-tip">Jenjang</span>
+                </button>
+            </nav>
+            <div class="sidebar-bottom">
+                <label for="file-input" class="sidebar-upload-btn" title="Upload Excel Data">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </label>
+            </div>
+        </aside>
+        <main class="saas-main">
+            <div class="dashboard">
+
+                <div class="topbar">
+                    <div class="topbar-wrap">
+                        <div class="brand">
+                            <h1>
+                                <i class="fa-solid fa-graduation-cap"></i>
+                                Statistik Nilai Ujian
+                            </h1>
+                            <p>Madrasah Diniyah "Miftahul Ulum" · Tahun 1447-1448 H</p>
+                        </div>
+
+                        <div class="top-actions">
+                            <label for="file-input" class="btn btn-primary btn-sm" title="Upload data dari Excel / CSV">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <span id="upload-btn-text">Upload Data</span>
+                            </label>
+                            <input type="file" id="file-input" accept=".xlsx, .xls, .csv" />
+
+                            <div class="kkm-group">
+                                <label for="kkmInput">KKM</label>
+                                <input type="number" id="kkmInput" value="50" min="0" max="100" step="0.1" title="Kriteria Ketuntasan Minimal">
+                                <button id="resetKkmBtn" class="btn-kkm-reset" title="Reset ke 50">
+                                    <i class="fa-solid fa-rotate-left"></i>
+                                </button>
+                            </div>
+
+                            <button id="clearDataBtn" class="btn btn-sm" style="background:var(--danger-soft);color:var(--danger);" title="Hapus data">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+
+                            <div class="theme-toggle">
+                                <button id="purpleModeBtn" class="theme-btn" data-theme="purple" title="Ungu Elegan">
+                                    <i class="fa-solid fa-droplet"></i>
+                                </button>
+                                <button id="greenModeBtn" class="theme-btn" data-theme="green" title="Hijau Terang">
+                                    <i class="fa-solid fa-leaf"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-workspace" id="dashboardWorkspace">
+                <!-- QUARTAL BAR -->
+                <div class="quartal-bar" id="quartal-bar">
+                    <span class="meta-title" style="margin:0;">
+                        <i class="fa-solid fa-calendar-days"></i> Periode
+                    </span>
+                    <div class="quartal-toggle" id="quartalTabs">
+                        <button class="quartal-btn active-quartal" data-q="Kuartal_I">Kuartal I</button>
+                        <button class="quartal-btn" data-q="Kuartal_II">Kuartal II</button>
+                        <button class="quartal-btn" data-q="Kuartal_III">Kuartal III</button>
+                    </div>
+                </div>
+
+                <!-- TAB SWITCHER -->
+                <div class="main-tabs kelas-active" id="mainTabs">
+                    <button class="main-tab active" data-pane="kelas"><i class="fa-solid fa-table-list" aria-hidden="true"></i> Per Kelas</button>
+                    <button class="main-tab" data-pane="jenjang"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Per Jenjang</button>
+                    <button class="main-tab" data-pane="grafikjenjang"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> Grafik Perjenjang</button>
+                    <button class="main-tab" data-pane="leger"><i class="fa-solid fa-book-open" aria-hidden="true"></i> Leger</button>
+                    <div class="jenjang-student-search" id="jenjangStudentSearch">
+                        <label class="jenjang-student-search-input-wrap">
+                            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                            <input id="jenjangStudentSearchInput" type="search" placeholder="Cari nilai siswa..." aria-label="Cari siswa di jenjang terpilih">
+                        </label>
+                        <div class="jenjang-student-search-results" id="jenjangStudentSearchResults" role="region" aria-live="polite" hidden></div>
+                    </div>
+                    <div class="kelas-quick-summary" id="kelasQuickSummary" role="status" aria-label="Ringkasan ketuntasan kelas"></div>
+                </div>
+
+                <!-- OVERVIEW PANE -->
+                <div class="main-pane" id="pane-overview">
+                    <div class="section-container">
+                        <div class="section-title" style="justify-content:space-between; flex-wrap:wrap;">
+                            <span style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chart-simple"></i> Ringkasan Sekolah</span>
+                            <div class="export-row" style="margin-top:0;">
+                                <button id="exportPDFOverview" class="btn btn-pdf btn-sm"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+                                <button id="exportCSVOverview" class="btn btn-csv btn-sm"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+                            </div>
+                        </div>
+                        <div id="overviewContent"></div>
+                    </div>
+                </div>
+
+                <!-- PER KELAS PANE -->
+                <div class="main-pane active pane-show" id="pane-kelas">
+                    <!-- FILTER BAR (Kelas) -->
+                    <div class="filter-bar" id="filterBar">
+                        <span class="meta-title" style="margin:0;">
+                            <i class="fa-solid fa-filter"></i> Filter Kelas
+                        </span>
+                        <select id="sheet-select" class="select-control"></select>
+                    </div>
+                    <div class="section-container">
+                        <div class="section-title" style="justify-content:space-between; flex-wrap:wrap;">
+                            <span style="display:flex; align-items:center; gap:10px;">
+                                <i class="fa-solid fa-table-cells-large"></i>
+                                <span id="kelasTableTitle">Tabel Analisis Per Kelas</span>
+                            </span>
+                            <div class="export-row" style="margin-top:0;">
+                                <button id="exportPDFKelas" class="btn btn-pdf btn-sm">
+                                    <i class="fa-solid fa-file-pdf"></i> Export PDF
+                                </button>
+                                <button id="exportCSVKelas" class="btn btn-csv btn-sm">
+                                    <i class="fa-solid fa-file-csv"></i> Export CSV
+                                </button>
+                            </div>
+                        </div>
+                        <div id="kelasMiniStats"></div>
+                        <div class="table-wrap">
+                            <table id="avg-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Mata Pelajaran</th>
+                                        <th>Rata-rata</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body-kelas">
+                                    <tr>
+                                        <td colspan="4" style="padding:0;">
+                                            <div class="empty-dropzone">
+                                                <div class="empty-dropzone-icon"><i class="fa-solid fa-file-excel"></i></div>
+                                                <div class="empty-dropzone-title">Belum ada data</div>
+                                                <div class="empty-dropzone-text">Silakan upload file Excel nilai siswa untuk mulai melihat analisis performa akademik.</div>
+                                                <label for="file-input" class="empty-dropzone-btn">
+                                                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload Data Sekarang
+                                                </label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="kelasKetuntasanSummaryBox"></div>
+                    </div>
+                </div>
+
+                <!-- PER JENJANG PANE -->
+                <div class="main-pane" id="pane-jenjang">
+                    <!-- DROPDOWN BAR (Jenjang) -->
+                    <div class="jenjang-dropdown-bar" id="jenjangDropdownBar" style="display:none;">
+                        <div class="jenjang-dropdown-row">
+                            <span class="meta-title" style="margin:0;">
+                                <i class="fa-solid fa-filter"></i> Pilih Jenjang
+                            </span>
+                            <select id="jenjang-select" class="select-control"></select>
+                        </div>
+                        <div class="jenjang-dropdown-row">
+                            <span class="meta-title" style="margin:0;">
+                                <i class="fa-solid fa-list-check"></i> Mata Pelajaran (tahan Ctrl untuk multi)
+                            </span>
+                            <div id="mapelSelect" class="mapel-chips"></div>
+                            <div class="mapel-control-actions">
+                                <button id="selectAllMapel" class="btn btn-sm btn-primary">Pilih Semua</button>
+                                <button id="deselectAllMapel" class="btn btn-sm btn-mapel-clear">Hapus Semua</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-container" id="jenjangContainer"></div>
+                </div>
+
+                <!-- GRAFIK PERJENJANG PANE (perbandingan % ketuntasan antar kelas dalam satu jenjang) -->
+                <div class="main-pane" id="pane-grafikjenjang">
+                    <div class="section-container">
+                        <div class="section-title" style="justify-content:space-between; flex-wrap:wrap;">
+                            <span style="display:flex; align-items:center; gap:10px;">
+                                <i class="fa-solid fa-chart-column"></i>
+                                Grafik Perjenjang
+                            </span>
+                        </div>
+                        <div class="jenjang-dropdown-row" style="margin-bottom:16px;">
+                            <span class="meta-title" style="margin:0;">
+                                <i class="fa-solid fa-filter"></i> Pilih Jenjang
+                            </span>
+                            <select id="grafikJenjangSelect" class="select-control"></select>
+                        </div>
+                        <div class="jenjang-dropdown-row" style="margin-bottom:16px; align-items:flex-start;">
+                            <span class="meta-title" style="margin:0; padding-top:6px;">
+                                <i class="fa-solid fa-book"></i> Pilih Mapel
+                            </span>
+                            <div id="grafikMapelSelect" class="mapel-chips"></div>
+                            <div class="mapel-control-actions">
+                                <button id="grafikSelectAllMapel" class="btn btn-sm btn-primary" type="button">Pilih Semua</button>
+                                <button id="grafikDeselectAllMapel" class="btn btn-sm btn-mapel-clear" type="button">Hapus Semua</button>
+                            </div>
+                        </div>
+                        <div id="grafikPerjenjangContainer"></div>
+                    </div>
+                </div>
+                <div class="main-pane" id="pane-leger">
+                    <div class="filter-bar">
+                        <label class="meta-title" for="legerSheetSelect" style="margin:0;">
+                            <i class="fa-solid fa-filter"></i> Pilih Kelas
+                        </label>
+                        <select id="legerSheetSelect" class="select-control"></select>
+                        <button id="exportPDFLeger" class="btn btn-pdf btn-sm" type="button">
+                            <i class="fa-solid fa-file-pdf"></i> Export PDF Leger
+                        </button>
+                    </div>
+                    <div class="section-container">
+                        <div id="legerContainer"></div>
+                    </div>
+                </div>
+                <aside class="kelas-ketuntasan-panel" id="kelasKetuntasanPanel">
+                    <div id="kelasKetuntasanBox"></div>
+                </aside>
+                </div>
+
+                <!-- FOOTER -->
+                <div class="footer-note">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Data Privacy Secured · Local Storage Encrypted
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="pdf-export-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
