@@ -274,7 +274,7 @@ function detectHeaderAndData(worksheet) {
         nopes: headerRow.findIndex(cell => /^(NO\s*PES|NOPES|NOMOR PESERTA|NO PESERTA)$/i.test(normalizeCellText(cell))),
         nis: headerRow.findIndex(cell => /^(NIS|NISN)$/i.test(normalizeCellText(cell))),
         asr: headerRow.findIndex(cell => /^ASR$/i.test(normalizeCellText(cell))),
-        kelas: headerRow.findIndex(cell => /^(KELAS|KLS)$/i.test(normalizeCellText(cell)))
+        kelas: headerRow.findIndex(cell => /KELAS|KLS/i.test(normalizeCellText(cell))),
     };
     const ignoreKeywords = ["NO", "NOPES", "NIS", "NAMA", "ASR", "KELAS", "KLS", "RUANG", "ASUHAN", "الترتيب",
         "جملة", "ألتسوية", "فائز", "RANK", "SUM", "jml"
