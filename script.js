@@ -22,6 +22,7 @@ function mergeCachedSheetData(sheetList, sheetsData) {
     let subjects = [];
     let scores = [];
     let studentNames = [];
+    let studentMeta = [];
     let studentCount = 0;
     for (const name of sheetList) {
         const data = sheetsData[name];
@@ -30,10 +31,11 @@ function mergeCachedSheetData(sheetList, sheetsData) {
         if (data.subjects.length === subjects.length) {
             scores = scores.concat(data.scores);
             studentNames = studentNames.concat(data.studentNames || data.scores.map(() => ''));
+            studentMeta = studentMeta.concat(data.studentMeta || data.scores.map(() => ({})));
             studentCount += data.studentCount || 0;
         }
     }
-    return { subjects, averages: computeAverages(subjects, scores), studentCount, scores, studentNames };
+    return { subjects, averages: computeAverages(subjects, scores), studentCount, scores, studentNames, studentMeta };
 }
 
 async function ensureXLSX() {
@@ -106,6 +108,8 @@ const kelasKetuntasanSummaryBox = document.getElementById('kelasKetuntasanSummar
 const kelasKetuntasanBox = document.getElementById('kelasKetuntasanBox');
 const kelasMiniStats = document.getElementById('kelasMiniStats');
 const kelasQuickSummary = document.getElementById('kelasQuickSummary');
+const legerSheetSelect = document.getElementById('legerSheetSelect');
+const legerContainer = document.getElementById('legerContainer');
 const jenjangStudentSearchInput = document.getElementById('jenjangStudentSearchInput');
 const jenjangStudentSearchResults = document.getElementById('jenjangStudentSearchResults');
 const metaDataStatus = document.getElementById('meta-data-status');
@@ -266,6 +270,12 @@ function detectHeaderAndData(worksheet) {
     const subjectIndices = [],
         subjectNames = [];
     const nameColIdx = headerRow.findIndex(cell => ['NAMA', 'NAMA SISWA'].includes(normalizeCellText(cell).toUpperCase()));
+    const metaColumnIndices = {
+        nopes: headerRow.findIndex(cell => /^(NO\s*PES|NOPES|NOMOR PESERTA|NO PESERTA)$/i.test(normalizeCellText(cell))),
+        nis: headerRow.findIndex(cell => /^(NIS|NISN)$/i.test(normalizeCellText(cell))),
+        asr: headerRow.findIndex(cell => /^ASR$/i.test(normalizeCellText(cell))),
+        kelas: headerRow.findIndex(cell => /^(KELAS|KLS)$/i.test(normalizeCellText(cell)))
+    };
     const ignoreKeywords = ["NO", "NOPES", "NIS", "NAMA", "ASR", "KELAS", "KLS", "RUANG", "ASUHAN", "الترتيب",
         "جملة", "ألتسوية", "فائز", "RANK", "SUM", "jml"
     ];
@@ -309,6 +319,7 @@ function detectHeaderAndData(worksheet) {
 
     const studentScores = [];
     const studentNames = [];
+    const studentMeta = [];
     for (let r = dataStartRow; r < rows.length; r++) {
         const row = rows[r];
         if (!row || row.length === 0) continue;
@@ -329,6 +340,9 @@ function detectHeaderAndData(worksheet) {
         if (hasNumeric) {
             studentScores.push(scoreRow);
             studentNames.push(normalizeCellText(row[nameColIdx]));
+            studentMeta.push(Object.fromEntries(Object.entries(metaColumnIndices)
+                .filter(([, colIndex]) => colIndex !== -1)
+                .map(([key, colIndex]) => [key, normalizeCellText(row[colIndex])])));
         }
     }
 
@@ -340,7 +354,8 @@ function detectHeaderAndData(worksheet) {
         asuhanVal = parseAsuhanText(asuhanRaw);
     }
 
-    return { subjects: subjectNames, scores: studentScores, studentNames, studentCount: studentScores.length, asuhan: asuhanVal };
+    return { subjects: subjectNames, scores: studentScores, studentNames, studentMeta,
+        studentCount: studentScores.length, asuhan: asuhanVal };
 }
 
 function computeAverages(subjects, scores) {
@@ -367,23 +382,25 @@ function mergeSheetData(sheetList) {
     let allSubjects = [],
         allScores = [],
         allStudentNames = [],
+        allStudentMeta = [],
         totalStudents = 0;
     for (const sheetName of sheetList) {
         const ws = workbookData.Sheets[sheetName];
         if (!ws) continue;
-        const { subjects, scores, studentNames, studentCount } = detectHeaderAndData(ws);
+        const { subjects, scores, studentNames, studentMeta, studentCount } = detectHeaderAndData(ws);
         if (subjects.length === 0 || scores.length === 0) continue;
         if (allSubjects.length === 0) allSubjects = subjects.slice();
         for (let i = 0; i < scores.length; i++) {
             if (scores[i].length === allSubjects.length) {
                 allScores.push(scores[i].slice());
                 allStudentNames.push(studentNames[i] || '');
+                allStudentMeta.push(studentMeta?.[i] || {});
             }
         }
         totalStudents += studentCount;
     }
     return { subjects: allSubjects, averages: computeAverages(allSubjects, allScores), studentCount: totalStudents,
-        scores: allScores, studentNames: allStudentNames };
+        scores: allScores, studentNames: allStudentNames, studentMeta: allStudentMeta };
 }
 
 function computeStudentAverages(scores) {
@@ -395,6 +412,79 @@ function computeStudentAverages(scores) {
                 count++; } }
         return count > 0 ? sum / count : 0;
     });
+}
+
+function renderLeger(sheetName = legerSheetSelect.value) {
+    const data = allSheetsData[sheetName];
+    if (!data?.scores?.length) {
+        legerContainer.innerHTML = '<div class="leger-empty">Belum ada data nilai untuk dibuat leger.</div>';
+        return;
+    }
+
+    const metaFields = [
+        ['nopes', 'NOPES'],
+        ['nis', 'NIS'],
+        ['asr', 'ASR']
+    ].filter(([key]) => (data.studentMeta || []).some(meta => meta?.[key]));
+    const headers = ['No', ...metaFields.map(([, label]) => label), 'Nama', 'Kelas',
+        ...data.subjects, 'Jumlah', 'Rata-rata', 'Status'];
+    const rows = data.scores.map((scores, index) => {
+        const meta = data.studentMeta?.[index] || {};
+        const studentName = data.studentNames?.[index] || 'Nama tidak terbaca';
+        const average = computeStudentAverages([scores])[0] || 0;
+        const total = scores.reduce((sum, score) => sum + (typeof score === 'number' && Number.isFinite(score) ? score : 0), 0);
+        const values = [
+            String(index + 1),
+            ...metaFields.map(([key]) => meta[key] || ''),
+            studentName,
+            meta.kelas || formatClassLabel(sheetName),
+            ...scores.map(score => typeof score === 'number' && Number.isFinite(score) ? score.toFixed(1) : ''),
+            total.toFixed(1),
+            average.toFixed(1),
+            average >= KKM ? 'Tuntas' : 'Tidak Tuntas'
+        ];
+        return { values, name: studentName, average };
+    });
+
+    const tableHTML = `
+        <div class="leger-table-wrap">
+            <table class="leger-table">
+                <thead><tr>${headers.map(header => `<th>${arabicTextHTML(header)}</th>`).join('')}</tr></thead>
+                <tbody>${rows.map(row => `<tr class="${row.average >= KKM ? 'leger-passed' : 'leger-failed'}">${row.values.map(value => `<td>${arabicTextHTML(value)}</td>`).join('')}</tr>`).join('')}</tbody>
+            </table>
+        </div>`;
+    const wali = waliKelas[sheetName] || data.asuhan || '';
+    legerContainer.innerHTML = `
+        <div class="leger-heading">
+            <div>
+                <h2>Leger Nilai Ujian — ${escapeHTML(formatClassLabel(sheetName))}</h2>
+                <p>${rows.length} siswa${wali ? ` · Wali Kelas: ${arabicTextHTML(wali)}` : ''}</p>
+            </div>
+        </div>
+        ${tableHTML}`;
+}
+
+function buildLegerDropdown() {
+    const selectedSheet = legerSheetSelect.value || currentSheetName;
+    legerSheetSelect.innerHTML = '';
+    const sheetNames = originalSheetNames.filter(name => allSheetsData[name]?.scores?.length);
+    if (!sheetNames.length) {
+        legerSheetSelect.disabled = true;
+        document.getElementById('exportPDFLeger').disabled = true;
+        legerContainer.innerHTML = '<div class="leger-empty">Upload data nilai untuk membuat leger.</div>';
+        return;
+    }
+
+    legerSheetSelect.disabled = false;
+    document.getElementById('exportPDFLeger').disabled = false;
+    sheetNames.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = formatClassLabel(name);
+        legerSheetSelect.appendChild(option);
+    });
+    legerSheetSelect.value = sheetNames.includes(selectedSheet) ? selectedSheet : sheetNames[0];
+    renderLeger(legerSheetSelect.value);
 }
 
 function getClassNumber(sheetName) {
@@ -1545,10 +1635,10 @@ function processAllSheets() {
 
     for (const name of sheetNames) {
         const ws = workbookData.Sheets[name];
-        if (!ws) { allSheetsData[name] = { subjects: [], averages: [], studentCount: 0, scores: [], studentNames: [] }; continue; }
-        const { subjects, scores, studentNames, studentCount, asuhan } = detectHeaderAndData(ws);
+        if (!ws) { allSheetsData[name] = { subjects: [], averages: [], studentCount: 0, scores: [], studentNames: [], studentMeta: [] }; continue; }
+        const { subjects, scores, studentNames, studentMeta, studentCount, asuhan } = detectHeaderAndData(ws);
         const avgs = computeAverages(subjects, scores);
-        allSheetsData[name] = { subjects, averages: avgs, studentCount, scores: scores || [], studentNames, asuhan };
+        allSheetsData[name] = { subjects, averages: avgs, studentCount, scores: scores || [], studentNames, studentMeta, asuhan };
         if (asuhan) waliKelas[name] = asuhan;
     }
 
@@ -1609,6 +1699,7 @@ function processAllSheets() {
 
     buildJenjangDropdown();
     buildGrafikJenjangDropdown();
+    buildLegerDropdown();
     saveToLocalStorage();
     saveUIState();
     updateQuartalTabsUI();
@@ -1653,6 +1744,7 @@ function renderQuartalView(quartal) {
         allSheetsData = {};
         originalSheetNames = [];
         renderKelasTable([], [], '');
+        buildLegerDropdown();
         jenjangContainer.innerHTML =
             '<p style="color:var(--muted); text-align:center; padding:40px; font-size:1rem;">Menunggu data komparatif...</p>';
         saveUIState();
@@ -1729,6 +1821,7 @@ function renderQuartalView(quartal) {
     uploadBtnText.innerText = "Upload Data";
     buildJenjangDropdown();
     buildGrafikJenjangDropdown();
+    buildLegerDropdown();
     saveUIState();
 }
 
@@ -1977,6 +2070,77 @@ document.querySelectorAll('.main-tab').forEach(tab => {
     tab.addEventListener('click', function() {
         switchPane(this.dataset.pane);
     });
+});
+
+legerSheetSelect.addEventListener('change', () => renderLeger());
+
+document.getElementById('exportPDFLeger').addEventListener('click', async () => {
+    const sheetName = legerSheetSelect.value;
+    const data = allSheetsData[sheetName];
+    const sourceTable = legerContainer.querySelector('.leger-table');
+    if (!data?.scores?.length || !sourceTable) {
+        alert('Tidak ada data leger untuk diekspor.');
+        return;
+    }
+
+    const button = document.getElementById('exportPDFLeger');
+    button.disabled = true;
+    try {
+        await ensurePDFLibs();
+        if (document.fonts?.ready) await document.fonts.ready;
+
+        const sourceRows = [...sourceTable.tBodies[0].rows];
+        const rowsPerPage = 30;
+        const pageCount = Math.ceil(sourceRows.length / rowsPerPage);
+        const pdfBackground = '#FFFFFF';
+        const doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+        for (let pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+            const page = document.createElement('div');
+            page.className = 'leger-pdf-page';
+            const teacher = waliKelas[sheetName] || data.asuhan || '';
+            page.innerHTML = `
+                <header>
+                    <h1>LEGER NILAI UJIAN</h1>
+                    <p>Madrasah Diniyah "Miftahul Ulum" · ${escapeHTML(formatClassLabel(sheetName))}${teacher ? ` · Wali Kelas: ${arabicTextHTML(teacher)}` : ''}</p>
+                    <small>Halaman ${pageIndex + 1} dari ${pageCount} · ${new Date().toLocaleDateString('id-ID')}</small>
+                </header>`;
+            const table = sourceTable.cloneNode(false);
+            table.appendChild(sourceTable.tHead.cloneNode(true));
+            const tbody = document.createElement('tbody');
+            sourceRows.slice(pageIndex * rowsPerPage, (pageIndex + 1) * rowsPerPage)
+                .forEach(row => tbody.appendChild(row.cloneNode(true)));
+            table.appendChild(tbody);
+            page.appendChild(table);
+            pdfContainer.innerHTML = '';
+            pdfContainer.appendChild(page);
+            rasterizeArabicText(page);
+            await new Promise(resolve => setTimeout(resolve, 60));
+
+            const canvas = await html2canvas(page, {
+                backgroundColor: pdfBackground,
+                scale: 2,
+                useCORS: true
+            });
+            if (pageIndex > 0) doc.addPage('a4', 'landscape');
+            const imageW = canvas.width / 2 * 0.264583;
+            const imageH = canvas.height / 2 * 0.264583;
+            const scale = Math.min(281 / imageW, 194 / imageH);
+            const width = imageW * scale;
+            const height = imageH * scale;
+            doc.addImage(canvas.toDataURL('image/png'), 'PNG',
+                (297 - width) / 2, (210 - height) / 2, width, height);
+        }
+
+        const safe = sheetName.replace(/[^a-zA-Z0-9]/g, '_');
+        doc.save(`Leger_${safe}.pdf`);
+    } catch (error) {
+        console.error('Gagal membuat PDF leger:', error);
+        alert('Gagal membuat PDF leger. Periksa koneksi internet dan coba lagi.');
+    } finally {
+        pdfContainer.innerHTML = '';
+        button.disabled = false;
+    }
 });
 
 document.getElementById('exportPDFKelas').addEventListener('click', () => {

@@ -1181,6 +1181,135 @@ body::before {
     box-shadow: var(--shadow-inner);
 }
 
+.leger-heading {
+    margin-bottom: 14px;
+}
+
+.leger-heading h2 {
+    color: var(--text);
+    font-size: 1.15rem;
+}
+
+.leger-heading p {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 0.82rem;
+}
+
+.leger-table-wrap {
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface-solid);
+}
+
+.leger-table {
+    min-width: 900px;
+    border-collapse: collapse;
+    font-size: 0.76rem;
+}
+
+.leger-table th,
+.leger-table td {
+    padding: 7px 9px;
+    border: 1px solid var(--border-soft);
+    text-align: center;
+}
+
+.leger-table th {
+    position: sticky;
+    top: 0;
+    background: var(--surface-soft);
+    color: var(--text);
+    white-space: normal;
+}
+
+.leger-table th:nth-child(1),
+.leger-table td:nth-child(1),
+.leger-table th:nth-child(2),
+.leger-table td:nth-child(2),
+.leger-table th:nth-child(3),
+.leger-table td:nth-child(3) {
+    white-space: nowrap;
+}
+
+.leger-table td:nth-child(1) {
+    color: var(--muted);
+}
+
+.leger-table .leger-passed td:last-child {
+    color: var(--success);
+    font-weight: 700;
+}
+
+.leger-table .leger-failed td:last-child {
+    color: var(--danger);
+    font-weight: 700;
+}
+
+.leger-empty {
+    padding: 40px 16px;
+    color: var(--muted);
+    text-align: center;
+}
+
+.leger-pdf-page {
+    width: 1080px;
+    padding: 18px;
+    background: #fff;
+    color: #111;
+    font-family: 'Manrope', sans-serif;
+}
+
+.leger-pdf-page header {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.leger-pdf-page h1 {
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.leger-pdf-page header p {
+    margin-top: 3px;
+    font-size: 9px;
+}
+
+.leger-pdf-page header small {
+    font-size: 8px;
+}
+
+.leger-pdf-page .leger-table {
+    width: 100%;
+    min-width: 0;
+    table-layout: fixed;
+    font-size: 7px;
+}
+
+.leger-pdf-page .leger-table th {
+    position: static;
+    padding: 4px 3px;
+    background: #eee;
+    color: #111;
+    font-size: 7px;
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+}
+
+.leger-pdf-page .leger-table td {
+    padding: 3px;
+    color: #111;
+    font-size: 7px;
+    line-height: 1.1;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.leger-pdf-page .leger-table .leger-failed td:last-child {
+    color: #b42318;
+}
+
 table {
     border-collapse: separate;
     border-spacing: 0;

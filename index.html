@@ -105,6 +105,7 @@
                     <button class="main-tab active" data-pane="kelas"><i class="fa-solid fa-table-list" aria-hidden="true"></i> Per Kelas</button>
                     <button class="main-tab" data-pane="jenjang"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Per Jenjang</button>
                     <button class="main-tab" data-pane="grafikjenjang"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> Grafik Perjenjang</button>
+                    <button class="main-tab" data-pane="leger"><i class="fa-solid fa-book-open" aria-hidden="true"></i> Leger</button>
                     <div class="jenjang-student-search" id="jenjangStudentSearch">
                         <label class="jenjang-student-search-input-wrap">
                             <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
@@ -234,6 +235,20 @@
                             </div>
                         </div>
                         <div id="grafikPerjenjangContainer"></div>
+                    </div>
+                </div>
+                <div class="main-pane" id="pane-leger">
+                    <div class="filter-bar">
+                        <label class="meta-title" for="legerSheetSelect" style="margin:0;">
+                            <i class="fa-solid fa-filter"></i> Pilih Kelas
+                        </label>
+                        <select id="legerSheetSelect" class="select-control"></select>
+                        <button id="exportPDFLeger" class="btn btn-pdf btn-sm" type="button">
+                            <i class="fa-solid fa-file-pdf"></i> Export PDF Leger
+                        </button>
+                    </div>
+                    <div class="section-container">
+                        <div id="legerContainer"></div>
                     </div>
                 </div>
                 <aside class="kelas-ketuntasan-panel" id="kelasKetuntasanPanel">
