@@ -144,7 +144,7 @@ function saveUIState() {
 }
 
 function saveToLocalStorage() {
-    const data = { groupedData, allSheetsData, originalSheetNames };
+    const data = { groupedData, allSheetsData, originalSheetNames, waliKelas };
     try {
         localStorage.setItem(STORAGE_PREFIX + currentQuartal, JSON.stringify(data));
     } catch (e) {
@@ -206,6 +206,56 @@ function detectAsuhanFromRows(rows) {
         }
     }
 
+    return '';
+}
+
+function normalizeWaliClassKey(value) {
+    const roman = { I: '1', II: '2', III: '3', IV: '4', V: '5', VI: '6', VII: '7', VIII: '8', IX: '9' };
+    const parts = normalizeCellText(value).toUpperCase()
+        .replace(/\bKLS?\b|\bKELAS\b/g, ' ')
+        .replace(/\bMDTA\b/g, 'MID')
+        .replace(/\bMTSD\b/g, 'MDTW')
+        .replace(/[^A-Z0-9]+/g, ' ')
+        .trim().split(/\s+/).filter(Boolean);
+    if (parts.length && roman[parts[0]]) parts[0] = roman[parts[0]];
+    return parts.join(' ');
+}
+
+function readWaliKelasSheet(worksheet) {
+    const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+    const headerIndex = rows.findIndex(row => {
+        const headers = row.map(normalizeCellText).map(value => value.toUpperCase());
+        return headers.includes('NAMA') && headers.some(value => value.includes('KELAS'));
+    });
+    if (headerIndex < 0) return {};
+
+    const headers = rows[headerIndex].map(normalizeCellText);
+    const nameIndex = headers.findIndex(value => /^NAMA(?: WALI)?$/i.test(value));
+    const classIndexes = headers.reduce((indexes, value, index) => {
+        if (/KELAS|KLS/i.test(value)) indexes.push(index);
+        return indexes;
+    }, []);
+    const positionIndex = headers.findIndex(value => /JABATAN/i.test(value));
+    const mapping = {};
+
+    rows.slice(headerIndex + 1).forEach(row => {
+        const name = normalizeCellText(row[nameIndex]);
+        const position = positionIndex >= 0 ? normalizeCellText(row[positionIndex]) : '';
+        if (!name || (position && !/WALI\s*KELAS/i.test(position))) return;
+        classIndexes.forEach(index => {
+            const classKey = normalizeWaliClassKey(row[index]);
+            if (classKey) mapping[classKey] = name;
+        });
+    });
+    return mapping;
+}
+
+function findWaliKelas(sheetName, data, mapping) {
+    const candidates = [sheetName, formatClassLabel(sheetName), ...(data?.studentMeta || []).map(meta => meta.kelas)];
+    for (const candidate of candidates) {
+        const key = normalizeWaliClassKey(candidate);
+        if (mapping[key]) return mapping[key];
+    }
     return '';
 }
 
@@ -1638,9 +1688,12 @@ function exportOverviewCSV() {
 // Data Management
 function processAllSheets() {
     if (!workbookData) return;
-    const sheetNames = workbookData.SheetNames;
+    const waliSheet = workbookData.SheetNames.find(name => normalizeCellText(name).toUpperCase() === 'DATA WALI KELAS');
+    const waliMapping = waliSheet ? readWaliKelasSheet(workbookData.Sheets[waliSheet]) : {};
+    const sheetNames = workbookData.SheetNames.filter(name => name !== waliSheet);
     if (!sheetNames.length) return;
 
+    waliKelas = {};
     originalSheetNames = [...sheetNames];
     groupedData = {};
     allSheetsData = {};
@@ -1670,12 +1723,12 @@ function processAllSheets() {
                     studentMeta: indices.map(i => studentMeta[i]),
                     asuhan
                 };
-                if (asuhan) waliKelas[klsName] = asuhan;
+                waliKelas[klsName] = findWaliKelas(klsName, { studentMeta: indices.map(i => studentMeta[i]) }, waliMapping) || asuhan;
             });
         } else {
             const avgs = computeAverages(subjects, scores);
             allSheetsData[name] = { subjects, averages: avgs, studentCount, scores: scores || [], studentNames, studentMeta, asuhan };
-            if (asuhan) waliKelas[name] = asuhan;
+            waliKelas[name] = findWaliKelas(name, { studentMeta }, waliMapping) || asuhan;
         }
     }
 
@@ -1790,6 +1843,7 @@ function renderQuartalView(quartal) {
 
     groupedData = cache.groupedData;
     allSheetsData = cache.allSheetsData || {};
+    waliKelas = cache.waliKelas || waliKelas;
     originalSheetNames = cache.originalSheetNames || Object.keys(allSheetsData);
     if (!originalSheetNames.length && Object.keys(allSheetsData).length) originalSheetNames = Object.keys(
     allSheetsData);
