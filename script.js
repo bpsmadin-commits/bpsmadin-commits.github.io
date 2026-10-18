@@ -406,11 +406,9 @@ function mergeSheetData(sheetList) {
 function computeStudentAverages(scores) {
     if (!scores || !scores.length) return [];
     return scores.map(student => {
-        let sum = 0,
-            count = 0;
-        for (let val of student) { if (typeof val === 'number' && !isNaN(val)) { sum += val;
-                count++; } }
-        return count > 0 ? sum / count : 0;
+        let sum = 0;
+        for (let val of student) { if (typeof val === 'number' && !isNaN(val)) { sum += val; } }
+        return student.length > 0 ? sum / student.length : 0;
     });
 }
 
@@ -444,7 +442,7 @@ function renderLeger(sheetName = legerSheetSelect.value) {
             average >= KKM ? 'Tuntas' : 'Tidak Tuntas'
         ];
         return { values, name: studentName, average };
-    });
+    }).sort((a, b) => b.average - a.average);
 
     const tableHTML = `
         <div class="leger-table-wrap">
@@ -2119,13 +2117,15 @@ document.getElementById('exportPDFLeger').addEventListener('click', async () => 
 
             const canvas = await html2canvas(page, {
                 backgroundColor: pdfBackground,
-                scale: 2,
+                scale: 3,
                 useCORS: true
             });
             if (pageIndex > 0) doc.addPage('a4', 'landscape');
-            const imageW = canvas.width / 2 * 0.264583;
-            const imageH = canvas.height / 2 * 0.264583;
-            const scale = Math.min(281 / imageW, 194 / imageH);
+            const imageW = canvas.width / 3 * 0.264583;
+            const imageH = canvas.height / 3 * 0.264583;
+            const usableWmm = 297 - 16;
+            const usableHmm = 210 - 12;
+            const scale = Math.min(usableWmm / imageW, usableHmm / imageH);
             const width = imageW * scale;
             const height = imageH * scale;
             doc.addImage(canvas.toDataURL('image/png'), 'PNG',
