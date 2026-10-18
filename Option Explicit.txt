@@ -1,0 +1,441 @@
+Option Explicit
+
+Sub PisahkanRekapNilaiPerKelas()
+
+    Dim wb As Workbook
+    Dim ws As Worksheet
+    Dim sumber As Worksheet
+    Dim tujuan As Worksheet
+
+    Dim daftarSumber() As String
+    Dim daftarHeader() As Long
+    Dim jumlahSumber As Long
+    Dim jumlahSheetDibuat As Long
+
+    Dim dict As Object
+    Dim daftarBaris As Collection
+    Dim daftarKunci As Variant
+
+    Dim namaKelas As String
+    Dim namaSheet As String
+    Dim namaAsal As String
+
+    Dim barisHeader As Long
+    Dim barisData As Long
+    Dim barisTerakhir As Long
+    Dim kolomTerakhir As Long
+    Dim barisSumber As Long
+    Dim barisTujuan As Long
+    Dim hasilCari As Long
+
+    Dim i As Long
+    Dim j As Long
+    Dim k As Long
+    Dim indeks As Long
+
+    Dim layarAwal As Boolean
+    Dim eventAwal As Boolean
+    Dim peringatanAwal As Boolean
+
+    Set wb = ThisWorkbook
+
+    layarAwal = Application.ScreenUpdating
+    eventAwal = Application.EnableEvents
+    peringatanAwal = Application.DisplayAlerts
+
+    On Error GoTo TanganiError
+
+    Application.ScreenUpdating = False
+    Application.EnableEvents = False
+    Application.DisplayAlerts = False
+
+    '========================================
+    ' BAGIAN 1: DETEKSI SHEET SUMBER
+    '========================================
+
+    jumlahSumber = 0
+
+    For Each ws In wb.Worksheets
+
+        If UCase(Left(ws.Name, 6)) <> "KLS - " Then
+
+            hasilCari = CariBarisHeader(ws)
+
+            If hasilCari > 0 Then
+
+                jumlahSumber = jumlahSumber + 1
+
+                ReDim Preserve daftarSumber(1 To jumlahSumber)
+                ReDim Preserve daftarHeader(1 To jumlahSumber)
+
+                daftarSumber(jumlahSumber) = ws.Name
+                daftarHeader(jumlahSumber) = hasilCari
+
+            End If
+
+        End If
+
+    Next ws
+
+    If jumlahSumber = 0 Then
+
+        MsgBox "Sheet sumber tidak ditemukan." & vbCrLf & _
+               "Pastikan kolom D berisi NAMA dan kolom F berisi KLS atau KELAS.", _
+               vbExclamation, "Pemisahan Nilai"
+
+        GoTo Selesai
+
+    End If
+
+    '========================================
+    ' BAGIAN 2: HAPUS HASIL MACRO SEBELUMNYA
+    '========================================
+
+    For i = wb.Worksheets.Count To 1 Step -1
+
+        If UCase(Left(wb.Worksheets(i).Name, 6)) = "KLS - " Then
+            wb.Worksheets(i).Delete
+        End If
+
+    Next i
+
+    '========================================
+    ' BAGIAN 3: PROSES SETIAP SHEET SUMBER
+    '========================================
+
+    jumlahSheetDibuat = 0
+
+    For indeks = 1 To jumlahSumber
+
+        namaAsal = daftarSumber(indeks)
+        barisHeader = daftarHeader(indeks)
+        barisData = barisHeader + 1
+
+        Set sumber = wb.Worksheets(namaAsal)
+
+        Set dict = CreateObject("Scripting.Dictionary")
+        dict.CompareMode = vbTextCompare
+
+        'Cari batas data berdasarkan kolom NAMA
+        barisTerakhir = sumber.Cells( _
+            sumber.Rows.Count, "D").End(xlUp).Row
+
+        'Cari kolom terakhir berdasarkan judul tabel
+        kolomTerakhir = sumber.Cells( _
+            barisHeader, sumber.Columns.Count).End(xlToLeft).Column
+
+        If barisTerakhir < barisData Then GoTo LanjutSumber
+
+        'Kelompokkan nomor baris berdasarkan kelas
+        For i = barisData To barisTerakhir
+
+            If Not IsError(sumber.Cells(i, 6).Value) Then
+
+                namaKelas = Trim(CStr(sumber.Cells(i, 6).Value))
+
+                If namaKelas <> "" Then
+
+                    If Not IsError(sumber.Cells(i, 4).Value) Then
+
+                        If Trim(CStr(sumber.Cells(i, 4).Value)) <> "" Then
+
+                            If Not dict.Exists(namaKelas) Then
+
+                                Set daftarBaris = New Collection
+                                dict.Add namaKelas, daftarBaris
+
+                            End If
+
+                            Set daftarBaris = dict(namaKelas)
+                            daftarBaris.Add i
+
+                        End If
+
+                    End If
+
+                End If
+
+            End If
+
+        Next i
+
+        If dict.Count = 0 Then GoTo LanjutSumber
+
+        daftarKunci = dict.Keys
+
+        '========================================
+        ' BAGIAN 4: BUAT SHEET MASING-MASING KELAS
+        '========================================
+
+        For j = LBound(daftarKunci) To UBound(daftarKunci)
+
+            namaKelas = CStr(daftarKunci(j))
+
+            namaSheet = BuatNamaSheetAman("KLS - " & namaKelas)
+
+            namaSheet = BuatNamaSheetUnik(wb, namaSheet)
+
+            Set tujuan = wb.Worksheets.Add( _
+                After:=wb.Worksheets(wb.Worksheets.Count))
+
+            tujuan.Name = namaSheet
+
+            'Salin judul dan header (baris 1 sampai baris header)
+            sumber.Range( _
+                sumber.Cells(1, 1), _
+                sumber.Cells(barisHeader, kolomTerakhir)).Copy _
+                Destination:=tujuan.Cells(1, 1)
+
+            'Salin tinggi baris judul dan header
+            For k = 1 To barisHeader
+                tujuan.Rows(k).RowHeight = sumber.Rows(k).RowHeight
+            Next k
+
+            'Salin lebar setiap kolom
+            For k = 1 To kolomTerakhir
+
+                tujuan.Columns(k).ColumnWidth = _
+                    sumber.Columns(k).ColumnWidth
+
+                tujuan.Columns(k).Hidden = sumber.Columns(k).Hidden
+
+            Next k
+
+            'Ambil daftar baris milik kelas ini
+            Set daftarBaris = dict(namaKelas)
+
+            barisTujuan = barisData
+
+            'Salin data satu per satu
+            For k = 1 To daftarBaris.Count
+
+                barisSumber = CLng(daftarBaris(k))
+
+                sumber.Range( _
+                    sumber.Cells(barisSumber, 1), _
+                    sumber.Cells(barisSumber, kolomTerakhir)).Copy _
+                    Destination:=tujuan.Cells(barisTujuan, 1)
+
+                'Nomor urut dibuat ulang mulai 1 per kelas
+                tujuan.Cells(barisTujuan, 1).Value = k
+
+                tujuan.Rows(barisTujuan).RowHeight = _
+                    sumber.Rows(barisSumber).RowHeight
+
+                barisTujuan = barisTujuan + 1
+
+            Next k
+            '========================================
+            ' TAMBAH KOLOM RATA-RATA DAN RANKING
+            '========================================
+            Dim kolNilaiAkhir As Long
+            Dim kolRata As Long
+            Dim kolRank As Long
+            Dim barisAkhir As Long
+            Dim alamatNilai As String
+            Dim alamatRata As String
+
+            barisAkhir = barisTujuan - 1
+
+            'Kolom nilai: dari kolom 8 (H) sampai sebelum KET
+            If UCase(Trim(CStr(sumber.Cells(barisHeader, kolomTerakhir).Value))) = "KET" Then
+                kolNilaiAkhir = kolomTerakhir - 1
+            Else
+                kolNilaiAkhir = kolomTerakhir
+            End If
+
+            kolRata = kolomTerakhir + 1
+            kolRank = kolomTerakhir + 2
+
+            'Samakan tampilan dengan kolom paling kanan
+            sumber.Range( _
+                sumber.Cells(1, kolomTerakhir), _
+                sumber.Cells(1, kolomTerakhir)).Copy
+
+            tujuan.Range( _
+                tujuan.Cells(barisHeader, kolRata), _
+                tujuan.Cells(barisAkhir, kolRank)).PasteSpecial xlPasteFormats
+
+            tujuan.Range( _
+                tujuan.Cells(barisHeader, kolomTerakhir), _
+                tujuan.Cells(barisAkhir, kolomTerakhir)).Copy
+            tujuan.Range( _
+                tujuan.Cells(barisHeader, kolRata), _
+                tujuan.Cells(barisAkhir, kolRank)).PasteSpecial xlPasteFormats
+            Application.CutCopyMode = False
+
+            tujuan.Cells(barisHeader, kolRata).Value = "RATA2"
+            tujuan.Cells(barisHeader, kolRank).Value = "RANK"
+
+            alamatNilai = tujuan.Range( _
+                tujuan.Cells(barisData, 8), _
+                tujuan.Cells(barisData, kolNilaiAkhir)).Address(False, False)
+
+            alamatRata = tujuan.Range( _
+                tujuan.Cells(barisData, kolRata), _
+                tujuan.Cells(barisAkhir, kolRata)).Address(True, True)
+
+            'Rata-rata: kosong kalau semua nilai kosong
+            tujuan.Range( _
+                tujuan.Cells(barisData, kolRata), _
+                tujuan.Cells(barisAkhir, kolRata)).Formula = _
+                "=IF(COUNT(" & alamatNilai & ")=0,"""",ROUND(AVERAGE(" & alamatNilai & "),2))"
+
+            'Ranking per kelas: kosong kalau rata-rata kosong
+            tujuan.Range( _
+                tujuan.Cells(barisData, kolRank), _
+                tujuan.Cells(barisAkhir, kolRank)).Formula = _
+                "=IF(" & tujuan.Cells(barisData, kolRata).Address(False, False) & "="""","""",RANK(" & _
+                tujuan.Cells(barisData, kolRata).Address(False, False) & "," & alamatRata & "))"
+
+            tujuan.Columns(kolRata).ColumnWidth = 9
+            tujuan.Columns(kolRank).ColumnWidth = 7
+            tujuan.Activate
+            ActiveWindow.DisplayGridlines = False
+
+            jumlahSheetDibuat = jumlahSheetDibuat + 1
+
+        Next j
+
+LanjutSumber:
+        Set dict = Nothing
+
+    Next indeks
+
+    Application.CutCopyMode = False
+
+    MsgBox "PEMISAHAN BERHASIL!" & vbCrLf & vbCrLf & _
+           "Jumlah sheet sumber: " & jumlahSumber & vbCrLf & _
+           "Jumlah sheet kelas dibuat: " & jumlahSheetDibuat & vbCrLf & vbCrLf & _
+           "Data telah dipisahkan berdasarkan kolom kelas.", _
+           vbInformation, "Selesai"
+
+Selesai:
+
+    Application.CutCopyMode = False
+    Application.ScreenUpdating = layarAwal
+    Application.EnableEvents = eventAwal
+    Application.DisplayAlerts = peringatanAwal
+
+    Exit Sub
+
+TanganiError:
+
+    MsgBox "Macro berhenti karena terjadi kesalahan." & vbCrLf & vbCrLf & _
+           "Nomor error: " & Err.Number & vbCrLf & _
+           "Keterangan: " & Err.Description & vbCrLf & vbCrLf & _
+           "Periksa sheet sumber dan format workbook.", _
+           vbCritical, "Error VBA"
+
+    Resume Selesai
+
+End Sub
+
+
+'============================================
+' MENCARI BARIS JUDUL (BARIS 1 SAMPAI 10)
+' Syarat: kolom D = NAMA, kolom F = KLS / KELAS
+'============================================
+
+Private Function CariBarisHeader( _
+    ByVal ws As Worksheet) As Long
+
+    Dim r As Long
+    Dim nama As String
+    Dim kls As String
+
+    CariBarisHeader = 0
+
+    For r = 1 To 10
+
+        If Not IsError(ws.Cells(r, 4).Value) And _
+           Not IsError(ws.Cells(r, 6).Value) Then
+
+            nama = UCase(Trim(CStr(ws.Cells(r, 4).Value)))
+            kls = UCase(Trim(CStr(ws.Cells(r, 6).Value)))
+
+            If nama = "NAMA" And (kls = "KLS" Or kls = "KELAS") Then
+                CariBarisHeader = r
+                Exit Function
+            End If
+
+        End If
+
+    Next r
+
+End Function
+
+
+'============================================
+' MEMBERSIHKAN NAMA SHEET
+'============================================
+
+Private Function BuatNamaSheetAman( _
+    ByVal teks As String) As String
+
+    Dim karakter As Variant
+
+    For Each karakter In Array("/", "\", "?", "*", "[", "]", ":")
+
+        teks = Replace(teks, karakter, "-")
+
+    Next karakter
+
+    teks = Trim(teks)
+
+    If Len(teks) > 31 Then
+        teks = Left(teks, 31)
+    End If
+
+    If teks = "" Then teks = "Kelas"
+
+    BuatNamaSheetAman = teks
+
+End Function
+
+
+'============================================
+' MEMASTIKAN NAMA SHEET TIDAK BENTROK
+'============================================
+
+Private Function BuatNamaSheetUnik( _
+    ByVal wb As Workbook, _
+    ByVal namaAwal As String) As String
+
+    Dim calon As String
+    Dim akhiran As String
+    Dim nomor As Long
+
+    calon = Left(namaAwal, 31)
+    nomor = 1
+
+    Do While NamaSheetSudahAda(wb, calon)
+
+        nomor = nomor + 1
+        akhiran = " (" & nomor & ")"
+
+        calon = Left(namaAwal, 31 - Len(akhiran)) & akhiran
+
+    Loop
+
+    BuatNamaSheetUnik = calon
+
+End Function
+
+
+Private Function NamaSheetSudahAda( _
+    ByVal wb As Workbook, _
+    ByVal nama As String) As Boolean
+
+    Dim cek As Worksheet
+
+    Set cek = Nothing
+
+    On Error Resume Next
+    Set cek = wb.Worksheets(nama)
+    On Error GoTo 0
+
+    NamaSheetSudahAda = Not cek Is Nothing
+
+End Function
+
