@@ -1267,17 +1267,17 @@ body::before {
 }
 
 .leger-pdf-page h1 {
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 800;
 }
 
 .leger-pdf-page header p {
-    margin-top: 3px;
-    font-size: 9px;
+    margin-top: 4px;
+    font-size: 11px;
 }
 
 .leger-pdf-page header small {
-    font-size: 8px;
+    font-size: 10px;
 }
 
 .leger-pdf-page .leger-table {
@@ -1289,21 +1289,20 @@ body::before {
 
 .leger-pdf-page .leger-table th {
     position: static;
-    padding: 4px 3px;
+    padding: 5px 7px;
     background: #eee;
     color: #111;
-    font-size: 7px;
+    font-size: 9px;
     letter-spacing: 0;
-    overflow-wrap: anywhere;
+    white-space: nowrap;
 }
 
 .leger-pdf-page .leger-table td {
-    padding: 3px;
+    padding: 5px 7px;
     color: #111;
-    font-size: 7px;
-    line-height: 1.1;
-    white-space: normal;
-    overflow-wrap: anywhere;
+    font-size: 9px;
+    line-height: 1.15;
+    white-space: nowrap;
 }
 
 .leger-pdf-page .leger-table .leger-failed td:last-child {
