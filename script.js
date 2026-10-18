@@ -1635,9 +1635,34 @@ function processAllSheets() {
         const ws = workbookData.Sheets[name];
         if (!ws) { allSheetsData[name] = { subjects: [], averages: [], studentCount: 0, scores: [], studentNames: [], studentMeta: [] }; continue; }
         const { subjects, scores, studentNames, studentMeta, studentCount, asuhan } = detectHeaderAndData(ws);
-        const avgs = computeAverages(subjects, scores);
-        allSheetsData[name] = { subjects, averages: avgs, studentCount, scores: scores || [], studentNames, studentMeta, asuhan };
-        if (asuhan) waliKelas[name] = asuhan;
+
+        // Pisah per kelas jika ada kolom KELAS dengan lebih dari satu nilai unik di dalam satu sheet
+        const kelasValues = (studentMeta || []).map(m => m.kelas).filter(v => v && String(v).trim());
+        const uniqueKelas = [...new Set(kelasValues)];
+
+        if (uniqueKelas.length > 1 && kelasValues.length === (studentNames || []).length) {
+            uniqueKelas.forEach(kls => {
+                const indices = [];
+                studentMeta.forEach((m, i) => { if (m.kelas === kls) indices.push(i); });
+                const klsScores = indices.map(i => scores[i]);
+                const klsName = `${name} — ${kls}`;
+                originalSheetNames.push(klsName);
+                allSheetsData[klsName] = {
+                    subjects,
+                    averages: computeAverages(subjects, klsScores),
+                    studentCount: klsScores.length,
+                    scores: klsScores,
+                    studentNames: indices.map(i => studentNames[i]),
+                    studentMeta: indices.map(i => studentMeta[i]),
+                    asuhan
+                };
+                if (asuhan) waliKelas[klsName] = asuhan;
+            });
+        } else {
+            const avgs = computeAverages(subjects, scores);
+            allSheetsData[name] = { subjects, averages: avgs, studentCount, scores: scores || [], studentNames, studentMeta, asuhan };
+            if (asuhan) waliKelas[name] = asuhan;
+        }
     }
 
     const groupMap = {};
