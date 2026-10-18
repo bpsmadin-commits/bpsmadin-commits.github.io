@@ -1134,7 +1134,7 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
             name: (data.studentNames || [])[index],
             score: student[scoreIndex]
         })).filter(student => typeof student.score === 'number' && student.score < KKM)
-    })).filter(subject => subject.students.length) : [];
+    })) : [];
     const failedStudentCount = totalStudents;
     const failedStudentsHTML = failedSubjects.length ? `
             <aside class="failed-students">
