@@ -120,7 +120,7 @@ body::before {
 .app-layout {
     display: flex;
     min-height: 100vh;
-    max-width: 1920px;
+    width: 100%;
     margin: 0 auto;
 }
 
@@ -333,12 +333,15 @@ body::before {
 .dashboard-workspace {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: max-content max-content max-content;
     align-items: start;
+    align-content: start;
 }
 
 .dashboard-workspace:has(#pane-kelas.active):has(#kelasKetuntasanBox:not(:empty)) {
-    grid-template-columns: minmax(900px, 1.7fr) minmax(360px, 1fr);
-    column-gap: 18px;
+    display: block;
+    position: relative;
+    padding-right: 1118px;
 }
 
 .dashboard-workspace > .quartal-bar,
@@ -351,20 +354,27 @@ body::before {
 .kelas-ketuntasan-panel {
     display: none;
     min-width: 0;
-    align-self: stretch;
+    align-self: start;
+    height: fit-content;
 }
 
 .dashboard-workspace:has(#pane-kelas.active):has(#kelasKetuntasanBox:not(:empty)) > .kelas-ketuntasan-panel {
     display: block;
-    grid-column: 2;
-    grid-row: 1 / span 3;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1100px;
 }
 
-@media (max-width: 1350px) {
+@media (max-width: 1600px) {
     .dashboard-workspace:has(#pane-kelas.active):has(#kelasKetuntasanBox:not(:empty)) {
+        display: grid;
+        padding-right: 0;
         grid-template-columns: minmax(0, 1fr);
     }
     .dashboard-workspace:has(#pane-kelas.active):has(#kelasKetuntasanBox:not(:empty)) > .kelas-ketuntasan-panel {
+        position: static;
+        width: auto;
         grid-column: 1;
         grid-row: auto;
     }
@@ -1181,6 +1191,92 @@ body::before {
     box-shadow: var(--shadow-inner);
 }
 
+/* Kelas: rapikan hierarki dan alignment tanpa mengubah tabel pane lain. */
+#pane-kelas .section-title {
+    margin-bottom: 16px;
+    transform: none;
+    justify-content: space-between;
+}
+
+#pane-kelas #kelasTableTitle {
+    flex: 1 1 240px;
+    min-width: 0;
+    white-space: normal;
+}
+
+#pane-kelas .section-title .export-row {
+    flex: 0 1 auto;
+    width: auto;
+    justify-content: flex-end;
+    max-width: 100%;
+}
+
+#pane-kelas .section-title .export-row .btn {
+    min-width: 0;
+    padding: 6px 10px 6px 6px;
+    font-size: 0.75rem;
+    gap: 6px;
+}
+
+#pane-kelas .section-title .export-row .btn i {
+    top: 0;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+    font-size: 0.62rem;
+}
+
+#pane-kelas .section-title .export-row .export-icon {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+#pane-kelas .section-title i {
+    transform: none;
+}
+
+#pane-kelas .mini-stats {
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+#pane-kelas .mini-stat {
+    padding: 10px;
+}
+
+#pane-kelas .table-wrap {
+    border-radius: var(--radius-lg);
+}
+
+#pane-kelas table {
+    table-layout: fixed;
+}
+
+#pane-kelas th,
+#pane-kelas td {
+    padding: 11px 16px;
+}
+
+#pane-kelas th:nth-child(1),
+#pane-kelas td:nth-child(1) {
+    width: 48px;
+}
+
+#pane-kelas th:nth-child(2) {
+    width: 28%;
+}
+
+#pane-kelas th:nth-child(3) {
+    width: 34%;
+}
+
 .leger-heading {
     margin-bottom: 14px;
 }
@@ -1725,15 +1821,18 @@ td .mapel-name {
 
 .failed-student-subjects {
     display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
     max-height: 1200px;
+    overflow-x: auto;
     overflow-y: auto;
     padding: 0 10px 10px;
 }
 
 .failed-student-subject {
     min-width: 0;
-    padding: 12px;
+    width: 100%;
+    padding: 8px;
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     background: var(--surface);
@@ -1775,6 +1874,61 @@ td .mapel-name {
     color: #111111;
 }
 
+.student-status-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.student-status-list {
+    min-width: 0;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+    padding: 0 4px 4px;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    background: var(--surface-soft);
+}
+
+.student-status-list h5 {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0 0 5px;
+    color: var(--text);
+    font-size: 0.72rem;
+}
+
+.student-status-list h5 span {
+    margin-left: auto;
+    color: var(--muted);
+}
+
+.student-status-list.is-passed h5 {
+    color: #15803d;
+}
+
+.student-status-list.is-passed li strong {
+    color: #16a34a;
+    background: #dcfce7;
+}
+
+.student-status-list.is-failed h5 {
+    color: #b91c1c;
+}
+
+.student-status-list.is-failed li strong {
+    color: #dc2626;
+    background: #fee2e2;
+}
+
+.student-list-empty {
+    justify-content: center;
+    color: var(--muted);
+    font-size: 0.78rem;
+}
+
 .failed-student-subject ol {
     display: grid;
     padding: 0;
@@ -1784,10 +1938,10 @@ td .mapel-name {
 
 .failed-student-subject li {
     display: grid;
-    grid-template-columns: 28px minmax(0, 1fr) 52px;
+    grid-template-columns: 24px minmax(0, 1fr) 44px;
     align-items: center;
-    gap: 8px;
-    min-height: 42px;
+    gap: 4px;
+    min-height: 36px;
     border-top: 1px solid var(--border-soft);
     counter-increment: failed-student;
 }
@@ -1805,12 +1959,12 @@ td .mapel-name {
 
 .failed-student-name {
     color: var(--text);
-    font-size: 1rem;
+    font-size: 0.84rem;
     font-weight: 600;
     font-family: "Arial Narrow", Arial, sans-serif;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    min-width: 0;
     white-space: nowrap;
+    overflow: visible;
 }
 
 .failed-student-name .arabic-text {
@@ -2501,6 +2655,15 @@ button:focus-visible,
     }
     .rekap-minmax {
         grid-template-columns: 1fr;
+    }
+    .student-status-columns {
+        grid-template-columns: 1fr;
+    }
+    .failed-student-subjects {
+        grid-template-columns: 1fr;
+    }
+    .failed-student-subject {
+        width: 100%;
     }
     .main-tabs {
         width: 100%;

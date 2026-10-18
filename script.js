@@ -1124,18 +1124,21 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
     const tidakTuntasStudents = rankedStudents.filter(student => student.average < KKM);
     const failedSubjects = showFailedStudents ? subjectIndices.map((subjectIndex, scoreIndex) => ({
         name: (data.subjects || [])[subjectIndex],
+        passed: scores.map((student, index) => ({
+            studentIndex: index,
+            name: (data.studentNames || [])[index],
+            score: student[scoreIndex]
+        })).filter(student => typeof student.score === 'number' && student.score >= KKM),
         students: scores.map((student, index) => ({
             studentIndex: index,
             name: (data.studentNames || [])[index],
             score: student[scoreIndex]
         })).filter(student => typeof student.score === 'number' && student.score < KKM)
     })).filter(subject => subject.students.length) : [];
-    const failedStudentCount = new Set(failedSubjects.flatMap(subject =>
-        subject.students.map(student => student.studentIndex)
-    )).size;
+    const failedStudentCount = totalStudents;
     const failedStudentsHTML = failedSubjects.length ? `
             <aside class="failed-students">
-                <h3><span class="failed-students-title"><i class="fa-solid fa-user-xmark"></i> Siswa Belum Tuntas</span><span>${failedStudentCount} siswa</span></h3>
+                <h3><span class="failed-students-title"><i class="fa-solid fa-users"></i> Daftar Siswa</span><span>${failedStudentCount} siswa</span></h3>
                 <div class="failed-student-subject-controls">
                     <label class="failed-student-search">
                         <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
@@ -1154,15 +1157,26 @@ function buildKetuntasanHTML(data, selectedIndices, showChart, titleSuffix, show
                 <div class="failed-student-subjects">
                     ${failedSubjects.map((subject, index) => `
                     <section class="failed-student-subject" data-subject-index="${index}">
-                        <h4><span class="failed-student-subject-name">${arabicTextHTML(subject.name)}</span><span class="failed-student-subject-count">${subject.students.length} siswa</span></h4>
-                        <ol>${subject.students.map(student =>
-                            `<li><span class="failed-student-name" title="${escapeHTML(student.name || 'Nama tidak terbaca')}">${arabicTextHTML(student.name || 'Nama tidak terbaca')}</span><strong>${student.score.toFixed(1)}</strong></li>`
-                        ).join('')}</ol>
+                        <h4><span class="failed-student-subject-name">${arabicTextHTML(subject.name)}</span></h4>
+                        <div class="student-status-columns">
+                            <div class="student-status-list is-passed">
+                                <h5><i class="fa-solid fa-circle-check"></i> Siswa Tuntas <span>${subject.passed.length}</span></h5>
+                                <ol>${subject.passed.map(student =>
+                                    `<li><span class="failed-student-name" title="${escapeHTML(student.name || 'Nama tidak terbaca')}">${arabicTextHTML(student.name || 'Nama tidak terbaca')}</span><strong>${student.score.toFixed(1)}</strong></li>`
+                                ).join('') || '<li class="student-list-empty">Tidak ada</li>'}</ol>
+                            </div>
+                            <div class="student-status-list is-failed">
+                                <h5><i class="fa-solid fa-circle-xmark"></i> Siswa Tidak Tuntas <span>${subject.students.length}</span></h5>
+                                <ol>${subject.students.map(student =>
+                                    `<li><span class="failed-student-name" title="${escapeHTML(student.name || 'Nama tidak terbaca')}">${arabicTextHTML(student.name || 'Nama tidak terbaca')}</span><strong>${student.score.toFixed(1)}</strong></li>`
+                                ).join('') || '<li class="student-list-empty">Tidak ada</li>'}</ol>
+                            </div>
+                        </div>
                     </section>`).join('')}
                 </div>
                 <p class="failed-student-no-results" hidden>Nama siswa tidak ditemukan.</p>
             </aside>` : '';
-    const ketuntasanTitleHTML = `<div class="section-title" style="font-size:1.1rem; margin-top:24px;"><i class="fa-solid fa-ranking-star"></i> Ketuntasan${titleSuffix ? ' ' + titleSuffix : ''}</div>`;
+    const ketuntasanTitleHTML = `<div class="section-title" style="font-size:1.1rem; margin-top:24px;">Ketuntasan${titleSuffix ? ' ' + titleSuffix : ''}</div>`;
     const summaryHTML = `
             ${ketuntasanTitleHTML}
             <div class="rekap-info-row" style="margin-bottom:12px;">
@@ -1937,10 +1951,10 @@ document.addEventListener('click', e => {
    }
    const button = e.target.closest('.failed-subject-toggle');
    if (button) {
+       const panel = button.closest('.failed-students');
        const isActive = button.classList.toggle('active-chip');
        button.setAttribute('aria-pressed', String(isActive));
-       button.closest('.failed-students')
-           .querySelector(`.failed-student-subject[data-subject-index="${button.dataset.subjectIndex}"]`)
+       panel.querySelector(`.failed-student-subject[data-subject-index="${button.dataset.subjectIndex}"]`)
            .classList.toggle('is-hidden', !isActive);
        return;
    }
