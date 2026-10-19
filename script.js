@@ -1,6 +1,6 @@
 // Lazy-load library berat: baru diambil pas benar-benar dipakai
 const CDN = {
-    xlsx: 'https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js',
+    xlsx: 'https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js',
     jspdf: 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
     html2canvas: 'https://html2canvas.hertzen.com/dist/html2canvas.min.js'
 };
@@ -169,7 +169,7 @@ function clearLocalStorage(quartal) {
 // Data Processing
 function normalizeCellText(value) {
     if (value === null || value === undefined) return '';
-    return String(value).trim();
+    return String(value).replace(/[\uFEFF\u00A0]/g, ' ').trim();
 }
 
 function parseAsuhanText(raw) {
@@ -217,7 +217,9 @@ function normalizeWaliClassKey(value) {
         .replace(/\bMTSD\b/g, 'MDTW')
         .replace(/[^A-Z0-9]+/g, ' ')
         .trim().split(/\s+/).filter(Boolean);
-    if (parts.length && roman[parts[0]]) parts[0] = roman[parts[0]];
+    parts.forEach((part, index) => {
+        if (roman[part]) parts[index] = roman[part];
+    });
     return parts.join(' ');
 }
 
@@ -255,6 +257,9 @@ function findWaliKelas(sheetName, data, mapping) {
     for (const candidate of candidates) {
         const key = normalizeWaliClassKey(candidate);
         if (mapping[key]) return mapping[key];
+        const matchingKey = Object.keys(mapping).find(mappedKey =>
+            key === mappedKey || key.endsWith(` ${mappedKey}`) || mappedKey.endsWith(` ${key}`));
+        if (matchingKey) return mapping[matchingKey];
     }
     return '';
 }
@@ -512,19 +517,172 @@ function renderLeger(sheetName = legerSheetSelect.value) {
         ${tableHTML}`;
 }
 
+function safeExcelSheetName(name, usedNames) {
+    const base = String(name || 'Kelas').replace(/[\\/*?:\[\]]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 31) || 'Kelas';
+    let result = base;
+    let suffix = 2;
+    while (usedNames.has(result)) {
+        const tail = ` (${suffix++})`;
+        result = `${base.slice(0, 31 - tail.length)}${tail}`;
+    }
+    usedNames.add(result);
+    return result;
+}
+
+async function exportAllLegerToExcel() {
+    const sheetNames = originalSheetNames.filter(name => allSheetsData[name]?.scores?.length);
+    if (!sheetNames.length) {
+        alert('Tidak ada data leger untuk diekspor.');
+        return;
+    }
+
+    const button = document.getElementById('exportExcelLeger');
+    button.disabled = true;
+    try {
+        await ensureXLSX();
+        const workbook = XLSX.utils.book_new();
+        const usedNames = new Set();
+
+        sheetNames.forEach(sheetName => {
+            const data = allSheetsData[sheetName];
+            const wali = waliKelas[sheetName] || data.asuhan || '';
+            const headers = ['NO', 'NOPES', 'NAMA', 'ASR', 'KLS',
+                ...data.subjects, 'جملة', 'التسوية', 'الترتيب', 'STATUS'];
+            const averages = computeStudentAverages(data.scores || []);
+            const rows = (data.scores || []).map((scores, index) => {
+                const meta = data.studentMeta?.[index] || {};
+                const total = scores.reduce((sum, score) => sum + (typeof score === 'number' && Number.isFinite(score) ? score : 0), 0);
+                const average = averages[index] || 0;
+                return {
+                    average,
+                    values: [index + 1, meta.nopes || '',
+                        data.studentNames?.[index] || 'Nama tidak terbaca',
+                        meta.asr || '', meta.kelas || formatClassLabel(sheetName),
+                        ...scores.map(score => typeof score === 'number' && Number.isFinite(score) ? score : ''),
+                        total, average, index + 1, average >= KKM ? 'Tuntas' : 'Tidak Tuntas']
+                };
+            }).sort((a, b) => b.average - a.average);
+
+            const titleRows = [
+                ['LEGER NILAI UJI TULIS KUARTAL'],
+                ['MADRASAH DINIYAH TAKMILIYAH (MDT) MIFTAHUL ULUM'],
+                ['TAHUN PELAJARAN 1447 - 1448 H.'],
+                [wali ? `WALI KELAS: ${wali}` : '']
+            ];
+            const headerRow = titleRows.length;
+            const worksheet = XLSX.utils.aoa_to_sheet([...titleRows, headers, ...rows.map(row => row.values)]);
+            const firstDataRow = headerRow + 2;
+            const subjectStartCol = 5;
+            const totalCol = subjectStartCol + data.subjects.length;
+            const averageCol = totalCol + 1;
+            const rankingCol = averageCol + 1;
+            const statusCol = rankingCol + 1;
+            rows.forEach((row, index) => {
+                const excelRow = firstDataRow + index;
+                const firstSubject = XLSX.utils.encode_cell({ r: excelRow - 1, c: subjectStartCol });
+                const lastSubject = XLSX.utils.encode_cell({ r: excelRow - 1, c: totalCol - 1 });
+                const totalCell = XLSX.utils.encode_cell({ r: excelRow - 1, c: totalCol });
+                const averageCell = XLSX.utils.encode_cell({ r: excelRow - 1, c: averageCol });
+                const statusCell = XLSX.utils.encode_cell({ r: excelRow - 1, c: statusCol });
+                const rankingCell = XLSX.utils.encode_cell({ r: excelRow - 1, c: rankingCol });
+                worksheet[totalCell] = { t: 'n', f: `ROUND(SUM(${firstSubject}:${lastSubject}),0)`, v: Math.round(row.values[5 + data.subjects.length]) };
+                worksheet[averageCell] = { t: 'n', f: `IFERROR(${totalCell}/${data.subjects.length},0)`, v: row.values[6 + data.subjects.length] };
+                worksheet[rankingCell] = { t: 'n', f: `RANK(${averageCell},$${XLSX.utils.encode_col(averageCol)}$${firstDataRow}:$${XLSX.utils.encode_col(averageCol)}$${firstDataRow + rows.length - 1},0)`, v: row.values[7 + data.subjects.length] };
+                worksheet[statusCell] = { t: 's', f: `IF(${averageCell}>=${KKM},"Tuntas","Tidak Tuntas")`, v: row.values[8 + data.subjects.length] };
+            });
+            const lastCol = headers.length - 1;
+            const lastRow = firstDataRow + rows.length - 1;
+            const border = { style: 'thin', color: { rgb: '808080' } };
+            const headerStyle = {
+                fill: { fgColor: { rgb: '9BBB59' } },
+                font: { bold: true, color: { rgb: '000000' } },
+                alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+                border: { top: border, bottom: border, left: border, right: border }
+            };
+            const subjectHeaderStyle = {
+                ...headerStyle,
+                font: { name: 'Traditional Arabic', sz: 12, bold: true, color: { rgb: '000000' } },
+                alignment: { horizontal: 'center', vertical: 'center', textRotation: 90, wrapText: true }
+            };
+            const cellStyle = {
+                alignment: { horizontal: 'center', vertical: 'center' },
+                border: { top: border, bottom: border, left: border, right: border }
+            };
+            const nameStyle = {
+                alignment: { horizontal: 'left', vertical: 'center' },
+                border: { top: border, bottom: border, left: border, right: border }
+            };
+            for (let col = 0; col <= lastCol; col++) {
+                worksheet[XLSX.utils.encode_cell({ r: headerRow, c: col })].s =
+                    col >= subjectStartCol && col <= rankingCol ? subjectHeaderStyle : headerStyle;
+            }
+            for (let rowIndex = firstDataRow - 1; rowIndex <= lastRow - 1; rowIndex++) {
+                for (let col = 0; col <= lastCol; col++) {
+                    const cell = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: col })];
+                    if (cell) cell.s = cellStyle;
+                }
+                const nameCell = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 2 })];
+                if (nameCell) nameCell.s = nameStyle;
+            }
+            for (let rowIndex = firstDataRow - 1; rowIndex <= lastRow - 1; rowIndex++) {
+                const noCell = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 0 })];
+                if (noCell) noCell.z = '0';
+                for (let col = subjectStartCol; col < totalCol; col++) {
+                    const cell = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: col })];
+                    if (cell) cell.z = '0';
+                }
+                worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: totalCol })].z = '0';
+                worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: averageCol })].z = '0.0';
+                worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: rankingCol })].z = '0';
+                if (rows[rowIndex - (firstDataRow - 1)].average < KKM) {
+                    const failedStyle = {
+                        fill: { fgColor: { rgb: 'F4CCCC' } },
+                        font: { color: { rgb: 'C00000' }, bold: true },
+                        alignment: { horizontal: 'center', vertical: 'center' },
+                        border: { top: border, bottom: border, left: border, right: border }
+                    };
+                    worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: averageCol })].s = failedStyle;
+                    worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: statusCol })].s = failedStyle;
+                }
+            }
+            worksheet['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: lastCol } },
+                { s: { r: 1, c: 0 }, e: { r: 1, c: lastCol } },
+                { s: { r: 2, c: 0 }, e: { r: 2, c: lastCol } },
+                { s: { r: 3, c: 0 }, e: { r: 3, c: lastCol } }];
+            worksheet['!cols'] = headers.map((header, index) => {
+                if (index === 2) return { wch: 25 };
+                if (index === 4) return { wch: 12 };
+                if (index >= subjectStartCol && index < totalCol) return { wch: 4 };
+                if (index === totalCol) return { wch: 6 };
+                if (index === rankingCol) return { wch: 4 };
+                return { wch: Math.max(8, Math.min(18, String(header).length + 3)) };
+            });
+            worksheet['!rows'] = [{ hpt: 22 }, { hpt: 20 }, { hpt: 18 }, { hpt: 18 }, { hpt: 88 }];
+            worksheet['!autofilter'] = { ref: `${XLSX.utils.encode_cell({ r: headerRow, c: 0 })}:${XLSX.utils.encode_cell({ r: lastRow - 1, c: lastCol })}` };
+            worksheet['!freeze'] = { xSplit: 6, ySplit: headerRow + 1 };
+            XLSX.utils.book_append_sheet(workbook, worksheet, safeExcelSheetName(sheetName, usedNames));
+        });
+
+        XLSX.writeFile(workbook, `Leger_Semua_Kelas_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    } catch (error) {
+        console.error('Gagal export Excel leger:', error);
+        alert('Gagal membuat file Excel leger.');
+    } finally {
+        button.disabled = false;
+    }
+}
+
 function buildLegerDropdown() {
     const selectedSheet = legerSheetSelect.value || currentSheetName;
     legerSheetSelect.innerHTML = '';
     const sheetNames = originalSheetNames.filter(name => allSheetsData[name]?.scores?.length);
     if (!sheetNames.length) {
         legerSheetSelect.disabled = true;
-        document.getElementById('exportPDFLeger').disabled = true;
         legerContainer.innerHTML = '<div class="leger-empty">Upload data nilai untuk membuat leger.</div>';
         return;
     }
 
     legerSheetSelect.disabled = false;
-    document.getElementById('exportPDFLeger').disabled = false;
     sheetNames.forEach(name => {
         const option = document.createElement('option');
         option.value = name;
@@ -2165,7 +2323,7 @@ document.querySelectorAll('.main-tab').forEach(tab => {
 
 legerSheetSelect.addEventListener('change', () => renderLeger());
 
-document.getElementById('exportPDFLeger').addEventListener('click', async () => {
+document.getElementById('exportPDFLeger')?.addEventListener('click', async () => {
     const sheetName = legerSheetSelect.value;
     const data = allSheetsData[sheetName];
     const sourceTable = legerContainer.querySelector('.leger-table');
@@ -2236,6 +2394,8 @@ document.getElementById('exportPDFLeger').addEventListener('click', async () => 
         button.disabled = false;
     }
 });
+
+document.getElementById('exportExcelLeger').addEventListener('click', exportAllLegerToExcel);
 
 document.getElementById('exportPDFKelas').addEventListener('click', () => {
     if (!currentSubjectNames.length) { alert("Tidak ada data"); return; }
