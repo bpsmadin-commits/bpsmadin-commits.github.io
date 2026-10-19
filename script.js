@@ -650,6 +650,7 @@ async function exportAllLegerToExcel() {
                 { s: { r: 2, c: 0 }, e: { r: 2, c: lastCol } },
                 { s: { r: 3, c: 0 }, e: { r: 3, c: lastCol } }];
             worksheet['!cols'] = headers.map((header, index) => {
+                if (index === 0) return { wch: 4 };
                 if (index === 2) return { wch: 25 };
                 if (index === 4) return { wch: 12 };
                 if (index >= subjectStartCol && index < totalCol) return { wch: 4 };
