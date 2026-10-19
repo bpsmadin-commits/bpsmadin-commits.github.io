@@ -612,6 +612,14 @@ async function exportAllLegerToExcel() {
                 alignment: { horizontal: 'left', vertical: 'center' },
                 border: { top: border, bottom: border, left: border, right: border }
             };
+            const titleStyle = {
+                font: { name: 'Arial', sz: 12, bold: true, color: { rgb: '000000' } },
+                alignment: { horizontal: 'left', vertical: 'center' }
+            };
+            for (let rowIndex = 0; rowIndex < titleRows.length; rowIndex++) {
+                const titleCell = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 0 })];
+                if (titleCell) titleCell.s = titleStyle;
+            }
             for (let col = 0; col <= lastCol; col++) {
                 worksheet[XLSX.utils.encode_cell({ r: headerRow, c: col })].s =
                     col >= subjectStartCol && col <= rankingCol ? subjectHeaderStyle : headerStyle;
@@ -655,7 +663,9 @@ async function exportAllLegerToExcel() {
                 if (index === 4) return { wch: 12 };
                 if (index >= subjectStartCol && index < totalCol) return { wch: 4 };
                 if (index === totalCol) return { wch: 6 };
+                if (index === averageCol) return { wch: 6 };
                 if (index === rankingCol) return { wch: 4 };
+                if (index === statusCol) return { wch: 12 };
                 return { wch: Math.max(8, Math.min(18, String(header).length + 3)) };
             });
             worksheet['!rows'] = [{ hpt: 22 }, { hpt: 20 }, { hpt: 18 }, { hpt: 18 }, { hpt: 88 }];
