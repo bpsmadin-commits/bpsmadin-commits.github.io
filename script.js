@@ -790,7 +790,7 @@ function runCountUps(scope) {
     const jcBars = root.querySelectorAll('.jc-bar-fill[data-target-height]');
     jcBars.forEach(bar => {
         bar.style.transition = 'none';
-        bar.style.height = bar.dataset.targetHeight || '0%';
+        bar.style.height = '0%';
     });
 
     root.querySelectorAll('.count-value[data-count-to]').forEach(el => {
@@ -803,7 +803,10 @@ function runCountUps(scope) {
 
     requestAnimationFrame(() => {
         bars.forEach(bar => { bar.style.transition = ''; });
-        jcBars.forEach(bar => { bar.style.transition = ''; });
+        jcBars.forEach(bar => {
+            bar.style.transition = 'height 700ms cubic-bezier(0.16, 1, 0.3, 1)';
+            bar.style.height = bar.dataset.targetHeight || '0%';
+        });
     });
 }
 
@@ -1119,7 +1122,7 @@ function renderJenjangStudentSearch() {
 }
 
 // Bangun dropdown jenjang khusus untuk tab Grafik Perjenjang
-function buildGrafikJenjangDropdown() {
+function buildGrafikJenjangDropdown(render = false) {
     grafikJenjangSelect.innerHTML = '';
 
     const groupedKeys = Object.keys(groupedData);
@@ -1148,7 +1151,12 @@ function buildGrafikJenjangDropdown() {
 
     grafikJenjangSelect.value = options[0];
     populateGrafikMapelSelect(options[0]);
-    renderJenjangCompareChart(options[0], getSelectedGrafikMapels());
+    if (render) {
+        renderJenjangCompareChart(options[0], getSelectedGrafikMapels());
+    } else {
+        grafikPerjenjangContainer.innerHTML =
+            '<p style="color:var(--muted); text-align:center; padding:40px; font-size:1rem;">Pilih tab ini untuk memuat grafik.</p>';
+    }
 }
 
 // Populate chip mapel khusus tab Grafik Perjenjang, persis sama polanya kayak populateMapelSelect
@@ -1250,33 +1258,45 @@ function renderJenjangCompareChart(key, selectedSubjects) {
             </div>`;
     });
 
-    // Ketuntasan per-kelas (bukan digabung), satu blok per kelas di jenjang ini, ikut mapel yang difilter
-    let ketuntasanHTML = '';
-    sheetList.forEach(name => {
-        const d = allSheetsData[name];
-        if (!d) return;
-        let selectedIndices = null;
-        if (hasFilter && d.subjects && d.subjects.length) {
-            const indices = [];
-            selectedSubjects.forEach(sub => {
-                const idx = d.subjects.indexOf(sub);
-                if (idx !== -1) indices.push(idx);
-            });
-            if (indices.length) selectedIndices = indices;
-        }
-        const block = buildKetuntasanHTML(d, selectedIndices, false, name);
-        if (block) {
-            ketuntasanHTML += `<div class="ketuntasan-perkelas-block">${block}</div>`;
-        }
-    });
-
+    const renderToken = ++grafikRenderToken;
     grafikPerjenjangContainer.innerHTML = `
             <div class="jenjang-compare-chart-wrap">
                 <div class="jenjang-compare-chart">${barsHTML}</div>
             </div>
-            ${ketuntasanHTML ? `<div class="ketuntasan-perkelas-grid">${ketuntasanHTML}</div>` : ''}`;
-
+            <div class="ketuntasan-perkelas-grid" data-grafik-details></div>`;
     runCountUps(grafikPerjenjangContainer);
+
+    // Detail daftar siswa dibuat setelah grafik utama tampil agar pergantian tab tidak tersendat.
+    setTimeout(() => {
+        if (renderToken !== grafikRenderToken) return;
+        const details = grafikPerjenjangContainer.querySelector('[data-grafik-details]');
+        if (!details) return;
+        let classIndex = 0;
+        const renderDetailChunk = () => {
+            if (renderToken !== grafikRenderToken) return;
+            let chunkHTML = '';
+            const chunkEnd = Math.min(classIndex + 2, sheetList.length);
+            for (; classIndex < chunkEnd; classIndex++) {
+                const name = sheetList[classIndex];
+                const d = allSheetsData[name];
+                if (!d) continue;
+                let selectedIndices = null;
+                if (hasFilter && d.subjects && d.subjects.length) {
+                    const indices = [];
+                    selectedSubjects.forEach(sub => {
+                        const idx = d.subjects.indexOf(sub);
+                        if (idx !== -1) indices.push(idx);
+                    });
+                    if (indices.length) selectedIndices = indices;
+                }
+                const block = buildKetuntasanHTML(d, selectedIndices, false, name);
+                if (block) chunkHTML += `<div class="ketuntasan-perkelas-block">${block}</div>`;
+            }
+            if (chunkHTML) details.insertAdjacentHTML('beforeend', chunkHTML);
+            if (classIndex < sheetList.length) setTimeout(renderDetailChunk, 0);
+        };
+        renderDetailChunk();
+    }, 500);
 }
 
 // Bangun blok Ketuntasan untuk satu jenjang (ditempel langsung di layout Per Jenjang)
@@ -2287,43 +2307,43 @@ grafikDeselectAllMapelBtn.addEventListener('click', () => {
     if (key) renderJenjangCompareChart(key, getSelectedGrafikMapels());
 });
 
-let paneSwitching = false;
+let grafikRenderToken = 0;
 function switchPane(paneId) {
-    if (paneSwitching) return;
+    if (paneId !== 'grafikjenjang') grafikRenderToken++;
     const nextPane = document.getElementById('pane-' + paneId);
     const currentPane = document.querySelector('.main-pane.active');
     if (!nextPane || currentPane === nextPane) return;
 
-    document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
-    const matchingTab = document.querySelector(`.main-tab[data-pane="${paneId}"]`);
+    const tabs = Array.from(document.querySelectorAll('.main-tab'));
+    const fromIndex = tabs.findIndex(t => t.classList.contains('active'));
+    tabs.forEach(t => t.classList.remove('active'));
+    const matchingTab = tabs.find(t => t.dataset.pane === paneId);
     if (matchingTab) matchingTab.classList.add('active');
     document.getElementById('mainTabs').classList.toggle('kelas-active', paneId === 'kelas');
     document.getElementById('mainTabs').classList.toggle('jenjang-active', paneId === 'jenjang');
     if (paneId !== 'jenjang') jenjangStudentSearchResults.hidden = true;
 
-    paneSwitching = true;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (currentPane) currentPane.classList.remove('pane-show', 'active');
+    nextPane.classList.add('active');
 
-    const showNextPane = () => {
-        nextPane.classList.add('active');
-        // force reflow so the transition to pane-show plays
-        void nextPane.offsetWidth;
+    if (reduceMotion) {
         nextPane.classList.add('pane-show');
-
-        if (paneId === 'overview') renderOverview();
-
-        runCountUps(nextPane);
-        paneSwitching = false;
-    };
-
-    if (currentPane) {
-        currentPane.classList.remove('pane-show');
-        setTimeout(() => {
-            currentPane.classList.remove('active');
-            showNextPane();
-        }, 220);
     } else {
-        showNextPane();
+        requestAnimationFrame(() => {
+            nextPane.classList.add('pane-show');
+        });
     }
+
+    if (paneId === 'overview') renderOverview();
+    if (paneId === 'grafikjenjang') {
+        setTimeout(() => {
+            if (document.querySelector('.main-pane.active') !== nextPane) return;
+            const key = grafikJenjangSelect.value;
+            if (key) renderJenjangCompareChart(key, getSelectedGrafikMapels());
+        }, 80);
+    }
+    runCountUps(nextPane);
 }
 
 document.querySelectorAll('.main-tab').forEach(tab => {

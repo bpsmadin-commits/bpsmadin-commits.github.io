@@ -346,9 +346,18 @@ body::before {
 
 .dashboard-workspace > .quartal-bar,
 .dashboard-workspace > .main-tabs,
-.dashboard-workspace > .main-pane {
+.dashboard-workspace > .pane-stack {
     grid-column: 1;
     min-width: 0;
+}
+
+.pane-stack {
+    position: relative;
+}
+
+.pane-stack.pane-animating {
+    overflow: hidden;
+    transition: height 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .kelas-ketuntasan-panel {
@@ -885,7 +894,7 @@ body::before {
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
-    transition: all var(--t-spring);
+    transition: color 220ms ease, background-color 260ms ease, box-shadow 260ms ease, transform 220ms ease;
     border: none;
     font-family: 'Manrope', sans-serif;
     position: relative;
@@ -905,6 +914,11 @@ body::before {
 
 .main-tabs.jenjang-active .jenjang-student-search {
     display: block;
+    animation: searchIn 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes searchIn {
+    from { opacity: 0; transform: translateX(10px); }
 }
 
 .jenjang-student-search-input-wrap {
@@ -1100,6 +1114,7 @@ body::before {
     background: var(--surface-solid);
     font-weight: 700;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
 }
 
 .main-tab.active::after {
@@ -1117,8 +1132,9 @@ body::before {
 .main-pane {
     display: none;
     opacity: 0;
-    transform: translateY(14px);
-    transition: opacity 0.28s ease, transform 0.28s ease;
+    transform: translateY(8px);
+    transition: opacity 260ms cubic-bezier(0.22, 1, 0.36, 1), transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
 }
 
 .main-pane.active {
@@ -1128,6 +1144,35 @@ body::before {
 .main-pane.active.pane-show {
     opacity: 1;
     transform: translateY(0);
+}
+
+.main-pane.active.pane-show > * {
+    animation: paneContentIn 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes paneContentIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pane-stack.pane-animating > .main-pane.pane-leaving {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 200ms ease-in, transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pane-stack.slide-next > .main-pane.pane-leaving { transform: translateX(-48px); }
+.pane-stack.slide-prev > .main-pane.pane-leaving { transform: translateX(48px); }
+
+.pane-stack.slide-next > .main-pane.pane-entering { transform: translateX(56px); }
+.pane-stack.slide-prev > .main-pane.pane-entering { transform: translateX(-56px); }
+
+.pane-stack.pane-animating > .main-pane.active:not(.pane-leaving) {
+    transition-delay: 80ms;
 }
 
 /* ========== SECTIONS ========== */
@@ -2100,11 +2145,26 @@ td .mapel-name {
     margin-top: 20px;
 }
 
+.jenjang-compare-chart-wrap {
+    animation: grafikChartIn 320ms ease-out both;
+}
+
 .ketuntasan-perkelas-block {
     background: var(--surface-soft, rgba(255,255,255,0.4));
     border: 1px solid var(--border);
     border-radius: var(--radius-2xl, 18px);
     padding: 14px 16px;
+    animation: grafikDetailIn 320ms ease-out both;
+}
+
+@keyframes grafikChartIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes grafikDetailIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .ketuntasan-perkelas-block .section-title {
