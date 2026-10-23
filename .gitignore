@@ -1,0 +1,4 @@
+﻿# Data nilai siswa - jangan di-commit
+*.xlsx
+*.xls
+~$*
