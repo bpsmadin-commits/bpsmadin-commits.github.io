@@ -172,6 +172,18 @@ function normalizeCellText(value) {
     return String(value).replace(/[\uFEFF\u00A0]/g, ' ').trim();
 }
 
+function showAppToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `app-toast app-toast-${type}`;
+    toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i><span>${escapeHTML(message)}</span>`;
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('is-visible'));
+    setTimeout(() => {
+        toast.classList.remove('is-visible');
+        setTimeout(() => toast.remove(), 260);
+    }, 3600);
+}
+
 function parseAsuhanText(raw) {
     const text = normalizeCellText(raw || '');
     if (!text) return '';
@@ -2003,6 +2015,7 @@ async function loadExcel(file) {
             let shortName = file.name;
             if (shortName.length > 15) shortName = shortName.substring(0, 15) + '...';
             uploadBtnText.innerText = shortName;
+            showAppToast(`Upload selesai. Data ${file.name} sudah siap digunakan.`);
         } catch (err) { alert("Gagal membaca file: " + file.name);
             uploadBtnText.innerText = "Upload Data"; }
     };
